@@ -130,13 +130,13 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
     <div className="container">
       <div className="section-heading section-heading--detail"><div><p className="eyebrow"><span className="eyebrow__line" />EN DETALLE</p><h2 id="detail-section-title">Encontrá tu próximo favorito.</h2></div><p>Elegí un producto para descubrirlo de cerca.</p></div>
       <motion.div className="detail-panel" initial={reducedMotion ? false : { opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.58, ease: 'easeOut' }}>
-        <div className="detail-showcase">
+        <div className={`detail-showcase detail-showcase--${product.id}`}>
           <div className="detail-showcase__heading"><span>01 / 06</span><span>DROP_ZONE CR</span></div>
           <AnimatePresence mode="wait"><motion.div key={product.id} initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0 }} transition={{ duration: 0.24 }} className="detail-showcase__image"><img src={product.detailImage || product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" /></motion.div></AnimatePresence>
           <div className="detail-showcase__caption"><span>DISEÑADO PARA ACOMPAÑARTE</span><strong>{product.name}</strong></div>
         </div>
         <div className="detail-content">
-          <div className="detail-content__top"><span className="detail-content__eyebrow">EXPLORÁ EL PRODUCTO</span><Sparkles size={21} strokeWidth={1.5} aria-hidden="true" /></div>
+          <div className="detail-content__top"><span className="detail-content__eyebrow">EXPLORÁ EL PRODUCTO</span></div>
           <div className="tabs" role="tablist" aria-label={`Información de ${product.name}`}>
             {['Características', 'Precio'].map((label, index) => <button key={label} ref={(element) => { tabRefs.current[index] = element; }} type="button" id={`tab-${index}`} role="tab" aria-selected={tab === index} aria-controls="product-tabpanel" tabIndex={tab === index ? 0 : -1} className={tab === index ? 'tab tab--active' : 'tab'} onClick={() => onTabChange(index)} onKeyDown={(event) => handleTabKey(event, index)}>{label}</button>)}
           </div>
