@@ -23,4 +23,47 @@
 @media(max-width:767px){.comparison{padding-block:70px}.comparison-stage{gap:12px}.compare-card{padding:20px}.compare-card__visual{height:230px}.compare-card__info>div{align-items:flex-start;flex-direction:column}.comparison-summary__count{display:none}}
 @media(max-width:639px){.comparison-stage{grid-template-columns:1fr;gap:0}.compare-card{padding:20px;border-radius:21px}.compare-card__visual{height:245px}.compare-card__info>div{align-items:center;flex-direction:row}.comparison-stage__versus{position:relative;top:auto;left:auto;transform:none;justify-self:center;margin:-16px 0;grid-row:2}.comparison-summary{align-items:flex-start;padding:15px}.comparison-summary strong{font-size:14px}.comparison-summary p{font-size:11px}.comparison__heading>p{max-width:none}}
 @media(max-width:374px){.compare-card__info>div{align-items:flex-start;flex-direction:column}.compare-card__visual{height:215px}.comparison-summary__mark{width:30px;height:30px;flex-basis:30px}}
+.scroll-progress{position:fixed;z-index:60;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),#61a0ff);transform-origin:0 50%;box-shadow:0 0 14px rgba(22,98,235,.4);pointer-events:none}
+.hero__visual-media{width:100%;will-change:transform}
+.product-card__arrow svg,.text-link svg,.button svg,.compare-card__info button svg{transition:transform .22s ease}
+.product-card:hover .product-card__arrow svg,.text-link:hover svg,.button:hover svg,.compare-card__info button:hover svg{transform:translateX(3px)}
+.brand{display:inline-flex;align-items:center;padding:8px 11px;background:#fff;border:1px solid #e1e6ed;border-radius:12px;box-shadow:0 7px 20px rgba(10,18,31,.08);line-height:0}
+.brand__logo{width:clamp(150px,16vw,190px);height:auto}
+.brand--compact{font-size:0}.brand--compact .brand__logo{width:168px}
+.hero{background-color:#f8fafc;background-image:linear-gradient(90deg,rgba(252,253,255,.98) 0%,rgba(249,251,254,.9) 34%,rgba(247,249,252,.24) 52%,rgba(247,249,252,0) 68%),url('/images/hero/airpods-hero-background.webp');background-size:cover,auto 112%;background-position:center,right center;background-repeat:no-repeat}
+.hero::after{content:"";position:absolute;z-index:0;left:0;right:0;bottom:0;height:120px;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.72) 55%,#fff 100%)}
+.hero__inner{grid-template-columns:minmax(0,630px) 1fr}.hero__copy{max-width:630px}.hero-benefits{background:rgba(251,252,254,.72);backdrop-filter:blur(8px);border-radius:18px 18px 0 0;padding-inline:18px}
+@media(max-width:639px){.brand{padding:7px 9px}.brand__logo{width:145px}}
+@media(max-width:767px){.hero{background-image:linear-gradient(90deg,rgba(252,253,255,.96) 0%,rgba(249,251,254,.82) 52%,rgba(247,249,252,.28) 100%),url('/images/hero/airpods-hero-background.webp');background-size:cover,auto 104%;background-position:center,68% center}.hero__inner{min-height:540px}.hero__copy{padding-block:72px;max-width:560px}.hero-benefits{border-radius:0;padding-inline:0}}
+@media(max-width:374px){.brand__logo{width:125px}}
+.compare-card__visual{height:clamp(280px,34vw,410px);padding:clamp(10px,2vw,22px);background:#f7f8fa}
+.compare-card__visual img{width:min(94%,460px);height:94%;max-width:none;max-height:none;object-fit:contain;border-radius:16px}
+@media(max-width:767px){.compare-card__visual{height:clamp(245px,66vw,360px);padding:10px}.compare-card__visual img{width:100%;height:100%;border-radius:13px}}
+@media(max-width:374px){.compare-card__visual{height:230px}}
+.footer{position:relative;overflow:hidden;background:linear-gradient(135deg,#0d1420 0%,#121c2a 58%,#0c1725 100%);color:#fff;border-top:0}
+.footer::before{content:"";position:absolute;pointer-events:none;width:520px;height:520px;right:-180px;top:-330px;border-radius:50%;background:radial-gradient(circle,rgba(32,105,238,.2),rgba(32,105,238,0) 68%)}
+.footer__main,.footer__bottom{position:relative;z-index:1}
+.footer__main{grid-template-columns:minmax(230px,1fr) auto auto;gap:38px;padding-block:54px}
+.footer-wordmark{display:inline-flex;align-items:baseline;color:#fff;font-size:27px;font-weight:800;letter-spacing:-.075em;line-height:1}
+.footer-wordmark__accent{color:#2d78ff;margin-inline:.02em}
+.footer-wordmark small{margin-left:7px;color:#7ea9ff;font-size:10px;font-weight:800;letter-spacing:.16em}
+.footer__brand p{max-width:290px;margin-top:12px;color:#9eacbf;font-size:13px;line-height:1.55}
+.footer__links{gap:10px}
+.footer__links>*{min-height:42px;padding:9px 13px;color:#c5cfdd;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.075);border-radius:999px;transition:color .2s,background .2s,border-color .2s,transform .2s}
+.footer__links a:hover{color:#fff;background:rgba(45,120,255,.13);border-color:rgba(90,147,255,.3);transform:translateY(-2px)}
+.footer__links svg{color:#5f98ff}
+.footer__main>.button{box-shadow:0 12px 28px rgba(13,158,73,.18)}
+.footer__bottom{padding-block:22px;border-top:1px solid rgba(255,255,255,.09);color:#7f8da2}
+@media(max-width:1023px){.footer__main{grid-template-columns:1fr auto}.footer__links{gap:9px}}
+@media(max-width:767px){.footer__main{gap:25px;padding-block:42px}.footer__links>*{background:transparent;border:0;padding:2px 0}.footer__links a:hover{background:transparent;border-color:transparent}}
+@media(max-width:639px){.footer__main{display:flex}.footer__bottom{padding-block:19px}.footer-wordmark{font-size:25px}}
+.detail-showcase{isolation:isolate;background:radial-gradient(circle at 52% 43%,#fff 0%,#f6f8fb 48%,#e9eef5 100%)}
+.detail-showcase::before{z-index:-1;border-color:rgba(109,137,178,.13)}
+.detail-showcase::after{z-index:-1;border-color:rgba(109,137,178,.1)}
+.detail-showcase__image{position:relative;z-index:1;padding:52px 30px 72px}
+.detail-showcase__image::after{content:"";position:absolute;z-index:-1;left:50%;bottom:66px;width:min(55%,360px);height:36px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(39,56,82,.18),rgba(39,56,82,0) 70%);filter:blur(10px)}
+.detail-showcase__image img{width:min(92%,540px);height:100%;max-height:500px;aspect-ratio:auto;object-fit:contain;border-radius:0;filter:drop-shadow(0 22px 24px rgba(46,62,86,.13));-webkit-mask-image:radial-gradient(ellipse 78% 84% at 50% 48%,#000 62%,rgba(0,0,0,.96) 73%,transparent 100%);mask-image:radial-gradient(ellipse 78% 84% at 50% 48%,#000 62%,rgba(0,0,0,.96) 73%,transparent 100%)}
+.detail-showcase__caption{bottom:24px;gap:6px;max-width:calc(100% - 64px);padding:11px 15px 12px;border:1px solid rgba(255,255,255,.72);border-radius:14px;background:rgba(255,255,255,.74);box-shadow:0 12px 30px rgba(45,61,84,.08);backdrop-filter:blur(12px)}
+.detail-showcase__caption span{color:#6f7f95}.detail-showcase__caption strong{font-size:clamp(22px,2vw,29px)}
+@media(max-width:767px){.detail-showcase__image{padding:48px 14px 80px}.detail-showcase__image img{width:100%;max-height:330px}.detail-showcase__image::after{bottom:74px;width:64%}.detail-showcase__caption{left:18px;bottom:17px;max-width:calc(100% - 36px);padding:9px 12px 10px}.detail-showcase__caption strong{font-size:21px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

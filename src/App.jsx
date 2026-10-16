@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion, useScroll, useSpring } from 'motion/react';
 import {
-  ArrowDown, ArrowRight, AudioLines, BatteryFull, Bluetooth, Check, ChevronDown, Droplets, Headphones, Info,
+  ArrowRight, AudioLines, BatteryFull, Bluetooth, Check, ChevronDown, Droplets, Headphones, Info,
   Instagram, MapPin, Menu, MessageCircle, PenLine, Phone,
   Sparkles, X,
 } from 'lucide-react';
@@ -11,9 +11,18 @@ import { getFallbackData } from './data/fallback.js';
 const service = new ProductService();
 const iconMap = { headphones: Headphones, info: Info, pen: PenLine, audio: AudioLines, bluetooth: Bluetooth, battery: BatteryFull, droplet: Droplets, sparkles: Sparkles };
 
+function ScrollProgress({ reducedMotion }) {
+  const { scrollYProgress } = useScroll();
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.25 });
+  return <motion.div className="scroll-progress" style={{ scaleX: reducedMotion ? scrollYProgress : smoothProgress }} aria-hidden="true" />;
+}
+
 function Brand({ compact = false }) {
-  return <span className={`brand ${compact ? 'brand--compact' : ''}`} aria-label="Drop Zone CR">
-    DROP<span className="brand__underscore">_</span><span className="brand__zone">ZONE</span><span className="brand__cr"> CR</span>
+  if (compact) return <span className="footer-wordmark" aria-label="Drop Zone CR">
+    DROP<span className="footer-wordmark__accent">_</span>ZONE <small>CR</small>
+  </span>;
+  return <span className="brand">
+    <img className="brand__logo" src="/images/logo-dropzone.png?v=2" alt="Drop Zone" width="800" height="125" />
   </span>;
 }
 
@@ -56,12 +65,10 @@ function Header({ settings, sections }) {
   </header>;
 }
 
-function Hero({ settings, product, reducedMotion }) {
+function Hero({ settings, reducedMotion }) {
   const title = settings.heroTitle;
   const lastSpace = title.lastIndexOf(' ');
   return <section className="hero" id="inicio" aria-labelledby="hero-title">
-    <div className="hero__ambient hero__ambient--one" aria-hidden="true" />
-    <div className="hero__ambient hero__ambient--two" aria-hidden="true" />
     <div className="container hero__inner">
       <motion.div className="hero__copy" initial={reducedMotion ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.62, ease: 'easeOut' }}>
         <h1 id="hero-title">{lastSpace > 0 ? <>{title.slice(0, lastSpace)} <span className="hero__blue">{title.slice(lastSpace + 1)}</span></> : title}</h1>
@@ -70,16 +77,6 @@ function Hero({ settings, product, reducedMotion }) {
           <WhatsAppLink phone={settings.whatsappPhone} className="button button--light">Hablemos</WhatsAppLink>
         </div>
       </motion.div>
-      <motion.div className="hero__visual" initial={reducedMotion ? false : { opacity: 0, x: 18, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}>
-        <img src={product.heroImage || product.image} alt="Ilustración editorial de audífonos blancos con estuche de carga abierto" width="1536" height="1024" fetchPriority="high" />
-        <span className="hero__image-note">UNA FORMA MÁS SIMPLE DE ELEGIR</span>
-      </motion.div>
-    </div>
-    <div className="container hero-benefits" aria-label="Información de la tienda">
-      <div><span className="benefit-icon"><MapPin size={19} /></span><span>El Roble, Puntarenas</span></div>
-      <div><span className="benefit-icon"><Check size={19} /></span><span>Consultá disponibilidad</span></div>
-      <div><span className="benefit-icon"><MessageCircle size={19} /></span><span>Atención por WhatsApp</span></div>
-      <a href="#productos" className="hero-benefits__down" aria-label="Ir a productos"><ArrowDown size={19} /></a>
     </div>
   </section>;
 }
@@ -91,23 +88,24 @@ function ProductImage({ product, className = '', eager = false }) {
   return <img className={className} src={product.image} alt={product.imageAlt} width="900" height="900" loading={eager ? 'eager' : 'lazy'} decoding="async" onError={() => setFailed(true)} />;
 }
 
-function ProductCard({ product, selected, onSelect }) {
-  return <button type="button" className={`product-card ${selected ? 'product-card--selected' : ''}`} onClick={() => onSelect(product.id)} aria-label={`Ver detalles de ${product.name}, ${product.formattedPrice}`} aria-pressed={selected}>
+function ProductCard({ product, selected, onSelect, index, reducedMotion }) {
+  return <motion.button type="button" className={`product-card ${selected ? 'product-card--selected' : ''}`} onClick={() => onSelect(product.id)} aria-label={`Ver detalles de ${product.name}, ${product.formattedPrice}`} aria-pressed={selected}
+    initial={reducedMotion ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.42, delay: reducedMotion ? 0 : Math.min(index * 0.055, 0.28), ease: 'easeOut' }} whileHover={reducedMotion ? undefined : { y: -6 }} whileTap={reducedMotion ? undefined : { scale: 0.985 }}>
     <div className="product-card__image"><ProductImage product={product} /></div>
     <div className="product-card__meta"><span className="product-card__category">{product.category}</span><span className="product-card__arrow"><ArrowRight size={17} /></span></div>
     <h3>{product.name}</h3>
     <p>{product.formattedPrice}</p>
-  </button>;
+  </motion.button>;
 }
 
-function Catalog({ catalog, selectedId, onSelect }) {
+function Catalog({ catalog, selectedId, onSelect, reducedMotion }) {
   return <section id="productos" className="catalog section" aria-labelledby="catalog-title">
     <div className="container">
       <div className="section-heading">
         <div><p className="eyebrow"><span className="eyebrow__line" />NUESTROS PRODUCTOS</p><h2 id="catalog-title">Una selección para vos.</h2></div>
         <a href="#comparar" className="text-link">Comparar modelos <ArrowRight size={17} /></a>
       </div>
-      <div className="product-grid">{catalog.featured.map((product) => <ProductCard key={product.id} product={product} selected={selectedId === product.id} onSelect={onSelect} />)}</div>
+      <div className="product-grid">{catalog.featured.map((product, index) => <ProductCard key={product.id} product={product} selected={selectedId === product.id} onSelect={onSelect} index={index} reducedMotion={reducedMotion} />)}</div>
       <p className="catalog__note">Imágenes ilustrativas. Consultá la versión y características del artículo disponible.</p>
     </div>
   </section>;
@@ -131,7 +129,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
   return <section id="caracteristicas" className="detail-section section" aria-labelledby="detail-section-title">
     <div className="container">
       <div className="section-heading section-heading--detail"><div><p className="eyebrow"><span className="eyebrow__line" />EN DETALLE</p><h2 id="detail-section-title">Encontrá tu próximo favorito.</h2></div><p>Elegí un producto para descubrirlo de cerca.</p></div>
-      <div className="detail-panel">
+      <motion.div className="detail-panel" initial={reducedMotion ? false : { opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.58, ease: 'easeOut' }}>
         <div className="detail-showcase">
           <div className="detail-showcase__heading"><span>01 / 06</span><span>DROP_ZONE CR</span></div>
           <AnimatePresence mode="wait"><motion.div key={product.id} initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0 }} transition={{ duration: 0.24 }} className="detail-showcase__image"><img src={product.detailImage || product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" /></motion.div></AnimatePresence>
@@ -160,12 +158,12 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
           </div>
           <div className="detail-content__footer"><div><span>PRECIO</span><strong>{product.formattedPrice}</strong></div><WhatsAppLink phone={settings.whatsappPhone} product={product} className="button button--whatsapp">Consultar este producto <ArrowRight size={17} /></WhatsAppLink></div>
         </div>
-      </div>
+      </motion.div>
     </div>
   </section>;
 }
 
-function Comparison({ catalog, onSelect }) {
+function Comparison({ catalog, onSelect, reducedMotion }) {
   const [firstId, setFirstId] = useState(catalog.products[0]?.id);
   const [secondId, setSecondId] = useState(catalog.products[1]?.id);
   const first = catalog.find(firstId) || catalog.products[0];
@@ -175,12 +173,12 @@ function Comparison({ catalog, onSelect }) {
     ? 'Ambos tienen el mismo precio publicado.'
     : `Diferencia de precio: ₡${new Intl.NumberFormat('es-CR').format(difference).replace(/[\s\u00a0\u202f]/g, '.')}`;
 
-  const compareCard = (product, index, value, onChange) => <article className="compare-card" key={index}>
+  const compareCard = (product, index, value, onChange) => <motion.article className="compare-card" key={`${index}-${product.id}`} initial={reducedMotion ? false : { opacity: 0, y: 22, scale: 0.985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.46, delay: reducedMotion ? 0 : index * 0.1, ease: 'easeOut' }}>
     <div className="compare-card__top"><span>0{index + 1} / {index === 0 ? 'TU ELECCIÓN' : 'COMPARAR CON'}</span><span className="compare-card__category">{product.category}</span></div>
     <div className="compare-card__select-wrap"><select aria-label={index === 0 ? 'Primer producto para comparar' : 'Segundo producto para comparar'} value={value} onChange={(event) => onChange(event.target.value)}>{catalog.products.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}</select><ChevronDown size={19} aria-hidden="true" /></div>
     <div className="compare-card__visual"><img src={product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" decoding="async" /></div>
     <div className="compare-card__info"><p>{product.verifiedFeatures[0]?.label || product.category}</p><div><strong>{product.formattedPrice}</strong><button type="button" onClick={() => onSelect(product.id)} aria-label={`Ver detalles de ${product.name}`}>Ver detalles <ArrowRight size={16} aria-hidden="true" /></button></div></div>
-  </article>;
+  </motion.article>;
 
   return <section id="comparar" className="comparison section" aria-labelledby="compare-title"><div className="container">
     <div className="section-heading comparison__heading"><div><p className="eyebrow"><span className="eyebrow__line" />ENCONTRÁ TU MEJOR OPCIÓN</p><h2 id="compare-title">Dos modelos. Una decisión más clara.</h2></div><p>Elegí dos productos y compará sus precios de un vistazo.</p></div>
@@ -225,18 +223,18 @@ export default function App() {
     requestAnimationFrame(() => document.getElementById('caracteristicas')?.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' }));
   };
   const product = data.catalog.find(selectedId) || data.catalog.featured[0];
-  const heroProduct = data.catalog.find('airpods-pro-3') || product;
 
   return <>
+    <ScrollProgress reducedMotion={reducedMotion} />
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
     <Header settings={data.settings} sections={data.siteSections} />
     <main id="contenido">
       {loadState === 'loading' && <div className="api-loading" role="status">Actualizando catálogo…</div>}
       {loadState === 'fallback' && <div className="api-notice" role="status">Vista de respaldo: el catálogo local no está conectado. Los datos mostrados proceden de la copia incluida en la web.</div>}
-      <Hero settings={data.settings} product={heroProduct} reducedMotion={reducedMotion} />
-      <Catalog catalog={data.catalog} selectedId={product.id} onSelect={selectProduct} />
+      <Hero settings={data.settings} reducedMotion={reducedMotion} />
+      <Catalog catalog={data.catalog} selectedId={product.id} onSelect={selectProduct} reducedMotion={reducedMotion} />
       <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} />
-      <Comparison catalog={data.catalog} onSelect={selectProduct} />
+      <Comparison catalog={data.catalog} onSelect={selectProduct} reducedMotion={reducedMotion} />
     </main>
     <Footer settings={data.settings} />
     <span className="sr-only" role="status" aria-live="polite">{product.name} seleccionado, precio {product.formattedPrice}</span>
