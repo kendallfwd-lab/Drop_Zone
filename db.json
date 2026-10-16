@@ -1,0 +1,170 @@
+{
+  "settings": {
+    "brand": "DROP_ZONE CR",
+    "tagline": "Tecnología que te acompaña.",
+    "heroTitle": "El producto que quieras de la mejor calidad",
+    "location": "El Roble, Puntarenas, Costa Rica",
+    "whatsappPhone": "50683120950",
+    "displayPhone": "+506 8312 0950",
+    "instagramHandle": "@drop_zonecr",
+    "instagramUrl": "https://www.instagram.com/drop_zonecr/",
+    "currency": "CRC",
+    "shippingMessage": "Consultá disponibilidad y opciones de entrega por WhatsApp.",
+    "shippingConfirmed": false
+  },
+  "products": [
+    {
+      "id": "airpods-pro-3",
+      "name": "AirPods Pro 3",
+      "category": "Audio",
+      "priceCRC": 25000,
+      "image": "/images/products/airpods-pro-3.webp",
+      "detailImage": "/images/products/airpods-pro-3.webp",
+      "heroImage": "/images/hero/airpods-pro-3-hero.webp",
+      "imageAlt": "Ilustración de audífonos inalámbricos blancos con almohadillas y estuche abierto",
+      "shortDescription": "Una experiencia para llevar a todas partes. Consultá los detalles de la versión disponible.",
+      "referenceFeatures": [
+        { "label": "Cancelación Activa de Ruido y modo Ambiente", "icon": "headphones" },
+        { "label": "Audio Adaptativo y Audio Espacial personalizado", "icon": "audio" },
+        { "label": "Chip H2 y conexión Bluetooth 5.3", "icon": "bluetooth" },
+        { "label": "Hasta 8 h de audio con cancelación de ruido; hasta 24 h con el estuche", "icon": "battery" }
+      ],
+      "specSourceUrl": "https://www.apple.com/la/airpods-pro/specs/",
+      "features": [
+        { "label": "Audífonos inalámbricos de tipo intraural", "icon": "headphones", "verified": true },
+        { "label": "Estuche de carga incluido en la presentación ilustrada", "icon": "package", "verified": false },
+        { "label": "Funciones y compatibilidad por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 1
+    },
+    {
+      "id": "airpods-pro-2",
+      "name": "AirPods Pro 2",
+      "category": "Audio",
+      "priceCRC": 20000,
+      "image": "/images/products/airpods-pro-2.webp",
+      "detailImage": "/images/products/airpods-pro-2.webp",
+      "imageAlt": "Ilustración de audífonos intraurales blancos con estuche abierto",
+      "shortDescription": "Conocé su presentación y consultá la versión exacta disponible.",
+      "referenceFeatures": [
+        { "label": "Cancelación Activa de Ruido y modo Ambiente", "icon": "headphones" },
+        { "label": "Audio Adaptativo y Audio Espacial personalizado", "icon": "audio" },
+        { "label": "Chip H2 y conexión Bluetooth 5.3", "icon": "bluetooth" },
+        { "label": "Hasta 6 h de audio; hasta 30 h con el estuche de carga", "icon": "battery" }
+      ],
+      "specSourceUrl": "https://support.apple.com/es-es/111834",
+      "features": [
+        { "label": "Audífonos inalámbricos de tipo intraural", "icon": "headphones", "verified": true },
+        { "label": "Funciones y compatibilidad por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 2
+    },
+    {
+      "id": "airpods-3",
+      "name": "AirPods 3",
+      "category": "Audio",
+      "priceCRC": 18000,
+      "image": "/images/products/airpods-3.webp",
+      "detailImage": "/images/products/airpods-3.webp",
+      "imageAlt": "Ilustración de audífonos inalámbricos blancos de ajuste abierto",
+      "shortDescription": "Una silueta abierta y ligera. Consultá la presentación disponible.",
+      "referenceFeatures": [
+        { "label": "Diseño de ajuste abierto y Audio Espacial personalizado", "icon": "headphones" },
+        { "label": "Ecualización Adaptativa y chip H1", "icon": "audio" },
+        { "label": "Resistencia al agua y al sudor IPX4", "icon": "droplet" },
+        { "label": "Hasta 6 h de audio; hasta 30 h con el estuche de carga", "icon": "battery" }
+      ],
+      "specSourceUrl": "https://support.apple.com/es-es/111863",
+      "features": [
+        { "label": "Audífonos inalámbricos de ajuste abierto", "icon": "headphones", "verified": true },
+        { "label": "Funciones y compatibilidad por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 3
+    },
+    {
+      "id": "airpods-4",
+      "name": "AirPods 4",
+      "category": "Audio",
+      "priceCRC": 18000,
+      "image": "/images/products/airpods-4.webp",
+      "detailImage": "/images/products/airpods-4.webp",
+      "imageAlt": "Ilustración de dos audífonos inalámbricos blancos de ajuste abierto",
+      "shortDescription": "Diseño compacto para el día a día. Preguntá por la versión ofrecida.",
+      "referenceFeatures": [
+        { "label": "Diseño de ajuste abierto con chip H2", "icon": "headphones" },
+        { "label": "Audio Espacial personalizado y Aislamiento de Voz", "icon": "audio" },
+        { "label": "Resistencia al polvo, al agua y al sudor IP54", "icon": "droplet" },
+        { "label": "Hasta 5 h de audio; hasta 30 h con el estuche USB-C", "icon": "battery" }
+      ],
+      "specSourceUrl": "https://support.apple.com/es-es/121203",
+      "features": [
+        { "label": "Audífonos inalámbricos de ajuste abierto", "icon": "headphones", "verified": true },
+        { "label": "Funciones y compatibilidad por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 4
+    },
+    {
+      "id": "airpods-max",
+      "name": "AirPods Max",
+      "category": "Audio",
+      "priceCRC": 27000,
+      "image": "/images/products/airpods-max.webp",
+      "detailImage": "/images/products/airpods-max.webp",
+      "imageAlt": "Ilustración de audífonos de diadema en tono gris oscuro",
+      "shortDescription": "Una presencia envolvente. Consultá color, versión y disponibilidad.",
+      "referenceFeatures": [
+        { "label": "Diseño de diadema con almohadillas circumaurales", "icon": "headphones" },
+        { "label": "Cancelación Activa de Ruido y modo Ambiente", "icon": "audio" },
+        { "label": "Audio Espacial con seguimiento dinámico de la cabeza", "icon": "sparkles" },
+        { "label": "Hasta 20 h de audio con cancelación de ruido", "icon": "battery" }
+      ],
+      "specSourceUrl": "https://support.apple.com/es-es/121205",
+      "features": [
+        { "label": "Audífonos inalámbricos de diadema", "icon": "headphones", "verified": true },
+        { "label": "Color y versión por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 5
+    },
+    {
+      "id": "apple-pencil",
+      "name": "Apple Pencil",
+      "category": "Accesorios",
+      "priceCRC": 22000,
+      "image": "/images/products/apple-pencil.webp",
+      "detailImage": "/images/products/apple-pencil.webp",
+      "imageAlt": "Ilustración de un lápiz digital blanco sobre fondo claro",
+      "shortDescription": "Una herramienta para crear. Consultá generación y compatibilidad con tu iPad.",
+      "referenceFeatures": [
+        { "label": "Trazos precisos y respuesta de baja latencia", "icon": "pen" },
+        { "label": "Sensibilidad a la inclinación para dibujar", "icon": "sparkles" },
+        { "label": "Escritura, dibujo y anotaciones en iPad", "icon": "info" },
+        { "label": "Compatibilidad y método de carga según la generación", "icon": "bluetooth" }
+      ],
+      "specSourceUrl": "https://www.apple.com/la/apple-pencil/",
+      "features": [
+        { "label": "Lápiz digital para iPad", "icon": "pen", "verified": true },
+        { "label": "Generación y compatibilidad por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 6
+    }
+  ],
+  "siteSections": [
+    { "id": "inicio", "label": "Inicio", "enabled": true },
+    { "id": "productos", "label": "Productos", "enabled": true },
+    { "id": "caracteristicas", "label": "Características", "enabled": true },
+    { "id": "comparar", "label": "Comparar", "enabled": true },
+    { "id": "contacto", "label": "Contacto", "enabled": true }
+  ]
+}
