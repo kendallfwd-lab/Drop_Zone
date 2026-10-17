@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useSpring } from 'motion/react';
 import {
   ArrowRight, AudioLines, BatteryFull, Bluetooth, Check, ChevronDown, Droplets, Headphones, Info,
-  Instagram, MapPin, Menu, MessageCircle, PenLine, Phone,
+  MapPin, Menu, MessageCircle, PenLine, Phone,
   Sparkles, X,
 } from 'lucide-react';
 import { ProductService } from './domain/catalog.js';
@@ -33,6 +33,24 @@ function Brand({ compact = false }) {
   return <span className="brand">
     <img className="brand__logo" src="/images/logo-dropzone.png?v=2" alt="Drop Zone" width="800" height="125" />
   </span>;
+}
+
+function InstagramBrandIcon() {
+  return <svg className="instagram-brand-icon" viewBox="0 0 24 24" role="img" aria-label="Instagram">
+    <defs>
+      <linearGradient id="instagram-brand-gradient" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#ffd600" />
+        <stop offset=".28" stopColor="#ff7a00" />
+        <stop offset=".52" stopColor="#ff0169" />
+        <stop offset=".78" stopColor="#d300c5" />
+        <stop offset="1" stopColor="#7638fa" />
+      </linearGradient>
+    </defs>
+    <rect width="24" height="24" rx="6.5" fill="url(#instagram-brand-gradient)" />
+    <rect x="5.2" y="5.2" width="13.6" height="13.6" rx="4.2" fill="none" stroke="#fff" strokeWidth="1.7" />
+    <circle cx="12" cy="12" r="3.25" fill="none" stroke="#fff" strokeWidth="1.7" />
+    <circle cx="16.75" cy="7.45" r="1.05" fill="#fff" />
+  </svg>;
 }
 
 function WhatsAppLink({ phone, product, children, className = '' }) {
@@ -218,7 +236,7 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
 }
 
 function Footer({ settings }) {
-  return <footer id="contacto" className="footer"><div className="container footer__main"><div className="footer__brand"><Brand compact /><p>{settings.tagline}</p></div><div className="footer__links"><span><MapPin size={17} />{settings.location}</span><a href={`tel:+${settings.whatsappPhone}`}><Phone size={17} />{settings.displayPhone}</a><a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer"><Instagram size={17} />{settings.instagramHandle}</a></div><WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp">Escríbenos <ArrowRight size={17} /></WhatsAppLink></div><div className="container footer__bottom"><span>© {new Date().getFullYear()} Drop_Zone CR</span><span>Comercio independiente. Las marcas mencionadas pertenecen a sus titulares.</span></div></footer>;
+  return <footer id="contacto" className="footer"><div className="container footer__main"><div className="footer__brand"><Brand compact /><p>{settings.tagline}</p></div><div className="footer__links"><span className="location-link"><MapPin size={17} />{settings.location}</span><a className="phone-link" href={`tel:+${settings.whatsappPhone}`}><Phone size={17} />{settings.displayPhone}</a><a className="instagram-link" href={settings.instagramUrl} target="_blank" rel="noopener noreferrer"><InstagramBrandIcon />{settings.instagramHandle}</a></div><WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp">Escribenos a nuestro WhatsApp <ArrowRight size={17} /></WhatsAppLink></div><div className="container footer__bottom"><span>© {new Date().getFullYear()} Drop_Zone CR</span><span>Comercio independiente. Las marcas mencionadas pertenecen a sus titulares.</span></div></footer>;
 }
 
 export default function App() {
