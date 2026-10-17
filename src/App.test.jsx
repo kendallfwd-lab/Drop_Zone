@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import App from './App.jsx';
 import data from '../db.json';
 
@@ -20,6 +20,23 @@ describe('catalog experience', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('El producto que quieras de la mejor calidad');
     expect(screen.queryByText('TU TIENDA DE TECNOLOGÍA EN EL ROBLE')).not.toBeInTheDocument();
     expect(screen.queryByText('La tecnología que quieres, calidad en cada detalle.')).not.toBeInTheDocument();
+  });
+
+  it('changes the hero product background every five seconds', () => {
+    const intervalCallbacks = [];
+    const intervalSpy = vi.spyOn(window, 'setInterval').mockImplementation((callback, delay) => {
+      if (delay === 5000) intervalCallbacks.push(callback);
+      return 1;
+    });
+    try {
+      const { container } = render(<App />);
+      expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-hero-background.webp');
+      expect(intervalCallbacks).not.toHaveLength(0);
+      act(() => intervalCallbacks.forEach((callback) => callback()));
+      expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-pro-3-hero-v2.webp');
+    } finally {
+      intervalSpy.mockRestore();
+    }
   });
 
   it('renders six prices, navigates to a product and updates its detail', async () => {

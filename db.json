@@ -20,7 +20,7 @@
       "priceCRC": 25000,
       "image": "/images/products/airpods-pro-3.webp",
       "detailImage": "/images/products/airpods-pro-3.webp",
-      "heroImage": "/images/hero/airpods-pro-3-hero.webp",
+      "heroImage": "/images/hero/airpods-pro-3-hero-v2.webp",
       "imageAlt": "Ilustración de audífonos inalámbricos blancos con almohadillas y estuche abierto",
       "shortDescription": "Una experiencia para llevar a todas partes. Consultá los detalles de la versión disponible.",
       "referenceFeatures": [
@@ -46,6 +46,7 @@
       "priceCRC": 20000,
       "image": "/images/products/airpods-pro-2.webp",
       "detailImage": "/images/products/airpods-pro-2.webp",
+      "heroImage": "/images/hero/airpods-pro-2-hero.webp",
       "imageAlt": "Ilustración de audífonos intraurales blancos con estuche abierto",
       "shortDescription": "Conocé su presentación y consultá la versión exacta disponible.",
       "referenceFeatures": [
@@ -70,6 +71,7 @@
       "priceCRC": 18000,
       "image": "/images/products/airpods-3.webp",
       "detailImage": "/images/products/airpods-3.webp",
+      "heroImage": "/images/hero/airpods-3-hero.webp",
       "imageAlt": "Ilustración de audífonos inalámbricos blancos de ajuste abierto",
       "shortDescription": "Una silueta abierta y ligera. Consultá la presentación disponible.",
       "referenceFeatures": [
@@ -94,6 +96,7 @@
       "priceCRC": 18000,
       "image": "/images/products/airpods-4.webp",
       "detailImage": "/images/products/airpods-4.webp",
+      "heroImage": "/images/hero/airpods-4-hero.webp",
       "imageAlt": "Ilustración de dos audífonos inalámbricos blancos de ajuste abierto",
       "shortDescription": "Diseño compacto para el día a día. Preguntá por la versión ofrecida.",
       "referenceFeatures": [
@@ -118,6 +121,7 @@
       "priceCRC": 27000,
       "image": "/images/products/airpods-max.webp",
       "detailImage": "/images/products/airpods-max.webp",
+      "heroImage": "/images/hero/airpods-max-hero.webp",
       "imageAlt": "Ilustración de audífonos de diadema en tono gris oscuro",
       "shortDescription": "Una presencia envolvente. Consultá color, versión y disponibilidad.",
       "referenceFeatures": [
@@ -142,6 +146,7 @@
       "priceCRC": 22000,
       "image": "/images/products/apple-pencil.webp",
       "detailImage": "/images/products/apple-pencil.webp",
+      "heroImage": "/images/hero/apple-pencil-hero.webp",
       "imageAlt": "Ilustración de un lápiz digital blanco sobre fondo claro",
       "shortDescription": "Una herramienta para crear. Consultá generación y compatibilidad con tu iPad.",
       "referenceFeatures": [

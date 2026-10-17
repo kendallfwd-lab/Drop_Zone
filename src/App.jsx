@@ -10,6 +10,15 @@ import { getFallbackData } from './data/fallback.js';
 
 const service = new ProductService();
 const iconMap = { headphones: Headphones, info: Info, pen: PenLine, audio: AudioLines, bluetooth: Bluetooth, battery: BatteryFull, droplet: Droplets, sparkles: Sparkles };
+const heroBackdrops = [
+  { id: 'airpods-background', image: '/images/hero/airpods-hero-background.webp' },
+  { id: 'airpods-pro-3', image: '/images/hero/airpods-pro-3-hero-v2.webp' },
+  { id: 'airpods-pro-2', image: '/images/hero/airpods-pro-2-hero.webp' },
+  { id: 'airpods-3', image: '/images/hero/airpods-3-hero.webp' },
+  { id: 'airpods-4', image: '/images/hero/airpods-4-hero.webp' },
+  { id: 'airpods-max', image: '/images/hero/airpods-max-hero.webp' },
+  { id: 'apple-pencil', image: '/images/hero/apple-pencil-hero.webp' },
+];
 
 function ScrollProgress({ reducedMotion }) {
   const { scrollYProgress } = useScroll();
@@ -68,7 +77,24 @@ function Header({ settings, sections }) {
 function Hero({ settings, reducedMotion }) {
   const title = settings.heroTitle;
   const lastSpace = title.lastIndexOf(' ');
+  const [activeBackdrop, setActiveBackdrop] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveBackdrop((current) => (current + 1) % heroBackdrops.length);
+    }, 5000);
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   return <section className="hero" id="inicio" aria-labelledby="hero-title">
+    <div className="hero__backdrops" aria-hidden="true">
+      {heroBackdrops.map((backdrop, index) => <div
+        className={`hero__backdrop hero__backdrop--${backdrop.id} ${index === activeBackdrop ? 'hero__backdrop--active' : ''}`}
+        key={backdrop.id}
+      >
+        <img src={backdrop.image} alt="" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+      </div>)}
+    </div>
     <div className="container hero__inner">
       <motion.div className="hero__copy" initial={reducedMotion ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.62, ease: 'easeOut' }}>
         <h1 id="hero-title">{lastSpace > 0 ? <>{title.slice(0, lastSpace)} <span className="hero__blue">{title.slice(lastSpace + 1)}</span></> : title}</h1>
@@ -131,7 +157,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
       <div className="section-heading section-heading--detail"><div><p className="eyebrow"><span className="eyebrow__line" />EN DETALLE</p><h2 id="detail-section-title">Encontrá tu próximo favorito.</h2></div><p>Elegí un producto para descubrirlo de cerca.</p></div>
       <motion.div className="detail-panel" initial={reducedMotion ? false : { opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.58, ease: 'easeOut' }}>
         <div className={`detail-showcase detail-showcase--${product.id}`}>
-          <div className="detail-showcase__heading"><span>01 / 06</span><span>DROP_ZONE CR</span></div>
+          <div className="detail-showcase__heading"><span>DROP_ZONE CR</span></div>
           <AnimatePresence mode="wait"><motion.div key={product.id} initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0 }} transition={{ duration: 0.24 }} className="detail-showcase__image"><img src={product.detailImage || product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" /></motion.div></AnimatePresence>
           <div className="detail-showcase__caption"><span>DISEÑADO PARA ACOMPAÑARTE</span><strong>{product.name}</strong></div>
         </div>
