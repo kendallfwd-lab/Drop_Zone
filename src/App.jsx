@@ -146,7 +146,7 @@ function Catalog({ catalog, selectedId, onSelect, reducedMotion }) {
   return <section id="productos" className="catalog section" aria-labelledby="catalog-title">
     <div className="container">
       <div className="section-heading">
-        <div><p className="eyebrow"><span className="eyebrow__line" />NUESTROS PRODUCTOS</p><h2 id="catalog-title">Una selección para vos.</h2></div>
+        <div><p className="eyebrow">NUESTROS PRODUCTOS</p><h2 id="catalog-title">Una selección para vos.</h2></div>
         <a href="#comparar" className="text-link">Comparar modelos <ArrowRight size={17} /></a>
       </div>
       <div className="product-grid">{catalog.featured.map((product, index) => <ProductCard key={product.id} product={product} selected={selectedId === product.id} onSelect={onSelect} index={index} reducedMotion={reducedMotion} />)}</div>
@@ -157,6 +157,7 @@ function Catalog({ catalog, selectedId, onSelect, reducedMotion }) {
 
 function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
   const tabRefs = useRef([]);
+  const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
   const selectTab = (next) => {
     onTabChange(next);
     tabRefs.current[next]?.focus();
@@ -172,15 +173,15 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
   };
   return <section id="caracteristicas" className="detail-section section" aria-labelledby="detail-section-title">
     <div className="container">
-      <div className="section-heading section-heading--detail"><div><p className="eyebrow"><span className="eyebrow__line" />EN DETALLE</p><h2 id="detail-section-title">Encontrá tu próximo favorito.</h2></div><p>Elegí un producto para descubrirlo de cerca.</p></div>
+      <div className="section-heading section-heading--detail"><div><p className="eyebrow"><img className="eyebrow__brand-icon" src="/favicon.svg" alt="" aria-hidden="true" />EN DETALLE</p><h2 id="detail-section-title">Cada detalle importa.</h2></div><p>Descubrí el diseño y las características que hacen único a cada producto.</p></div>
       <motion.div className="detail-panel" initial={reducedMotion ? false : { opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.58, ease: 'easeOut' }}>
         <div className={`detail-showcase detail-showcase--${product.id}`}>
-          <div className="detail-showcase__heading"><span>DROP_ZONE CR</span></div>
+          <div className="detail-showcase__heading"><span>VISTA DEL PRODUCTO</span></div>
           <AnimatePresence mode="wait"><motion.div key={product.id} initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0 }} transition={{ duration: 0.24 }} className="detail-showcase__image"><img src={product.detailImage || product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" /></motion.div></AnimatePresence>
-          <div className="detail-showcase__caption"><span>DISEÑADO PARA ACOMPAÑARTE</span><strong>{product.name}</strong></div>
+          <div className="detail-showcase__caption"><span>{product.category}</span><strong>{product.name}</strong></div>
         </div>
         <div className="detail-content">
-          <div className="detail-content__top"><span className="detail-content__eyebrow">EXPLORÁ EL PRODUCTO</span></div>
+          <div className="detail-content__top"><span className="detail-content__eyebrow">EXPLORÁ EL PRODUCTO</span><span className="detail-content__count">{features.length} CARACTERÍSTICAS</span></div>
           <div className="tabs" role="tablist" aria-label={`Información de ${product.name}`}>
             {['Características', 'Precio'].map((label, index) => <button key={label} ref={(element) => { tabRefs.current[index] = element; }} type="button" id={`tab-${index}`} role="tab" aria-selected={tab === index} aria-controls="product-tabpanel" tabIndex={tab === index ? 0 : -1} className={tab === index ? 'tab tab--active' : 'tab'} onClick={() => onTabChange(index)} onKeyDown={(event) => handleTabKey(event, index)}>{label}</button>)}
           </div>
@@ -190,7 +191,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
                 <p className="detail-content__category">{product.category.toUpperCase()} / {product.name.toUpperCase()}</p>
                 <h3>{product.name}</h3><p className="detail-content__description">{product.shortDescription}</p>
                 <p className="detail-content__category detail-content__category--features">CARACTERÍSTICAS DEL MODELO SEGÚN APPLE</p>
-                <ul className="feature-list">{(product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures).map((feature) => { const Icon = iconMap[feature.icon] || Info; return <li key={feature.label}><span><Icon size={19} strokeWidth={1.7} aria-hidden="true" /></span>{feature.label}</li>; })}</ul>
+                <ul className="feature-list">{features.map((feature) => { const Icon = iconMap[feature.icon] || Info; return <li key={feature.label}><span><Icon size={19} strokeWidth={1.7} aria-hidden="true" /></span><strong>{feature.label}</strong></li>; })}</ul>
                 {product.specSourceUrl && <p className="detail-reference">Especificaciones de referencia. Confirmá la versión y funciones del artículo disponible con la tienda. <a href={product.specSourceUrl} target="_blank" rel="noopener noreferrer">Ver ficha oficial de Apple <ArrowRight size={13} aria-hidden="true" /></a></p>}
               </> : <>
                 <p className="detail-content__category">PRECIO PUBLICADO</p>
@@ -225,7 +226,7 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
   </motion.article>;
 
   return <section id="comparar" className="comparison section" aria-labelledby="compare-title"><div className="container">
-    <div className="section-heading comparison__heading"><div><p className="eyebrow"><span className="eyebrow__line" />ENCONTRÁ TU MEJOR OPCIÓN</p><h2 id="compare-title">Dos modelos. Una decisión más clara.</h2></div><p>Elegí dos productos y compará sus precios de un vistazo.</p></div>
+    <div className="section-heading comparison__heading"><div><p className="eyebrow"><img className="eyebrow__brand-icon" src="/favicon.svg" alt="" aria-hidden="true" />ENCONTRÁ TU MEJOR OPCIÓN</p><h2 id="compare-title">Dos modelos. Una decisión más clara.</h2></div><p>Elegí dos productos y compará sus precios de un vistazo.</p></div>
     <div className="comparison-stage">
       {compareCard(first, 0, firstId, setFirstId)}
       <div className="comparison-stage__versus" aria-hidden="true">VS</div>

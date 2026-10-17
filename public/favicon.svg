@@ -1,17 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
   <title id="title">Drop Zone CR</title>
   <defs>
-    <linearGradient id="background" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#172131"/>
-      <stop offset="1" stop-color="#0b111b"/>
-    </linearGradient>
     <linearGradient id="bolt" x1="47" y1="12" x2="24" y2="54" gradientUnits="userSpaceOnUse">
       <stop stop-color="#42a5ff"/>
       <stop offset="1" stop-color="#0b5ee8"/>
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="16" fill="url(#background)"/>
-  <path fill="#fff" fill-rule="evenodd" d="M12 14h17c12.7 0 21 7 21 18s-8.3 18-21 18H12V14Zm10 9v18h6.5c7 0 11.5-3.2 11.5-9s-4.5-9-11.5-9H22Z"/>
+  <path fill="#10151f" fill-rule="evenodd" d="M12 14h17c12.7 0 21 7 21 18s-8.3 18-21 18H12V14Zm10 9v18h6.5c7 0 11.5-3.2 11.5-9s-4.5-9-11.5-9H22Z"/>
   <path d="M43 9 25 32h9l-10 23 24-29h-10L43 9Z" fill="url(#bolt)" stroke="#0f1724" stroke-width="1.5" stroke-linejoin="round"/>
   <path d="M44 13 31 30h7l-7 15 13-17h-8l8-15Z" fill="#79c8ff" opacity=".42"/>
 </svg>
