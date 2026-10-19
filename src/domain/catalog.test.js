@@ -19,21 +19,29 @@ describe('Product', () => {
     expect(url.searchParams.get('text')).toContain('AirPods Pro 3');
     expect(url.searchParams.get('text')).toContain('₡25.000');
   });
+
+  it('builds a configured case inquiry with a validated model and color', () => {
+    const product = new Product(data.products.find((item) => item.id === 'estuches-airpods'));
+    const url = new URL(product.whatsappUrl(data.settings.whatsappPhone, { model: 'AirPods 4', color: 'Turquesa' }));
+    expect(url.searchParams.get('text')).toContain('color Turquesa');
+    expect(url.searchParams.get('text')).toContain('modelo AirPods 4');
+    expect(url.searchParams.get('text')).toContain('₡4.000');
+  });
 });
 
 describe('ProductCatalog', () => {
-  it('keeps four sourced reference specifications for every listed product', () => {
+  it('keeps four official reference specifications for sourced devices', () => {
     const catalog = new ProductCatalog(data.products);
-    for (const product of catalog.products) {
+    for (const product of catalog.products.filter((item) => item.specSourceUrl)) {
       expect(product.referenceFeatures).toHaveLength(4);
-      expect(product.specSourceUrl).toMatch(/^https:\/\/(www\.apple\.com|support\.apple\.com)\//);
+      expect(product.specSourceUrl).toMatch(/^https:\/\/(www\.apple\.com|support\.apple\.com|www\.samsung\.com)\//);
     }
   });
 
-  it('sorts the six requested products by display order', () => {
+  it('sorts the eight requested products by display order', () => {
     const catalog = new ProductCatalog([...data.products].reverse());
     expect(catalog.products.map((product) => product.id)).toEqual([
-      'airpods-pro-3', 'airpods-pro-2', 'airpods-3', 'airpods-4', 'airpods-max', 'apple-pencil',
+      'airpods-pro-3', 'airpods-pro-2', 'airpods-3', 'airpods-4', 'airpods-max', 'apple-pencil', 'estuches-airpods', 'galaxy-buds3-pro',
     ]);
   });
 });

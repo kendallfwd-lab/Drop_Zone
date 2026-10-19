@@ -39,11 +39,11 @@ describe('catalog experience', () => {
     }
   });
 
-  it('renders six prices, navigates to a product and updates its detail', async () => {
+  it('renders eight prices, navigates to a product and updates its detail', async () => {
     render(<App />);
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
     const catalog = document.getElementById('productos');
-    expect(within(catalog).getAllByRole('button', { name: /^Ver detalles de/ })).toHaveLength(6);
+    expect(within(catalog).getAllByRole('button', { name: /^Ver detalles de/ })).toHaveLength(8);
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Max/ }));
     expect(window.location.search).toBe('?producto=airpods-max');
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods Max' })).toBeInTheDocument());
@@ -73,12 +73,40 @@ describe('catalog experience', () => {
     expect(await screen.findByText(/Vista de respaldo/)).toBeInTheDocument();
   });
 
+  it('configures an AirPods case and prepares model and color for WhatsApp', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para AirPods/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para AirPods en color Verde pino' })).toHaveAttribute('src', '/images/products/estuche-verde-pino.webp'));
+    expect(within(detail).queryByRole('group', { name: 'Galería de estuches' })).not.toBeInTheDocument();
+    fireEvent.change(within(detail).getByLabelText('Modelo de AirPods'), { target: { value: 'AirPods Pro 2' } });
+    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Fucsia' } });
+    expect(within(detail).getByRole('img', { name: 'Estuches para AirPods en color Fucsia' })).toHaveAttribute('src', '/images/products/estuche-fucsia.webp');
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Estuches para AirPods/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('estuche de audífonos');
+    expect(message).toContain('color Fucsia');
+    expect(message).toContain('modelo AirPods Pro 2');
+    expect(message).toContain('₡4.000');
+  });
+
+  it('shows Samsung-sourced Galaxy Buds3 Pro specifications and price', async () => {
+    render(<App />);
+    fireEvent.click(within(document.getElementById('productos')).getByRole('button', { name: /Ver detalles de Samsung Galaxy Buds3 Pro/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Samsung Galaxy Buds3 Pro' })).toBeInTheDocument());
+    expect(within(detail).getAllByText('₡20.000').length).toBeGreaterThan(0);
+    expect(within(detail).getByText(/Bluetooth 5.4 y resistencia/)).toBeInTheDocument();
+    expect(within(detail).getByRole('link', { name: /Ver ficha oficial de Samsung/ })).toHaveAttribute('href', 'https://www.samsung.com/latin/audio-sound/galaxy-buds/galaxy-buds3-pro-silver-sm-r630nzaalta/');
+  });
+
   it('compares two selected products and opens the chosen detail', async () => {
     render(<App />);
     const comparison = document.getElementById('comparar');
     expect(within(comparison).getByText('Diferencia de precio: ₡5.000')).toBeInTheDocument();
     fireEvent.change(within(comparison).getByRole('combobox', { name: 'Segundo producto para comparar' }), { target: { value: 'airpods-3' } });
-    expect(within(comparison).getByText('Diferencia de precio: ₡7.000')).toBeInTheDocument();
+    expect(within(comparison).getByText('Diferencia de precio: ₡9.000')).toBeInTheDocument();
     fireEvent.click(within(comparison).getByRole('button', { name: 'Ver detalles de AirPods 3' }));
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods 3' })).toBeInTheDocument());
   });

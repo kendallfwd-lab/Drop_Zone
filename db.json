@@ -68,7 +68,7 @@
       "id": "airpods-3",
       "name": "AirPods 3",
       "category": "Audio",
-      "priceCRC": 18000,
+      "priceCRC": 16000,
       "image": "/images/products/airpods-3.webp",
       "detailImage": "/images/products/airpods-3.webp",
       "heroImage": "/images/hero/airpods-3-hero.webp",
@@ -163,6 +163,71 @@
       "availability": "Consultar",
       "featured": true,
       "displayOrder": 6
+    },
+    {
+      "id": "estuches-airpods",
+      "name": "Estuches para AirPods",
+      "category": "Estuches",
+      "priceCRC": 4000,
+      "image": "/images/products/estuche-verde-pino.webp",
+      "detailImage": "/images/products/estuche-verde-pino.webp",
+      "imageAlt": "Estuche verde pino para audífonos AirPods",
+      "shortDescription": "Protegé tus audífonos con un estuche del color que más te guste y elegí el modelo compatible antes de consultar.",
+      "configurable": true,
+      "models": ["AirPods 3", "AirPods 4", "AirPods Pro 3", "AirPods Pro 2"],
+      "colors": [
+        { "name": "Verde pino", "hex": "#17645f", "image": "/images/products/estuche-verde-pino.webp" },
+        { "name": "Azul", "hex": "#168bea", "image": "/images/products/estuche-azul.webp" },
+        { "name": "Rojo", "hex": "#e62535", "image": "/images/products/estuche-rojo.webp" },
+        { "name": "Vino", "hex": "#8d1831", "image": "/images/products/estuche-vino.webp" },
+        { "name": "Negro", "hex": "#17191d", "image": "/images/products/estuche-negro.webp" },
+        { "name": "Verde oscuro", "hex": "#244c39", "image": "/images/products/estuche-verde-oscuro.webp" },
+        { "name": "Gris", "hex": "#858b91", "image": "/images/products/estuche-gris.webp" },
+        { "name": "Lila", "hex": "#9b8bdd", "image": "/images/products/estuche-lila.webp" },
+        { "name": "Morado oscuro", "hex": "#553082", "image": "/images/products/estuche-morado-oscuro.webp" },
+        { "name": "Amarillo", "hex": "#ffd21f", "image": "/images/products/estuche-amarillo.webp" },
+        { "name": "Verde menta", "hex": "#72dfbb", "image": "/images/products/estuche-verde-menta.webp" },
+        { "name": "Turquesa", "hex": "#18b8c5", "image": "/images/products/estuche-turquesa.webp" },
+        { "name": "Fucsia", "hex": "#ef0b70", "image": "/images/products/estuche-fucsia.webp" },
+        { "name": "Morado claro", "hex": "#b18ae0", "image": "/images/products/estuche-morado-claro.webp" },
+        { "name": "Azul oscuro", "hex": "#183f80", "image": "/images/products/estuche-azul-oscuro.webp" }
+      ],
+      "referenceFeatures": [],
+      "features": [
+        { "label": "Disponible para cuatro modelos de AirPods", "icon": "headphones", "verified": true },
+        { "label": "Quince colores para escoger", "icon": "palette", "verified": true },
+        { "label": "Modelo y color se eligen antes de consultar", "icon": "package", "verified": true },
+        { "label": "Precio publicado por unidad", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 7
+    },
+    {
+      "id": "galaxy-buds3-pro",
+      "name": "Samsung Galaxy Buds3 Pro",
+      "category": "Audio",
+      "priceCRC": 20000,
+      "image": "/images/products/galaxy-buds3-pro.webp",
+      "detailImage": "/images/products/galaxy-buds3-pro.webp",
+      "heroImage": "/images/hero/galaxy-buds3-pro-hero.webp",
+      "imageAlt": "Samsung Galaxy Buds3 Pro plateados y blancos en sus estuches de carga",
+      "shortDescription": "Audio inalámbrico con diseño Blade y estuche de cubierta transparente. Consultá color y disponibilidad.",
+      "referenceFeatures": [
+        { "label": "Altavoces bidireccionales mejorados y amplificador dual", "icon": "audio" },
+        { "label": "Cancelación Activa de Ruido, sonido ambiente y Audio 360", "icon": "headphones" },
+        { "label": "Bluetooth 5.4 y resistencia al agua y polvo IP57", "icon": "bluetooth" },
+        { "label": "Hasta 6 h de música; hasta 26 h con el estuche y ANC activo", "icon": "battery" }
+      ],
+      "specSourceBrand": "Samsung",
+      "specSourceUrl": "https://www.samsung.com/latin/audio-sound/galaxy-buds/galaxy-buds3-pro-silver-sm-r630nzaalta/",
+      "features": [
+        { "label": "Audífonos inalámbricos intraurales", "icon": "headphones", "verified": true },
+        { "label": "Color y versión por confirmar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 8
     }
   ],
   "siteSections": [

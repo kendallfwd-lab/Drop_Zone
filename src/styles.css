@@ -166,3 +166,33 @@
   .feature-list li{min-height:50px;align-items:center}
   .detail-content__footer{align-items:stretch;flex-direction:column}
 }
+
+/* Configurable AirPods cases */
+.product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.detail-showcase--estuches-airpods .detail-showcase__image{padding:58px 24px 78px}
+.detail-showcase--estuches-airpods .detail-showcase__image img{transform:scale(.96);border-radius:18px}
+.product-configurator{margin:0 0 16px;padding:16px;border:1px solid #dfe7f1;border-radius:17px;background:#f7faff}
+.product-configurator__heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:13px}
+.product-configurator__heading>div{display:grid;gap:3px}
+.product-configurator__heading span{color:#77869a;font-size:9px;font-weight:750;letter-spacing:.12em;text-transform:uppercase}
+.product-configurator__heading strong{font-size:16px;letter-spacing:-.025em}
+.product-configurator__heading>span{padding:5px 8px;border-radius:999px;background:#e7f0ff;color:var(--blue);white-space:nowrap}
+.product-configurator__fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.product-configurator__fields label{display:grid;gap:6px;color:#68778b;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.product-configurator__fields select{width:100%;min-height:42px;padding:8px 34px 8px 11px;border:1px solid #d5deea;border-radius:10px;background:#fff;color:var(--text);font-family:inherit;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;cursor:pointer}
+.case-colors{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.case-color{position:relative;width:31px;height:31px;padding:3px;border:1px solid #d9e1eb;border-radius:50%;background:#fff;transition:transform .18s,border-color .18s,box-shadow .18s}
+.case-color:hover{transform:translateY(-2px)}
+.case-color--active{border-color:var(--blue);box-shadow:0 0 0 2px rgba(36,101,231,.16)}
+.case-color span{display:block;width:100%;height:100%;border:1px solid rgba(14,25,39,.09);border-radius:50%}
+.case-color small{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:767px){
+  .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .detail-showcase--estuches-airpods .detail-showcase__image{padding:46px 12px 68px}
+  .detail-showcase--estuches-airpods .detail-showcase__image img{transform:scale(.98)}
+}
+@media(max-width:479px){
+  .product-configurator__fields{grid-template-columns:1fr}
+  .case-colors{gap:7px}
+  .case-color{width:29px;height:29px}
+}

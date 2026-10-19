@@ -6,6 +6,8 @@ export class Product {
     Object.assign(this, data);
     this.features = Array.isArray(data.features) ? data.features : [];
     this.referenceFeatures = Array.isArray(data.referenceFeatures) ? data.referenceFeatures : [];
+    this.models = Array.isArray(data.models) ? data.models : [];
+    this.colors = Array.isArray(data.colors) ? data.colors : [];
   }
 
   get formattedPrice() {
@@ -16,9 +18,13 @@ export class Product {
     return this.features.filter((feature) => feature.verified === true);
   }
 
-  whatsappUrl(phone) {
+  whatsappUrl(phone, selections = {}) {
     const number = String(phone).replace(/\D/g, '');
-    const message = `Hola, me interesa ${this.name} de Drop_Zone CR, con precio publicado de ${this.formattedPrice}. ¿Podrían confirmarme disponibilidad y detalles?`;
+    const selectedModel = this.models.includes(selections.model) ? selections.model : this.models[0];
+    const selectedColor = this.colors.find((color) => color.name === selections.color) ?? this.colors[0];
+    const message = this.configurable && selectedModel && selectedColor
+      ? `Hola, me interesa el estuche de audífonos, color ${selectedColor.name} y modelo ${selectedModel}, con precio publicado de ${this.formattedPrice}. ¿Podrían confirmarme disponibilidad?`
+      : `Hola, me interesa ${this.name} de Drop_Zone CR, con precio publicado de ${this.formattedPrice}. ¿Podrían confirmarme disponibilidad y detalles?`;
     return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
   }
 }
