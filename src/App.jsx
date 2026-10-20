@@ -58,7 +58,7 @@ function WhatsAppLink({ phone, product, selections, children, className = '' }) 
   const href = product
     ? product.whatsappUrl(phone, selections)
     : `https://wa.me/${String(phone).replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera consultar sobre los productos de Drop_Zone CR.')}`;
-  return <a className={className} href={href} target="_blank" rel="noopener noreferrer" aria-label={product ? `Consultar por WhatsApp sobre ${product.name}` : 'Escribir a Drop Zone CR por WhatsApp'}>
+  return <a className={className} href={href} aria-label={product ? `Consultar por WhatsApp sobre ${product.name}` : 'Escribir a Drop Zone CR por WhatsApp'}>
     <MessageCircle size={18} aria-hidden="true" />{children}
   </a>;
 }
@@ -219,7 +219,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
                 <h3>{product.name}</h3><p className="detail-content__description">{product.shortDescription}</p>
                 <p className="detail-content__category detail-content__category--features">{specificationLinks.length ? (product.specReferenceTitle || `CARACTERÍSTICAS DEL MODELO SEGÚN ${specificationBrand.toUpperCase()}`) : 'CARACTERÍSTICAS DEL PRODUCTO'}</p>
                 <ul className="feature-list">{features.map((feature) => { const Icon = iconMap[feature.icon] || Info; return <li key={feature.label}><span><Icon size={19} strokeWidth={1.7} aria-hidden="true" /></span><strong>{feature.label}</strong></li>; })}</ul>
-                {specificationLinks.length > 0 && <p className="detail-reference">{product.specReferenceNotice || 'Especificaciones de referencia. Confirmá la versión y funciones del artículo disponible con la tienda.'} {specificationLinks.map((source, index) => <span key={source.url}>{index > 0 && ' · '}<a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} <ArrowRight size={13} aria-hidden="true" /></a></span>)}</p>}
+                {specificationLinks.length > 0 && <p className="detail-reference">{product.specReferenceNotice || 'Especificaciones de referencia. Confirmá la versión y funciones del artículo disponible con la tienda.'} {specificationLinks.map((source, index) => <span key={source.url}>{index > 0 && ' · '}<a href={source.url}>{source.label} <ArrowRight size={13} aria-hidden="true" /></a></span>)}</p>}
               </> : <>
                 <p className="detail-content__category">PRECIO PUBLICADO</p>
                 <h3>{product.name}</h3><p className="price-big">{activePrice}</p>
@@ -283,7 +283,7 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
 }
 
 function Footer({ settings }) {
-  return <footer id="contacto" className="footer"><div className="container footer__main"><div className="footer__brand"><Brand compact /><p>{settings.tagline}</p></div><div className="footer__links"><span className="location-link"><MapPin size={17} />{settings.location}</span><a className="phone-link" href={`tel:+${settings.whatsappPhone}`}><Phone size={17} />{settings.displayPhone}</a><a className="instagram-link" href={settings.instagramUrl} target="_blank" rel="noopener noreferrer"><InstagramBrandIcon />{settings.instagramHandle}</a></div><WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp">Escribenos a nuestro WhatsApp <ArrowRight size={17} /></WhatsAppLink></div><div className="container footer__bottom"><span>© {new Date().getFullYear()} Drop_Zone CR</span><span>Comercio independiente. Las marcas mencionadas pertenecen a sus titulares.</span></div></footer>;
+  return <footer id="contacto" className="footer"><div className="container footer__main"><div className="footer__brand"><Brand compact /><p>{settings.tagline}</p></div><div className="footer__links"><span className="location-link"><MapPin size={17} />{settings.location}</span><a className="phone-link" href={`tel:+${settings.whatsappPhone}`}><Phone size={17} />{settings.displayPhone}</a><a className="instagram-link" href={settings.instagramUrl}><InstagramBrandIcon />{settings.instagramHandle}</a></div><WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp">Escribenos a nuestro WhatsApp <ArrowRight size={17} /></WhatsAppLink></div><div className="container footer__bottom"><span>© {new Date().getFullYear()} Drop_Zone CR</span><span>Comercio independiente. Las marcas mencionadas pertenecen a sus titulares.</span></div></footer>;
 }
 
 export default function App() {
@@ -300,9 +300,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const onPopState = () => setSelectedId(new URLSearchParams(window.location.search).get('producto') || 'airpods-pro-3');
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'auto';
+    const onPopState = () => {
+      setSelectedId(new URLSearchParams(window.location.search).get('producto') || 'airpods-pro-3');
+      setTab(0);
+    };
     window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
   }, []);
 
   const selectProduct = (id) => {

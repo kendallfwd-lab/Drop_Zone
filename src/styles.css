@@ -23,6 +23,13 @@
 @media(max-width:767px){.comparison{padding-block:70px}.comparison-stage{gap:12px}.compare-card{padding:20px}.compare-card__visual{height:230px}.compare-card__info>div{align-items:flex-start;flex-direction:column}.comparison-summary__count{display:none}}
 @media(max-width:639px){.comparison-stage{grid-template-columns:1fr;gap:0}.compare-card{padding:20px;border-radius:21px}.compare-card__visual{height:245px}.compare-card__info>div{align-items:center;flex-direction:row}.comparison-stage__versus{position:relative;top:auto;left:auto;transform:none;justify-self:center;margin:-16px 0;grid-row:2}.comparison-summary{align-items:flex-start;padding:15px}.comparison-summary strong{font-size:14px}.comparison-summary p{font-size:11px}.comparison__heading>p{max-width:none}}
 @media(max-width:374px){.compare-card__info>div{align-items:flex-start;flex-direction:column}.compare-card__visual{height:215px}.comparison-summary__mark{width:30px;height:30px;flex-basis:30px}}
+
+/* Keep mobile scrolling touch-friendly without a visually heavy side rail. */
+@media(max-width:767px){
+  html,body{max-width:100%;overflow-x:hidden;-ms-overflow-style:none;scrollbar-width:none}
+  html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;background:transparent}
+  main,section,footer{max-width:100%}
+}
 .scroll-progress{position:fixed;z-index:60;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),#61a0ff);transform-origin:0 50%;box-shadow:0 0 14px rgba(22,98,235,.4);pointer-events:none}
 .product-card__image{display:grid;place-items:center;padding:5px}
 .product-card__image img{object-fit:contain;object-position:center;transform:none}

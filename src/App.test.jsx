@@ -53,6 +53,20 @@ describe('catalog experience', () => {
     expect(within(document.getElementById('caracteristicas')).getAllByText('₡19.000').length).toBeGreaterThan(0);
   });
 
+  it('uses browser history to return to Drop Zone and restore the selected product', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    const externalLinks = screen.getAllByRole('link').filter((link) => /^https?:/.test(link.href));
+    expect(externalLinks.length).toBeGreaterThan(0);
+    externalLinks.forEach((link) => expect(link).not.toHaveAttribute('target'));
+
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Max/ }));
+    await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods Max' })).toBeInTheDocument());
+    window.history.replaceState({}, '', '/?producto=airpods-4');
+    fireEvent.popState(window);
+    await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods 4' })).toBeInTheDocument());
+  });
+
   it('changes the AirPods Max image and WhatsApp inquiry by color', async () => {
     render(<App />);
     const catalog = document.getElementById('productos');
