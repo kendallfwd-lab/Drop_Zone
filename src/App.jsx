@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useSpring } from 'motion/react';
 import {
   ArrowRight, AudioLines, BatteryFull, Bluetooth, Check, ChevronDown, Droplets, Headphones, Info,
   MapPin, Menu, MessageCircle, Package, Palette, PenLine, Phone,
-  Sparkles, X,
+  Minus, Plus, ShoppingCart, Sparkles, Trash2, X,
 } from 'lucide-react';
 import { ProductService } from './domain/catalog.js';
+import {
+  addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
+  formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
+} from './domain/cart.js';
+import { compareProducts } from './domain/comparison.js';
 import { getFallbackData } from './data/fallback.js';
 
 const service = new ProductService();
@@ -20,6 +25,91 @@ const heroBackdrops = [
   { id: 'airpods-max', image: '/images/hero/airpods-max-hero.webp' },
   { id: 'apple-pencil', image: '/images/hero/apple-pencil-hero.webp' },
 ];
+
+// Keep the Accessories group editorial so its products can change without
+// rewriting the filtering behavior or its interface.
+const accessoryProductIds = new Set([
+  'apple-pencil',
+  'estuches-airpods',
+  'estuches-iphone',
+]);
+
+const samsungProductIds = new Set([
+  'galaxy-buds3-pro',
+  'samsung-cargador-45w',
+  'samsung-adaptador-45w',
+  'cable-samsung-usbc-3a',
+]);
+
+const catalogFilters = [
+  { id: 'all', label: 'Todos', matches: () => true },
+  { id: 'audio', label: 'Audio', matches: (product) => product.category === 'Audio' },
+  { id: 'accessories', label: 'Accesorios', matches: (product) => accessoryProductIds.has(product.id) },
+  { id: 'apple', label: 'Apple', matches: (product) => !samsungProductIds.has(product.id) },
+  { id: 'samsung', label: 'Samsung', matches: (product) => samsungProductIds.has(product.id) },
+];
+
+function usePageScroller(reducedMotion) {
+  const animationRef = useRef(null);
+
+  const cancelScroll = useCallback(() => {
+    if (animationRef.current != null) window.cancelAnimationFrame(animationRef.current);
+    animationRef.current = null;
+  }, []);
+
+  const scrollToElement = useCallback((element) => {
+    if (!element) return;
+    cancelScroll();
+    const headerOffset = window.innerWidth <= 767 ? 76 : 88;
+    const start = window.scrollY;
+    const destination = Math.max(0, element.getBoundingClientRect().top + start - headerOffset);
+    const distance = destination - start;
+    if (reducedMotion || Math.abs(distance) < 2) {
+      window.scrollTo({ top: destination, behavior: 'auto' });
+      return;
+    }
+    const duration = Math.min(950, Math.max(650, Math.abs(distance) * 0.35));
+    const startedAt = performance.now();
+    const animate = (now) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = progress < 0.5 ? 2 * progress * progress : 1 - ((-2 * progress + 2) ** 2) / 2;
+      window.scrollTo({ top: start + distance * eased, behavior: 'auto' });
+      if (progress < 1) animationRef.current = window.requestAnimationFrame(animate);
+      else animationRef.current = null;
+    };
+    animationRef.current = window.requestAnimationFrame(animate);
+  }, [cancelScroll, reducedMotion]);
+
+  useEffect(() => {
+    const interrupt = () => cancelScroll();
+    const handleAnchorClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const id = decodeURIComponent(anchor.getAttribute('href').slice(1));
+      const target = id ? document.getElementById(id) : document.body;
+      if (!target) return;
+      event.preventDefault();
+      const url = new URL(window.location.href);
+      url.hash = id;
+      window.history.pushState({}, '', url);
+      scrollToElement(target);
+    };
+    document.addEventListener('click', handleAnchorClick);
+    window.addEventListener('wheel', interrupt, { passive: true });
+    window.addEventListener('touchstart', interrupt, { passive: true });
+    window.addEventListener('keydown', interrupt);
+    return () => {
+      cancelScroll();
+      document.removeEventListener('click', handleAnchorClick);
+      window.removeEventListener('wheel', interrupt);
+      window.removeEventListener('touchstart', interrupt);
+      window.removeEventListener('keydown', interrupt);
+    };
+  }, [cancelScroll, scrollToElement]);
+
+  return scrollToElement;
+}
 
 function ScrollProgress({ reducedMotion }) {
   const { scrollYProgress } = useScroll();
@@ -63,7 +153,18 @@ function WhatsAppLink({ phone, product, selections, children, className = '' }) 
   </a>;
 }
 
-function Header({ settings, sections }) {
+function QuantityStepper({ value, onChange, label = 'Cantidad' }) {
+  return <div className="quantity-control">
+    <span>{label}</span>
+    <div className="quantity-stepper">
+      <button type="button" onClick={() => onChange(clampQuantity(value - 1))} aria-label="Disminuir cantidad" disabled={value <= 1}><Minus size={15} aria-hidden="true" /></button>
+      <input type="number" min="1" max="99" inputMode="numeric" value={value} onChange={(event) => onChange(clampQuantity(event.target.value))} aria-label={label} />
+      <button type="button" onClick={() => onChange(clampQuantity(value + 1))} aria-label="Aumentar cantidad" disabled={value >= 99}><Plus size={15} aria-hidden="true" /></button>
+    </div>
+  </div>;
+}
+
+function Header({ settings, sections, cartCount, onOpenCart }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -87,6 +188,10 @@ function Header({ settings, sections }) {
       </nav>
       <div className="site-header__actions">
         <WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp header-whatsapp"><span className="header-whatsapp__long">Escríbenos</span><span className="header-whatsapp__short">WhatsApp</span></WhatsAppLink>
+        <button className="header-cart" type="button" onClick={onOpenCart} aria-label={`Abrir carrito, ${cartCount} productos`}>
+          <ShoppingCart size={19} aria-hidden="true" />
+          <span className={cartCount > 0 ? 'header-cart__count header-cart__count--visible' : 'header-cart__count'} aria-hidden="true">{cartCount}</span>
+        </button>
         <button ref={menuRef} className="menu-toggle" type="button" aria-label={open ? 'Cerrar menú' : 'Abrir menú'} aria-controls="main-navigation" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X size={22} /> : <Menu size={22} />}</button>
       </div>
     </div>
@@ -144,19 +249,44 @@ function ProductCard({ product, selected, onSelect, index, reducedMotion }) {
 }
 
 function Catalog({ catalog, selectedId, onSelect, reducedMotion }) {
+  const [activeFilter, setActiveFilter] = useState('all');
+  const filter = catalogFilters.find((item) => item.id === activeFilter) || catalogFilters[0];
+  const products = catalog.featured.filter(filter.matches);
+
   return <section id="productos" className="catalog section" aria-labelledby="catalog-title">
     <div className="container">
       <div className="section-heading">
         <div><p className="eyebrow">NUESTROS PRODUCTOS</p><h2 id="catalog-title">Una selección para vos.</h2></div>
         <a href="#comparar" className="text-link">Comparar modelos <ArrowRight size={17} /></a>
       </div>
-      <div className="product-grid">{catalog.featured.map((product, index) => <ProductCard key={product.id} product={product} selected={selectedId === product.id} onSelect={onSelect} index={index} reducedMotion={reducedMotion} />)}</div>
+      <div className="catalog-filters" role="group" aria-label="Filtrar productos">
+        {catalogFilters.map((item) => <motion.button
+          type="button"
+          className={`catalog-filter ${activeFilter === item.id ? 'catalog-filter--active' : ''}`}
+          aria-pressed={activeFilter === item.id}
+          onClick={() => setActiveFilter(item.id)}
+          whileHover={reducedMotion ? undefined : { y: -3, scale: 1.025 }}
+          whileTap={reducedMotion ? undefined : { y: 0, scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 430, damping: 28 }}
+          key={item.id}
+        >
+          {activeFilter === item.id && <motion.span
+            className="catalog-filter__active-bg"
+            layoutId="catalog-filter-active"
+            transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }}
+            aria-hidden="true"
+          />}
+          <span className="catalog-filter__label">{item.label}</span>
+        </motion.button>)}
+      </div>
+      <p className="catalog-filter-status" aria-live="polite">{products.length} {products.length === 1 ? 'producto' : 'productos'} en {filter.label}</p>
+      <div className="product-grid">{products.map((product, index) => <ProductCard key={product.id} product={product} selected={selectedId === product.id} onSelect={onSelect} index={index} reducedMotion={reducedMotion} />)}</div>
       <p className="catalog__note">Imágenes ilustrativas. Consultá la versión y características del artículo disponible.</p>
     </div>
   </section>;
 }
 
-function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
+function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart }) {
   const tabRefs = useRef([]);
   const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
   const specificationBrand = product.specSourceBrand || 'Apple';
@@ -167,6 +297,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || '');
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]?.name || '');
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(product.gallery[0]?.name || '');
+  const [quantity, setQuantity] = useState(1);
   const selectedColorOption = product.colors.find((color) => color.name === selectedColor);
   const selectedVariantOption = product.variants.find((variant) => variant.name === selectedVariant);
   const selectedGalleryOption = product.gallery.find((item) => item.name === selectedGalleryImage);
@@ -179,6 +310,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
     setSelectedColor(product.colors[0]?.name || '');
     setSelectedVariant(product.variants[0]?.name || '');
     setSelectedGalleryImage(product.gallery[0]?.name || '');
+    setQuantity(1);
   }, [product.id]);
 
   const chooseColor = (color) => {
@@ -247,7 +379,17 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
             <div className="product-configurator__heading"><div><span>GALERÍA DEL PRODUCTO</span><strong id="gallery-configurator-title">Elegí la vista que querés ver</strong></div><span>{product.gallery.length} fotos</span></div>
             <div className="image-gallery-options">{product.gallery.map((item) => <button key={item.name} type="button" className={selectedGalleryImage === item.name ? 'image-gallery-option image-gallery-option--active' : 'image-gallery-option'} onClick={() => setSelectedGalleryImage(item.name)} aria-pressed={selectedGalleryImage === item.name}><img src={item.image} alt="" aria-hidden="true" /><span>{item.name}</span></button>)}</div>
           </div>}
-          <div className="detail-content__footer"><div><span>PRECIO</span><strong>{activePrice}</strong></div><WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">{product.configurable || product.colorConfigurable || product.variants.length > 0 ? 'Preguntar por WhatsApp' : 'Consultar este producto'} <ArrowRight size={17} /></WhatsAppLink></div>
+          <div className="purchase-row">
+            <QuantityStepper value={quantity} onChange={setQuantity} />
+            <p>Elegí primero el modelo, tipo o color cuando corresponda.</p>
+          </div>
+          <div className="detail-content__footer">
+            <div><span>PRECIO</span><strong>{activePrice}</strong></div>
+            <div className="detail-content__actions">
+              <WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">Consultar solo este producto <ArrowRight size={17} /></WhatsAppLink>
+              <button type="button" className="button button--cart" onClick={() => onAddToCart(product, inquirySelections, quantity)}><ShoppingCart size={17} aria-hidden="true" />Agregar al carrito</button>
+            </div>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -257,12 +399,16 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
 function Comparison({ catalog, onSelect, reducedMotion }) {
   const [firstId, setFirstId] = useState(catalog.products[0]?.id);
   const [secondId, setSecondId] = useState(catalog.products[1]?.id);
+  const [expanded, setExpanded] = useState(false);
   const first = catalog.find(firstId) || catalog.products[0];
   const second = catalog.find(secondId) || catalog.products[1];
   const difference = Math.abs(first.priceCRC - second.priceCRC);
+  const comparison = compareProducts(first, second);
   const differenceLabel = difference === 0
     ? 'Ambos tienen el mismo precio publicado.'
     : `Diferencia de precio: ₡${new Intl.NumberFormat('es-CR').format(difference).replace(/[\s\u00a0\u202f]/g, '.')}`;
+
+  useEffect(() => setExpanded(false), [firstId, secondId]);
 
   const compareCard = (product, index, value, onChange) => <motion.article className="compare-card" key={`${index}-${product.id}`} initial={reducedMotion ? false : { opacity: 0, y: 22, scale: 0.985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.46, delay: reducedMotion ? 0 : index * 0.1, ease: 'easeOut' }}>
     <div className="compare-card__top"><span>0{index + 1} / {index === 0 ? 'TU ELECCIÓN' : 'COMPARAR CON'}</span><span className="compare-card__category">{product.category}</span></div>
@@ -278,8 +424,116 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
       <div className="comparison-stage__versus" aria-hidden="true">VS</div>
       {compareCard(second, 1, secondId, setSecondId)}
     </div>
-    <div className="comparison-summary"><span className="comparison-summary__mark"><Check size={18} aria-hidden="true" /></span><div><strong>{differenceLabel}</strong><p>Precio en colones. Confirmá versiones y disponibilidad con la tienda.</p></div><span className="comparison-summary__count">{catalog.products.length} MODELOS PARA EXPLORAR</span></div>
+    <div className={`comparison-summary ${expanded ? 'comparison-summary--expanded' : ''}`}>
+      <div className="comparison-summary__overview">
+        <span className="comparison-summary__mark"><Check size={18} aria-hidden="true" /></span>
+        <div className="comparison-summary__copy">
+          <div className="comparison-summary__price"><strong>{differenceLabel}</strong><span>{catalog.products.length} MODELOS PARA EXPLORAR</span></div>
+          <p>{comparison.conclusion}</p>
+          <p className="comparison-summary__recommendation">{comparison.recommendation.first.replace(':', '')} {comparison.recommendation.second.replace(':', '')}</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        className="comparison-summary__toggle"
+        aria-expanded={expanded}
+        aria-controls="comparison-differences"
+        onClick={() => setExpanded((current) => !current)}
+      >
+        {expanded ? 'Ocultar diferencias' : 'Ver diferencias'}
+        <ChevronDown size={18} aria-hidden="true" />
+      </button>
+      <AnimatePresence initial={false}>
+        {expanded && <motion.div
+          id="comparison-differences"
+          className="comparison-details"
+          initial={reducedMotion ? false : { height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={reducedMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.25, ease: 'easeInOut' }}
+        >
+          {comparison.rows.length ? <div className="comparison-table" role="table" aria-label={`Comparación entre ${first.name} y ${second.name}`}>
+            <div className="comparison-table__row comparison-table__head" role="row">
+              <span role="columnheader">Característica</span>
+              <span role="columnheader">{first.name}</span>
+              <span role="columnheader">{second.name}</span>
+            </div>
+            {comparison.rows.map((row) => <div className="comparison-table__row" role="row" key={row.key}>
+              <strong role="rowheader">{row.label}</strong>
+              <span role="cell" className={row.advantage === 'first' ? 'comparison-table__advantage' : ''}>
+                {row.first?.value || 'No especificado'}
+                {row.advantage === 'first' && <Check size={14} aria-label="Ventaja verificable" />}
+              </span>
+              <span role="cell" className={row.advantage === 'second' ? 'comparison-table__advantage' : ''}>
+                {row.second?.value || 'No especificado'}
+                {row.advantage === 'second' && <Check size={14} aria-label="Ventaja verificable" />}
+              </span>
+            </div>)}
+          </div> : <p className="comparison-details__empty">No hay suficientes especificaciones verificadas para comparar estos productos.</p>}
+          <div className="comparison-details__conclusion">
+            <p><strong>{first.name}</strong> {comparison.recommendation.first.replace(`${first.name}: `, '')}</p>
+            <p><strong>{second.name}</strong> {comparison.recommendation.second.replace(`${second.name}: `, '')}</p>
+            <p><strong>Diferencia</strong> {formatCRC(difference)}.</p>
+          </div>
+          {comparison.matchingRowCount > 0 && <p className="comparison-details__matches">Las diferencias aparecen primero; después se muestran {comparison.matchingRowCount} {comparison.matchingRowCount === 1 ? 'característica compartida' : 'características compartidas'} de las fichas verificadas.</p>}
+          {comparison.omittedMatchCount > 0 && <p className="comparison-details__matches">Se omitieron {comparison.omittedMatchCount} coincidencias adicionales para mantener la comparación compacta.</p>}
+        </motion.div>}
+      </AnimatePresence>
+    </div>
   </div></section>;
+}
+
+function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove, onEditProduct }) {
+  const closeButtonRef = useRef(null);
+  const count = cartItemCount(cart);
+  const total = cartTotal(cart);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+  return <div className="cart-layer" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div className="cart-drawer__header">
+        <div><span>TU PEDIDO</span><h2 id="cart-title">Carrito de compras</h2></div>
+        <button ref={closeButtonRef} type="button" onClick={onClose} aria-label="Cerrar carrito"><X size={20} aria-hidden="true" /></button>
+      </div>
+      {cart.length === 0 ? <div className="cart-empty">
+        <span><ShoppingCart size={25} aria-hidden="true" /></span>
+        <h3>Tu carrito está vacío</h3>
+        <p>Elegí un producto, configurá sus opciones y agregalo al pedido.</p>
+        <button type="button" className="button button--secondary" onClick={onClose}>Explorar productos</button>
+      </div> : <>
+        <div className="cart-items">
+          {cart.map((item) => <article className="cart-item" key={item.key}>
+            <img src={item.image} alt="" aria-hidden="true" />
+            <div className="cart-item__content">
+              <div className="cart-item__heading"><div><h3>{item.name}</h3>{item.options.map((option) => <p key={option}>{option}</p>)}</div><button type="button" onClick={() => onRemove(item.key)} aria-label={`Eliminar ${item.name} del carrito`}><Trash2 size={16} aria-hidden="true" /></button></div>
+              <div className="cart-item__controls"><QuantityStepper value={item.quantity} onChange={(quantity) => onUpdateQuantity(item.key, quantity)} /><strong>{formatCRC(item.unitPriceCRC * item.quantity)}</strong></div>
+              <button type="button" className="cart-item__edit" onClick={() => onEditProduct(item.productId)}>Cambiar opciones del producto</button>
+            </div>
+          </article>)}
+        </div>
+        <div className="cart-drawer__summary"><div><span>{count} {count === 1 ? 'producto' : 'productos'}</span><strong>Total: {formatCRC(total)}</strong></div><p>La disponibilidad y entrega se confirman por WhatsApp.</p></div>
+        <div className="cart-drawer__actions">
+          <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} aria-label="Enviar pedido completo por WhatsApp"><MessageCircle size={18} aria-hidden="true" />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
+          <button type="button" className="cart-continue" onClick={onClose}>Seguir comprando</button>
+        </div>
+      </>}
+    </aside>
+  </div>;
 }
 
 function Footer({ settings }) {
@@ -291,7 +545,12 @@ export default function App() {
   const [loadState, setLoadState] = useState('loading');
   const [selectedId, setSelectedId] = useState(() => new URLSearchParams(window.location.search).get('producto') || 'airpods-pro-3');
   const [tab, setTab] = useState(0);
+  const [cart, setCart] = useState(() => readStoredCart(window.localStorage));
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartNotice, setCartNotice] = useState('');
   const reducedMotion = useReducedMotion();
+  const scrollToElement = usePageScroller(reducedMotion);
+  const closeCart = useCallback(() => setCartOpen(false), []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -313,29 +572,55 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('drop-zone-cart', JSON.stringify(cart));
+    } catch {
+      // The cart remains usable for the current visit when storage is unavailable.
+    }
+  }, [cart]);
+
+  useEffect(() => {
+    if (!cartNotice) return undefined;
+    const timeoutId = window.setTimeout(() => setCartNotice(''), 2400);
+    return () => window.clearTimeout(timeoutId);
+  }, [cartNotice]);
+
   const selectProduct = (id) => {
     setSelectedId(id);
     setTab(0);
     const url = new URL(window.location.href);
     url.searchParams.set('producto', id);
     window.history.pushState({}, '', url);
-    requestAnimationFrame(() => document.getElementById('caracteristicas')?.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' }));
+    requestAnimationFrame(() => scrollToElement(document.getElementById('caracteristicas')));
+  };
+  const handleAddToCart = (selectedProduct, selections, quantity) => {
+    const item = createCartItem(selectedProduct, selections, quantity);
+    setCart((current) => addCartItem(current, item));
+    setCartNotice(`${item.name} agregado al carrito`);
+  };
+  const handleEditCartProduct = (id) => {
+    closeCart();
+    selectProduct(id);
   };
   const product = data.catalog.find(selectedId) || data.catalog.featured[0];
+  const numberOfCartItems = cartItemCount(cart);
 
   return <>
     <ScrollProgress reducedMotion={reducedMotion} />
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
-    <Header settings={data.settings} sections={data.siteSections} />
+    <Header settings={data.settings} sections={data.siteSections} cartCount={numberOfCartItems} onOpenCart={() => setCartOpen(true)} />
     <main id="contenido">
       {loadState === 'loading' && <div className="api-loading" role="status">Actualizando catálogo…</div>}
       {loadState === 'fallback' && <div className="api-notice" role="status">Vista de respaldo: el catálogo local no está conectado. Los datos mostrados proceden de la copia incluida en la web.</div>}
       <Hero settings={data.settings} reducedMotion={reducedMotion} />
       <Catalog catalog={data.catalog} selectedId={product.id} onSelect={selectProduct} reducedMotion={reducedMotion} />
-      <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} />
+      <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} onAddToCart={handleAddToCart} />
       <Comparison catalog={data.catalog} onSelect={selectProduct} reducedMotion={reducedMotion} />
     </main>
     <Footer settings={data.settings} />
+    <CartDrawer open={cartOpen} cart={cart} settings={data.settings} onClose={closeCart} onUpdateQuantity={(key, quantity) => setCart((current) => updateCartItemQuantity(current, key, quantity))} onRemove={(key) => setCart((current) => removeCartItem(current, key))} onEditProduct={handleEditCartProduct} />
+    {cartNotice && <div className="cart-toast" role="status"><Check size={16} aria-hidden="true" />{cartNotice}</div>}
     <span className="sr-only" role="status" aria-live="polite">{product.name} seleccionado, precio {product.formattedPrice}</span>
   </>;
 }

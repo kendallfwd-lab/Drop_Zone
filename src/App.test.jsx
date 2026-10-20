@@ -1,18 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import App from './App.jsx';
 import data from '../db.json';
 
 beforeEach(() => {
   window.history.replaceState({}, '', '/');
+  window.localStorage.clear();
   Element.prototype.scrollIntoView = vi.fn();
+  window.scrollTo = vi.fn();
   vi.stubGlobal('fetch', vi.fn(async (url) => {
     const value = String(url).endsWith('/products') ? data.products : String(url).endsWith('/settings') ? data.settings : data.siteSections;
     return { ok: true, json: async () => value };
   }));
 });
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 describe('catalog experience', () => {
   it('shows the requested hero title without the removed lines', () => {
@@ -51,6 +56,33 @@ describe('catalog experience', () => {
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Apple Pencil/ }));
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'Apple Pencil' })).toBeInTheDocument());
     expect(within(document.getElementById('caracteristicas')).getAllByText('₡19.000').length).toBeGreaterThan(0);
+  });
+
+  it('filters the catalog by audio, accessories and brand', async () => {
+    render(<App />);
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
+    const catalog = document.getElementById('productos');
+    const productCards = () => within(catalog).getAllByRole('button', { name: /^Ver detalles de/ });
+
+    expect(productCards()).toHaveLength(20);
+    fireEvent.click(within(catalog).getByRole('button', { name: 'Audio' }));
+    expect(productCards()).toHaveLength(7);
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Samsung Galaxy Buds3 Pro/ })).toBeInTheDocument();
+    expect(within(catalog).queryByRole('button', { name: /Ver detalles de Apple Pencil/ })).not.toBeInTheDocument();
+
+    fireEvent.click(within(catalog).getByRole('button', { name: 'Samsung' }));
+    expect(productCards()).toHaveLength(4);
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Samsung Galaxy Buds3 Pro/ })).toBeInTheDocument();
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Cargador Samsung 45W USB-C/ })).toBeInTheDocument();
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Adaptador Samsung 45W USB-C/ })).toBeInTheDocument();
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Cable Samsung USB-C a USB-C 3A/ })).toBeInTheDocument();
+    expect(within(catalog).queryByRole('button', { name: /Ver detalles de AirPods Pro 3/ })).not.toBeInTheDocument();
+
+    fireEvent.click(within(catalog).getByRole('button', { name: 'Accesorios' }));
+    expect(productCards()).toHaveLength(3);
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Apple Pencil/ })).toBeInTheDocument();
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para AirPods/ })).toBeInTheDocument();
+    expect(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ })).toBeInTheDocument();
   });
 
   it('uses browser history to return to Drop Zone and restore the selected product', async () => {
@@ -136,6 +168,35 @@ describe('catalog experience', () => {
     expect(message).toContain('color Azul oscuro');
     expect(message).toContain('modelo iPhone 17 Pro Max');
     expect(message).toContain('₡6.000');
+  });
+
+  it('adds a configured product, edits its quantity and sends the cart through WhatsApp', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ }));
+    const detail = document.getElementById('caracteristicas');
+    fireEvent.change(within(detail).getByLabelText('Modelo de iPhone'), { target: { value: 'iPhone 17 Pro Max' } });
+    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Azul oscuro' } });
+    fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
+    fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 2 productos' }));
+    const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    expect(within(cart).getByText('Modelo de iPhone: iPhone 17 Pro Max')).toBeInTheDocument();
+    expect(within(cart).getByText('Color: Azul oscuro')).toBeInTheDocument();
+    expect(within(cart).getByText('Total: ₡12.000')).toBeInTheDocument();
+
+    fireEvent.change(within(cart).getByRole('spinbutton', { name: 'Cantidad' }), { target: { value: '3' } });
+    expect(within(cart).getByText('Total: ₡18.000')).toBeInTheDocument();
+    const orderLink = within(cart).getByRole('link', { name: 'Enviar pedido completo por WhatsApp' });
+    const orderMessage = new URL(orderLink.href).searchParams.get('text');
+    expect(orderMessage).toContain('Modelo de iPhone: iPhone 17 Pro Max');
+    expect(orderMessage).toContain('Color: Azul oscuro');
+    expect(orderMessage).toContain('Cantidad: 3');
+    expect(orderMessage).toContain('Total publicado: ₡18.000');
+
+    fireEvent.click(within(cart).getByRole('button', { name: /Eliminar estuche para iPhone del carrito/i }));
+    expect(within(cart).getByText('Tu carrito está vacío')).toBeInTheDocument();
   });
 
   it('shows Samsung-sourced Galaxy Buds3 Pro specifications and price', async () => {
@@ -315,8 +376,15 @@ describe('catalog experience', () => {
     render(<App />);
     const comparison = document.getElementById('comparar');
     expect(within(comparison).getByText('Diferencia de precio: ₡5.000')).toBeInTheDocument();
+    const differencesButton = within(comparison).getByRole('button', { name: 'Ver diferencias' });
+    expect(differencesButton).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(differencesButton);
+    expect(within(comparison).getByRole('table', { name: 'Comparación entre AirPods Pro 3 y AirPods Pro 2' })).toBeInTheDocument();
+    expect(within(comparison).getByText('Autonomía')).toBeInTheDocument();
+    expect(within(comparison).getByRole('button', { name: 'Ocultar diferencias' })).toHaveAttribute('aria-expanded', 'true');
     fireEvent.change(within(comparison).getByRole('combobox', { name: 'Segundo producto para comparar' }), { target: { value: 'airpods-3' } });
     expect(within(comparison).getByText('Diferencia de precio: ₡9.000')).toBeInTheDocument();
+    expect(within(comparison).getByRole('button', { name: 'Ver diferencias' })).toHaveAttribute('aria-expanded', 'false');
     fireEvent.click(within(comparison).getByRole('button', { name: 'Ver detalles de AirPods 3' }));
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods 3' })).toBeInTheDocument());
   });
