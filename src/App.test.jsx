@@ -39,18 +39,34 @@ describe('catalog experience', () => {
     }
   });
 
-  it('renders eight prices, navigates to a product and updates its detail', async () => {
+  it('renders twenty prices, navigates to a product and updates its detail', async () => {
     render(<App />);
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
     const catalog = document.getElementById('productos');
-    expect(within(catalog).getAllByRole('button', { name: /^Ver detalles de/ })).toHaveLength(8);
+    expect(within(catalog).getAllByRole('button', { name: /^Ver detalles de/ })).toHaveLength(20);
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Max/ }));
     expect(window.location.search).toBe('?producto=airpods-max');
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods Max' })).toBeInTheDocument());
     expect(within(document.getElementById('caracteristicas')).getAllByText('₡27.000').length).toBeGreaterThan(0);
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Apple Pencil/ }));
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'Apple Pencil' })).toBeInTheDocument());
-    expect(within(document.getElementById('caracteristicas')).getAllByText('₡22.000').length).toBeGreaterThan(0);
+    expect(within(document.getElementById('caracteristicas')).getAllByText('₡19.000').length).toBeGreaterThan(0);
+  });
+
+  it('changes the AirPods Max image and WhatsApp inquiry by color', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    expect(within(catalog).getByRole('img', { name: /AirPods Max en color azul medianoche/ })).toHaveAttribute('src', '/images/products/airpods-max-azul-medianoche.webp');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Max/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'AirPods Max en color Blanco y gris' })).toHaveAttribute('src', '/images/products/airpods-max-blanco-gris.webp'));
+    fireEvent.click(within(detail).getByRole('button', { name: 'Elegir color Azul medianoche' }));
+    expect(within(detail).getByRole('img', { name: 'AirPods Max en color Azul medianoche' })).toHaveAttribute('src', '/images/products/airpods-max-azul-medianoche.webp');
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre AirPods Max/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('AirPods Max');
+    expect(message).toContain('color Azul medianoche');
+    expect(message).toContain('₡27.000');
   });
 
   it('switches tabs with keyboard and shows sourced model specifications', async () => {
@@ -91,6 +107,23 @@ describe('catalog experience', () => {
     expect(message).toContain('₡4.000');
   });
 
+  it('configures an iPhone case, changes its image and prepares WhatsApp', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Arena' })).toHaveAttribute('src', '/images/products/estuche-iphone-arena.webp'));
+    fireEvent.change(within(detail).getByLabelText('Modelo de iPhone'), { target: { value: 'iPhone 17 Pro Max' } });
+    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Azul oscuro' } });
+    expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp');
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Estuches para iPhone/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('estuche para iPhone');
+    expect(message).toContain('color Azul oscuro');
+    expect(message).toContain('modelo iPhone 17 Pro Max');
+    expect(message).toContain('₡6.000');
+  });
+
   it('shows Samsung-sourced Galaxy Buds3 Pro specifications and price', async () => {
     render(<App />);
     fireEvent.click(within(document.getElementById('productos')).getByRole('button', { name: /Ver detalles de Samsung Galaxy Buds3 Pro/ }));
@@ -99,6 +132,169 @@ describe('catalog experience', () => {
     expect(within(detail).getAllByText('₡20.000').length).toBeGreaterThan(0);
     expect(within(detail).getByText(/Bluetooth 5.4 y resistencia/)).toBeInTheDocument();
     expect(within(detail).getByRole('link', { name: /Ver ficha oficial de Samsung/ })).toHaveAttribute('href', 'https://www.samsung.com/latin/audio-sound/galaxy-buds/galaxy-buds3-pro-silver-sm-r630nzaalta/');
+  });
+
+  it('shows the Samsung 45W charger beside the Buds with official specifications', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    const cards = within(catalog).getAllByRole('button', { name: /^Ver detalles de/ });
+    expect(cards[8]).toHaveAccessibleName(/Samsung Galaxy Buds3 Pro/);
+    expect(cards[9]).toHaveAccessibleName(/Cargador Samsung 45W USB-C/);
+    fireEvent.click(cards[9]);
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Cargador Samsung 45W USB-C' })).toBeInTheDocument());
+    expect(within(detail).getAllByText('₡8.000').length).toBeGreaterThan(0);
+    expect(within(detail).getByText(/Super Fast Charging 2.0/)).toBeInTheDocument();
+    expect(within(detail).getAllByText(/cable USB-C a USB-C de 5 A y 1,8 m/).length).toBeGreaterThanOrEqual(1);
+    expect(within(detail).getByRole('link', { name: /Ver ficha oficial de Samsung/ })).toHaveAttribute('href', 'https://www.samsung.com/latin/mobile-accessories/45w-power-adapter-black-ep-t4510xbegca/');
+  });
+
+  it('shows the separate Samsung 45W adapter without cable for six thousand colones', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    expect(within(catalog).getAllByRole('button', { name: /^Ver detalles de/ })[10]).toHaveAccessibleName(/Adaptador Samsung 45W USB-C/);
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Adaptador Samsung 45W USB-C/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Adaptador Samsung 45W USB-C' })).toBeInTheDocument());
+    expect(within(detail).getAllByText('₡6.000').length).toBeGreaterThan(0);
+    expect(within(detail).getByText('Consumo en espera inferior a 5 mW')).toBeInTheDocument();
+    expect(within(detail).getByText(/Esta presentación no incluye cable/)).toBeInTheDocument();
+    expect(within(detail).getByRole('link', { name: /Ver ficha oficial de Samsung/ })).toHaveAttribute('href', 'https://www.samsung.com/us/mobile-accessories/45w-pd-power-adapter-sku-ep-t4511nbegus/');
+  });
+
+  it('shows the USB-C 60W cable as a separate four-thousand-colones product', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    expect(within(catalog).getAllByRole('button', { name: /^Ver detalles de/ })[12]).toHaveAccessibleName(/Cable USB-C 60W de 1 m/);
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Cable USB-C 60W de 1 m/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Cable USB-C 60W de 1 m' })).toBeInTheDocument());
+    expect(within(detail).getAllByText('₡4.000').length).toBeGreaterThan(0);
+    expect(within(detail).getByText(/Admite carga de hasta 60 W/)).toBeInTheDocument();
+    expect(within(detail).getByText(/transferencia de datos a velocidad USB 2/)).toBeInTheDocument();
+    expect(within(detail).getByRole('link', { name: /Ver ficha oficial de Apple/ })).toHaveAttribute('href', 'https://www.apple.com/mx/shop/product/mw493am/a/cable-de-carga-usb-c-de-60-w-1-m');
+  });
+
+  it('changes the Apple adapter price and WhatsApp message by selected wattage', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Adaptador USB-C para Apple/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Adaptador USB-C para Apple' })).toBeInTheDocument());
+    expect(within(detail).getAllByText('₡6.500').length).toBeGreaterThan(0);
+    fireEvent.change(within(detail).getByLabelText('Potencia'), { target: { value: '20 W' } });
+    expect(within(detail).getAllByText('₡5.000').length).toBeGreaterThan(0);
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Adaptador USB-C para Apple/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('potencia 20 W');
+    expect(message).toContain('₡5.000');
+  });
+
+  it('switches the EarPods image and WhatsApp inquiry between USB-C and Lightning', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de EarPods con cable/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'EarPods con cable, USB-C' })).toHaveAttribute('src', '/images/products/earpods-usb-c-premium.webp'));
+    expect(within(detail).getAllByText('₡10.000').length).toBeGreaterThan(0);
+    fireEvent.change(within(detail).getByLabelText('Tipo de conector'), { target: { value: 'Lightning' } });
+    expect(within(detail).getByRole('img', { name: 'EarPods con cable, Lightning' })).toHaveAttribute('src', '/images/products/earpods-lightning-premium.webp');
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre EarPods con cable/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('conector Lightning');
+    expect(message).toContain('₡10.000');
+    expect(within(detail).getByRole('link', { name: /Ver ficha USB-C de Apple/ })).toBeInTheDocument();
+    expect(within(detail).getByRole('link', { name: /Ver ficha Lightning de Apple/ })).toBeInTheDocument();
+  });
+
+  it('shows the Apple 35W charger and cable kit for nine thousand five hundred colones', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Kit cargador USB-C 35W con cable/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Kit cargador USB-C 35W con cable' })).toBeInTheDocument());
+    expect(within(detail).getAllByText('₡9.500').length).toBeGreaterThan(0);
+    expect(within(detail).getByText(/Incluye adaptador de corriente USB-C y cable USB-C a USB-C/)).toBeInTheDocument();
+    expect(within(detail).getByText(/puede diferir de los modelos oficiales enlazados/)).toBeInTheDocument();
+    expect(within(detail).getByRole('link', { name: /Referencia Apple para adaptador de 35 W/ })).toBeInTheDocument();
+    expect(within(detail).getByRole('link', { name: /Referencia Apple para cable USB-C/ })).toBeInTheDocument();
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Kit cargador USB-C 35W con cable/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('Kit cargador USB-C 35W con cable');
+    expect(message).toContain('₡9.500');
+  });
+
+  it('switches the 3.5 mm Apple audio adapter between USB-C and Lightning', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Adaptador para audífonos de 3,5 mm/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Adaptador para audífonos de 3,5 mm, USB-C' })).toHaveAttribute('src', '/images/products/adaptador-audio-usb-c.webp'));
+    expect(within(detail).getAllByText('₡3.700').length).toBeGreaterThan(0);
+    fireEvent.change(within(detail).getByLabelText('Conector del dispositivo'), { target: { value: 'Lightning' } });
+    expect(within(detail).getByRole('img', { name: 'Adaptador para audífonos de 3,5 mm, Lightning' })).toHaveAttribute('src', '/images/products/adaptador-audio-lightning.webp');
+    expect(within(detail).getByText(/iOS 10 o posterior/)).toBeInTheDocument();
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Adaptador para audífonos de 3,5 mm/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('conector Lightning');
+    expect(message).toContain('₡3.700');
+  });
+
+  it('updates the magnetic battery image and price by selected capacity', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Batería portátil magnética para iPhone/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Batería portátil magnética para iPhone, 5.000 mAh' })).toHaveAttribute('src', '/images/products/bateria-magnetica-5000mah.webp'));
+    expect(within(detail).getAllByText('₡10.000').length).toBeGreaterThan(0);
+    const largeOption = within(detail).getByRole('button', { name: '10.000 mAh ₡15.000' });
+    fireEvent.click(largeOption);
+    expect(within(detail).getByRole('img', { name: 'Batería portátil magnética para iPhone, 10.000 mAh' })).toHaveAttribute('src', '/images/products/bateria-magnetica-10000mah.webp');
+    expect(within(detail).getAllByText('₡15.000').length).toBeGreaterThan(0);
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Batería portátil magnética para iPhone/ });
+    const message = new URL(link.href).searchParams.get('text');
+    expect(message).toContain('capacidad 10.000 mAh');
+    expect(message).toContain('₡15.000');
+  });
+
+  it('switches the Samsung USB-C cable between black and white', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Cable Samsung USB-C a USB-C 3A/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Cable Samsung USB-C a USB-C 3A, Negro' })).toHaveAttribute('src', '/images/products/cable-samsung-usbc-negro.webp'));
+    expect(within(detail).getAllByText('₡5.000').length).toBeGreaterThan(0);
+    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Blanco' } });
+    expect(within(detail).getByRole('img', { name: 'Cable Samsung USB-C a USB-C 3A, Blanco' })).toHaveAttribute('src', '/images/products/cable-samsung-usbc-blanco.webp');
+    const message = new URL(within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Cable Samsung USB-C a USB-C 3A/ }).href).searchParams.get('text');
+    expect(message).toContain('color Blanco');
+    expect(message).toContain('₡5.000');
+  });
+
+  it('updates the Apple USB-C to Lightning cable by selected length', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Cable USB-C a Lightning/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Cable USB-C a Lightning, 1 m' })).toHaveAttribute('src', '/images/products/cable-apple-usbc-lightning-1m.webp'));
+    expect(within(detail).getAllByText('₡5.000').length).toBeGreaterThan(0);
+    fireEvent.click(within(detail).getByRole('button', { name: '2 m ₡6.500' }));
+    expect(within(detail).getByRole('img', { name: 'Cable USB-C a Lightning, 2 m' })).toHaveAttribute('src', '/images/products/cable-apple-usbc-lightning-2m.webp');
+    expect(within(detail).getAllByText('₡6.500').length).toBeGreaterThan(0);
+    const message = new URL(within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Cable USB-C a Lightning/ }).href).searchParams.get('text');
+    expect(message).toContain('longitud 2 m');
+    expect(message).toContain('₡6.500');
+  });
+
+  it('shows the Lightning to USB cable first and switches to its packaging image', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Cable Lightning a USB de 1 m/ }));
+    const detail = document.getElementById('caracteristicas');
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Cable Lightning a USB de 1 m, vista Cable' })).toHaveAttribute('src', '/images/products/cable-apple-lightning-usb-1m.png'));
+    expect(within(detail).getAllByText('₡4.000').length).toBeGreaterThan(0);
+    fireEvent.click(within(detail).getByRole('button', { name: 'Empaque' }));
+    expect(within(detail).getByRole('img', { name: 'Cable Lightning a USB de 1 m, vista Empaque' })).toHaveAttribute('src', '/images/products/cable-apple-lightning-usb-1m-empaque.png');
   });
 
   it('compares two selected products and opens the chosen detail', async () => {

@@ -16,7 +16,7 @@ const heroBackdrops = [
   { id: 'airpods-pro-2', image: '/images/hero/airpods-pro-2-hero.webp' },
   { id: 'airpods-3', image: '/images/hero/airpods-3-hero.webp' },
   { id: 'airpods-4', image: '/images/hero/airpods-4-hero.webp' },
-  { id: 'galaxy-buds3-pro', image: '/images/hero/galaxy-buds3-pro-hero.webp' },
+  { id: 'galaxy-buds3-pro', image: '/images/hero/galaxy-buds3-pro-hero-white.png' },
   { id: 'airpods-max', image: '/images/hero/airpods-max-hero.webp' },
   { id: 'apple-pencil', image: '/images/hero/apple-pencil-hero.webp' },
 ];
@@ -160,15 +160,25 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
   const tabRefs = useRef([]);
   const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
   const specificationBrand = product.specSourceBrand || 'Apple';
+  const specificationLinks = product.specSourceLinks.length
+    ? product.specSourceLinks
+    : product.specSourceUrl ? [{ label: `Ver ficha oficial de ${specificationBrand}`, url: product.specSourceUrl }] : [];
   const [selectedModel, setSelectedModel] = useState(product.models[0] || '');
   const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || '');
+  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]?.name || '');
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState(product.gallery[0]?.name || '');
   const selectedColorOption = product.colors.find((color) => color.name === selectedColor);
-  const activeImage = selectedColorOption?.image || product.detailImage || product.image;
-  const inquirySelections = { model: selectedModel, color: selectedColor };
+  const selectedVariantOption = product.variants.find((variant) => variant.name === selectedVariant);
+  const selectedGalleryOption = product.gallery.find((item) => item.name === selectedGalleryImage);
+  const activeImage = selectedVariantOption?.image || selectedColorOption?.image || selectedGalleryOption?.image || product.detailImage || product.image;
+  const activePrice = product.formatPrice(selectedVariantOption?.priceCRC ?? product.priceCRC);
+  const inquirySelections = { model: selectedModel, color: selectedColor, variant: selectedVariant };
 
   useEffect(() => {
     setSelectedModel(product.models[0] || '');
     setSelectedColor(product.colors[0]?.name || '');
+    setSelectedVariant(product.variants[0]?.name || '');
+    setSelectedGalleryImage(product.gallery[0]?.name || '');
   }, [product.id]);
 
   const chooseColor = (color) => {
@@ -194,7 +204,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
       <motion.div className="detail-panel" initial={reducedMotion ? false : { opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.58, ease: 'easeOut' }}>
         <div className={`detail-showcase detail-showcase--${product.id}`}>
           <div className="detail-showcase__heading"><span>VISTA DEL PRODUCTO</span></div>
-          <motion.div key={`${product.id}-${activeImage}`} initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.24 }} className="detail-showcase__image"><img src={activeImage} alt={selectedColorOption ? `${product.name} en color ${selectedColorOption.name}` : product.imageAlt} width="900" height="900" loading="lazy" /></motion.div>
+          <motion.div key={`${product.id}-${activeImage}`} initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.24 }} className="detail-showcase__image"><img src={activeImage} alt={selectedVariantOption ? `${product.name}, ${selectedVariantOption.name}` : selectedColorOption ? `${product.name} en color ${selectedColorOption.name}` : selectedGalleryOption ? `${product.name}, vista ${selectedGalleryOption.name}` : product.imageAlt} width="900" height="900" loading="lazy" /></motion.div>
           <div className="detail-showcase__caption"><span>{product.category}</span><strong>{product.name}</strong></div>
         </div>
         <div className="detail-content">
@@ -207,26 +217,37 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion }) {
               {tab === 0 ? <>
                 <p className="detail-content__category">{product.category.toUpperCase()} / {product.name.toUpperCase()}</p>
                 <h3>{product.name}</h3><p className="detail-content__description">{product.shortDescription}</p>
-                <p className="detail-content__category detail-content__category--features">{product.specSourceUrl ? `CARACTERÍSTICAS DEL MODELO SEGÚN ${specificationBrand.toUpperCase()}` : 'CARACTERÍSTICAS DEL PRODUCTO'}</p>
+                <p className="detail-content__category detail-content__category--features">{specificationLinks.length ? (product.specReferenceTitle || `CARACTERÍSTICAS DEL MODELO SEGÚN ${specificationBrand.toUpperCase()}`) : 'CARACTERÍSTICAS DEL PRODUCTO'}</p>
                 <ul className="feature-list">{features.map((feature) => { const Icon = iconMap[feature.icon] || Info; return <li key={feature.label}><span><Icon size={19} strokeWidth={1.7} aria-hidden="true" /></span><strong>{feature.label}</strong></li>; })}</ul>
-                {product.specSourceUrl && <p className="detail-reference">Especificaciones de referencia. Confirmá la versión y funciones del artículo disponible con la tienda. <a href={product.specSourceUrl} target="_blank" rel="noopener noreferrer">Ver ficha oficial de {specificationBrand} <ArrowRight size={13} aria-hidden="true" /></a></p>}
+                {specificationLinks.length > 0 && <p className="detail-reference">{product.specReferenceNotice || 'Especificaciones de referencia. Confirmá la versión y funciones del artículo disponible con la tienda.'} {specificationLinks.map((source, index) => <span key={source.url}>{index > 0 && ' · '}<a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} <ArrowRight size={13} aria-hidden="true" /></a></span>)}</p>}
               </> : <>
                 <p className="detail-content__category">PRECIO PUBLICADO</p>
-                <h3>{product.name}</h3><p className="price-big">{product.formattedPrice}</p>
+                <h3>{product.name}</h3><p className="price-big">{activePrice}</p>
                 <p className="detail-content__description">{settings.shippingMessage}</p>
                 <p className="detail-content__small">La versión, disponibilidad y detalles finales se confirman directamente con la tienda.</p>
               </>}
             </motion.div></AnimatePresence>
           </div>
-          {product.configurable && <div className="product-configurator" role="group" aria-labelledby="case-configurator-title">
-            <div className="product-configurator__heading"><div><span>PERSONALIZÁ TU ESTUCHE</span><strong id="case-configurator-title">Elegí modelo y color</strong></div><span>{product.colors.length} colores</span></div>
-            <div className="product-configurator__fields">
-              <label>Modelo de AirPods<select value={selectedModel} onChange={(event) => setSelectedModel(event.target.value)}>{product.models.map((model) => <option key={model} value={model}>{model}</option>)}</select></label>
+          {(product.configurable || product.colorConfigurable) && <div className="product-configurator" role="group" aria-labelledby="color-configurator-title">
+            <div className="product-configurator__heading"><div><span>{product.configuratorEyebrow || 'PERSONALIZÁ TU ESTUCHE'}</span><strong id="color-configurator-title">{product.configuratorTitle || 'Elegí modelo y color'}</strong></div><span>{product.colors.length} colores</span></div>
+            <div className={product.models.length ? 'product-configurator__fields' : 'product-configurator__fields product-configurator__fields--single'}>
+              {product.models.length > 0 && <label>{product.modelLabel || 'Modelo'}<select value={selectedModel} onChange={(event) => setSelectedModel(event.target.value)}>{product.models.map((model) => <option key={model} value={model}>{model}</option>)}</select></label>}
               <label>Color<select value={selectedColor} onChange={(event) => chooseColor(product.colors.find((color) => color.name === event.target.value))}>{product.colors.map((color) => <option key={color.name} value={color.name}>{color.name}</option>)}</select></label>
             </div>
             <div className="case-colors" role="group" aria-label="Colores disponibles">{product.colors.map((color) => <button key={color.name} type="button" className={selectedColor === color.name ? 'case-color case-color--active' : 'case-color'} onClick={() => chooseColor(color)} aria-label={`Elegir color ${color.name}`} aria-pressed={selectedColor === color.name}><span style={{ backgroundColor: color.hex }} aria-hidden="true" /><small>{color.name}</small></button>)}</div>
           </div>}
-          <div className="detail-content__footer"><div><span>PRECIO</span><strong>{product.formattedPrice}</strong></div><WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">{product.configurable ? 'Preguntar por WhatsApp' : 'Consultar este producto'} <ArrowRight size={17} /></WhatsAppLink></div>
+          {product.variants.length > 0 && <div className="product-configurator" role="group" aria-labelledby="variant-configurator-title">
+            <div className="product-configurator__heading"><div><span>{product.configuratorEyebrow || 'ELEGÍ TU OPCIÓN'}</span><strong id="variant-configurator-title">{product.configuratorTitle || 'Seleccioná la opción que necesitás'}</strong></div><span>{product.variants.length} opciones</span></div>
+            <div className="product-configurator__fields product-configurator__fields--single">
+              <label>{product.variantLabel || 'Opción'}<select value={selectedVariant} onChange={(event) => setSelectedVariant(event.target.value)}>{product.variants.map((variant) => <option key={variant.name} value={variant.name}>{variant.name}</option>)}</select></label>
+            </div>
+            {product.showVariantPrices && <div className="variant-options" role="group" aria-label="Opciones de capacidad y precio">{product.variants.map((variant) => <button key={variant.name} type="button" className={selectedVariant === variant.name ? 'variant-option variant-option--active' : 'variant-option'} onClick={() => setSelectedVariant(variant.name)} aria-pressed={selectedVariant === variant.name}><span>{variant.name}</span><strong>{product.formatPrice(variant.priceCRC)}</strong></button>)}</div>}
+          </div>}
+          {product.gallery.length > 0 && <div className="product-configurator" role="group" aria-labelledby="gallery-configurator-title">
+            <div className="product-configurator__heading"><div><span>GALERÍA DEL PRODUCTO</span><strong id="gallery-configurator-title">Elegí la vista que querés ver</strong></div><span>{product.gallery.length} fotos</span></div>
+            <div className="image-gallery-options">{product.gallery.map((item) => <button key={item.name} type="button" className={selectedGalleryImage === item.name ? 'image-gallery-option image-gallery-option--active' : 'image-gallery-option'} onClick={() => setSelectedGalleryImage(item.name)} aria-pressed={selectedGalleryImage === item.name}><img src={item.image} alt="" aria-hidden="true" /><span>{item.name}</span></button>)}</div>
+          </div>}
+          <div className="detail-content__footer"><div><span>PRECIO</span><strong>{activePrice}</strong></div><WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">{product.configurable || product.colorConfigurable || product.variants.length > 0 ? 'Preguntar por WhatsApp' : 'Consultar este producto'} <ArrowRight size={17} /></WhatsAppLink></div>
         </div>
       </motion.div>
     </div>

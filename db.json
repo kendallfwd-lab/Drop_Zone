@@ -87,7 +87,7 @@
       ],
       "availability": "Consultar",
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 4
     },
     {
       "id": "airpods-4",
@@ -112,18 +112,28 @@
       ],
       "availability": "Consultar",
       "featured": true,
-      "displayOrder": 4
+      "displayOrder": 3
     },
     {
       "id": "airpods-max",
       "name": "AirPods Max",
       "category": "Audio",
       "priceCRC": 27000,
-      "image": "/images/products/airpods-max.webp",
-      "detailImage": "/images/products/airpods-max.webp",
+      "image": "/images/products/airpods-max-azul-medianoche.webp",
+      "detailImage": "/images/products/airpods-max-blanco-gris.webp",
       "heroImage": "/images/hero/airpods-max-hero.webp",
-      "imageAlt": "Ilustración de audífonos de diadema en tono gris oscuro",
-      "shortDescription": "Una presencia envolvente. Consultá color, versión y disponibilidad.",
+      "imageAlt": "AirPods Max en color azul medianoche",
+      "shortDescription": "Una presencia envolvente. Elegí el color que preferís y consultá disponibilidad.",
+      "inquiryProductName": "AirPods Max",
+      "colorConfigurable": true,
+      "configuratorEyebrow": "ELEGÍ TU COLOR",
+      "configuratorTitle": "Seleccioná el acabado que preferís",
+      "colors": [
+        { "name": "Blanco y gris", "hex": "#e8e8e5", "image": "/images/products/airpods-max-blanco-gris.webp" },
+        { "name": "Negro", "hex": "#252525", "image": "/images/products/airpods-max-negro.webp" },
+        { "name": "Azul medianoche", "hex": "#18314d", "image": "/images/products/airpods-max-azul-medianoche.webp" },
+        { "name": "Lila", "hex": "#aaa4c2", "image": "/images/products/airpods-max-lila.webp" }
+      ],
       "referenceFeatures": [
         { "label": "Diseño de diadema con almohadillas circumaurales", "icon": "headphones" },
         { "label": "Cancelación Activa de Ruido y modo Ambiente", "icon": "audio" },
@@ -143,7 +153,7 @@
       "id": "apple-pencil",
       "name": "Apple Pencil",
       "category": "Accesorios",
-      "priceCRC": 22000,
+      "priceCRC": 19000,
       "image": "/images/products/apple-pencil.webp",
       "detailImage": "/images/products/apple-pencil.webp",
       "heroImage": "/images/hero/apple-pencil-hero.webp",
@@ -169,11 +179,13 @@
       "name": "Estuches para AirPods",
       "category": "Estuches",
       "priceCRC": 4000,
-      "image": "/images/products/estuche-verde-pino.webp",
+      "image": "/images/products/estuche-azul-oscuro.webp",
       "detailImage": "/images/products/estuche-verde-pino.webp",
       "imageAlt": "Estuche verde pino para audífonos AirPods",
       "shortDescription": "Protegé tus audífonos con un estuche del color que más te guste y elegí el modelo compatible antes de consultar.",
       "configurable": true,
+      "inquiryProductName": "estuche de audífonos",
+      "modelLabel": "Modelo de AirPods",
       "models": ["AirPods 3", "AirPods 4", "AirPods Pro 3", "AirPods Pro 2"],
       "colors": [
         { "name": "Verde pino", "hex": "#17645f", "image": "/images/products/estuche-verde-pino.webp" },
@@ -204,13 +216,64 @@
       "displayOrder": 7
     },
     {
+      "id": "estuches-iphone",
+      "name": "Estuches para iPhone",
+      "category": "Estuches",
+      "priceCRC": 6000,
+      "image": "/images/products/estuche-iphone-azul-oscuro.webp",
+      "detailImage": "/images/products/estuche-iphone-arena.webp",
+      "imageAlt": "Estuche MagSafe color arena para iPhone",
+      "shortDescription": "Protegé tu iPhone con un estuche del color que más te guste y elegí el modelo compatible antes de consultar.",
+      "configurable": true,
+      "inquiryProductName": "estuche para iPhone",
+      "modelLabel": "Modelo de iPhone",
+      "models": [
+        "iPhone 15",
+        "iPhone 15 Plus",
+        "iPhone 15 Pro",
+        "iPhone 15 Pro Max",
+        "iPhone 16",
+        "iPhone 16 Plus",
+        "iPhone 16 Pro",
+        "iPhone 16 Pro Max",
+        "iPhone 16e",
+        "iPhone 17",
+        "iPhone Air",
+        "iPhone 17 Pro",
+        "iPhone 17 Pro Max",
+        "iPhone 17e"
+      ],
+      "colors": [
+        { "name": "Arena", "hex": "#e6b980", "image": "/images/products/estuche-iphone-arena.webp" },
+        { "name": "Menta", "hex": "#8bd8d0", "image": "/images/products/estuche-iphone-menta.webp" },
+        { "name": "Rosado", "hex": "#efa9b1", "image": "/images/products/estuche-iphone-rosado.webp" },
+        { "name": "Naranja", "hex": "#ff7a13", "image": "/images/products/estuche-iphone-naranja.webp" },
+        { "name": "Azul claro", "hex": "#91afe5", "image": "/images/products/estuche-iphone-azul-claro.webp" },
+        { "name": "Fucsia", "hex": "#bc1680", "image": "/images/products/estuche-iphone-fucsia.webp" },
+        { "name": "Lila", "hex": "#b996dc", "image": "/images/products/estuche-iphone-lila.webp" },
+        { "name": "Café", "hex": "#74442f", "image": "/images/products/estuche-iphone-cafe.webp" },
+        { "name": "Negro", "hex": "#171717", "image": "/images/products/estuche-iphone-negro.webp" },
+        { "name": "Azul oscuro", "hex": "#173361", "image": "/images/products/estuche-iphone-azul-oscuro.webp" }
+      ],
+      "referenceFeatures": [],
+      "features": [
+        { "label": "Modelos recientes de iPhone para escoger", "icon": "package", "verified": true },
+        { "label": "Diez colores disponibles", "icon": "palette", "verified": true },
+        { "label": "Diseño compatible con carga magnética", "icon": "sparkles", "verified": true },
+        { "label": "Modelo y color se eligen antes de consultar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 8
+    },
+    {
       "id": "galaxy-buds3-pro",
       "name": "Samsung Galaxy Buds3 Pro",
       "category": "Audio",
       "priceCRC": 20000,
       "image": "/images/products/galaxy-buds3-pro.webp",
       "detailImage": "/images/products/galaxy-buds3-pro.webp",
-      "heroImage": "/images/hero/galaxy-buds3-pro-hero.webp",
+      "heroImage": "/images/hero/galaxy-buds3-pro-hero-white.png",
       "imageAlt": "Samsung Galaxy Buds3 Pro plateados y blancos en sus estuches de carga",
       "shortDescription": "Audio inalámbrico con diseño Blade y estuche de cubierta transparente. Consultá color y disponibilidad.",
       "referenceFeatures": [
@@ -223,11 +286,368 @@
       "specSourceUrl": "https://www.samsung.com/latin/audio-sound/galaxy-buds/galaxy-buds3-pro-silver-sm-r630nzaalta/",
       "features": [
         { "label": "Audífonos inalámbricos intraurales", "icon": "headphones", "verified": true },
-        { "label": "Color y versión por confirmar", "icon": "info", "verified": true }
+        { "label": "Cuatro colores para escoger", "icon": "info", "verified": true }
       ],
       "availability": "Consultar",
       "featured": true,
-      "displayOrder": 8
+      "displayOrder": 9
+    },
+    {
+      "id": "samsung-cargador-45w",
+      "name": "Cargador Samsung 45W USB-C",
+      "category": "Samsung",
+      "priceCRC": 8000,
+      "image": "/images/products/samsung-cargador-45w.webp",
+      "detailImage": "/images/products/samsung-cargador-45w.webp",
+      "imageAlt": "Cargador Samsung negro de 45 W con caja y cable USB-C a USB-C",
+      "shortDescription": "Adaptador de corriente USB-C para carga rápida de dispositivos compatibles. Incluye cable USB-C a USB-C de 5 A y 1,8 metros.",
+      "referenceFeatures": [
+        { "label": "Super Fast Charging 2.0 de hasta 45 W con PD 3.0 PDO/PPS", "icon": "battery" },
+        { "label": "Puerto USB-C para teléfonos, audífonos, tabletas y otros dispositivos compatibles", "icon": "package" },
+        { "label": "Incluye adaptador y cable USB-C a USB-C de 5 A y 1,8 m", "icon": "sparkles" },
+        { "label": "Protección contra sobrecorriente, cortocircuitos y cambios de temperatura", "icon": "info" }
+      ],
+      "specSourceBrand": "Samsung",
+      "specSourceUrl": "https://www.samsung.com/latin/mobile-accessories/45w-power-adapter-black-ep-t4510xbegca/",
+      "features": [
+        { "label": "Modelo de referencia EP-T4510", "icon": "info", "verified": true },
+        { "label": "Potencia y velocidad dependen del dispositivo conectado", "icon": "battery", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 10
+    },
+    {
+      "id": "samsung-adaptador-45w",
+      "name": "Adaptador Samsung 45W USB-C",
+      "category": "Samsung",
+      "priceCRC": 6000,
+      "image": "/images/products/samsung-adaptador-45w-sin-cable.webp",
+      "detailImage": "/images/products/samsung-adaptador-45w-sin-cable.webp",
+      "imageAlt": "Adaptadores Samsung USB-C de 45 W en color blanco y negro dentro de sus cajas",
+      "shortDescription": "Adaptador de corriente USB-C de 45 W disponible en blanco o negro. Esta presentación no incluye cable.",
+      "referenceFeatures": [
+        { "label": "Super Fast Charging 2.0 de hasta 45 W con PD 3.0 PDO/PPS", "icon": "battery" },
+        { "label": "Puerto USB-C para teléfonos, tabletas y otros dispositivos compatibles", "icon": "package" },
+        { "label": "Consumo en espera inferior a 5 mW", "icon": "sparkles" },
+        { "label": "Protección contra sobrecorriente, sobrecalentamiento y cortocircuitos", "icon": "info" }
+      ],
+      "specSourceBrand": "Samsung",
+      "specSourceUrl": "https://www.samsung.com/us/mobile-accessories/45w-pd-power-adapter-sku-ep-t4511nbegus/",
+      "features": [
+        { "label": "Modelo de referencia EP-T4511", "icon": "info", "verified": true },
+        { "label": "Disponible en blanco o negro; color sujeto a existencias", "icon": "palette", "verified": true },
+        { "label": "El cable USB-C se vende por separado", "icon": "package", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 11
+    },
+    {
+      "id": "cable-usb-c-60w",
+      "name": "Cable USB-C 60W de 1 m",
+      "category": "Apple",
+      "priceCRC": 4000,
+      "image": "/images/products/cable-usb-c-60w-1m.webp",
+      "detailImage": "/images/products/cable-usb-c-60w-1m.webp",
+      "imageAlt": "Cable blanco trenzado USB-C a USB-C de 60 W y un metro dentro de su caja",
+      "shortDescription": "Cable trenzado USB-C a USB-C para cargar, sincronizar y transferir datos entre dispositivos compatibles.",
+      "referenceFeatures": [
+        { "label": "Conectores USB-C en ambos extremos y longitud de 1 metro", "icon": "package" },
+        { "label": "Admite carga de hasta 60 W con un adaptador compatible", "icon": "battery" },
+        { "label": "Permite sincronización y transferencia de datos a velocidad USB 2", "icon": "sparkles" },
+        { "label": "Diseño exterior trenzado; el adaptador de corriente se vende por separado", "icon": "info" }
+      ],
+      "specSourceBrand": "Apple",
+      "specSourceUrl": "https://www.apple.com/mx/shop/product/mw493am/a/cable-de-carga-usb-c-de-60-w-1-m",
+      "features": [
+        { "label": "Cable de carga USB-C a USB-C", "icon": "package", "verified": true },
+        { "label": "Potencia y velocidad dependen del adaptador y dispositivo conectados", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 13
+    },
+    {
+      "id": "apple-adaptador-usb-c",
+      "name": "Adaptador USB-C para Apple",
+      "category": "Apple",
+      "priceCRC": 6500,
+      "image": "/images/products/apple-adaptador-usb-c-35w.webp",
+      "detailImage": "/images/products/apple-adaptador-usb-c-35w.webp",
+      "imageAlt": "Adaptador de corriente USB-C blanco para dispositivos Apple dentro de su caja",
+      "shortDescription": "Elegí la potencia que necesitás antes de consultar. El precio cambia según la opción seleccionada.",
+      "inquiryProductName": "adaptador USB-C para Apple",
+      "variantLabel": "Potencia",
+      "variantInquiryLabel": "potencia",
+      "configuratorEyebrow": "CONFIGURÁ TU ADAPTADOR",
+      "configuratorTitle": "Elegí la potencia que necesitás",
+      "variants": [
+        { "name": "35 W", "priceCRC": 6500, "image": "/images/products/apple-adaptador-usb-c-35w.webp" },
+        { "name": "25 W", "priceCRC": 5500, "image": "/images/products/apple-adaptador-usb-c-35w.webp" },
+        { "name": "20 W", "priceCRC": 5000, "image": "/images/products/apple-adaptador-usb-c-35w.webp" }
+      ],
+      "referenceFeatures": [],
+      "features": [
+        { "label": "Disponible en potencias de 20 W, 25 W y 35 W", "icon": "battery", "verified": true },
+        { "label": "Salida USB-C para cable compatible", "icon": "package", "verified": true },
+        { "label": "El adaptador se vende sin cable", "icon": "info", "verified": true },
+        { "label": "Confirmá la potencia compatible con tu dispositivo antes de comprar", "icon": "sparkles", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 15
+    },
+    {
+      "id": "earpods-con-cable",
+      "name": "EarPods con cable",
+      "category": "Audio",
+      "priceCRC": 10000,
+      "image": "/images/products/earpods-usb-c-premium.webp",
+      "detailImage": "/images/products/earpods-usb-c-premium.webp",
+      "imageAlt": "Audífonos EarPods blancos con cable, control integrado y conector USB-C",
+      "shortDescription": "Audífonos con cable y control integrado. Elegí la conexión USB-C o Lightning según el puerto de tu dispositivo.",
+      "inquiryProductName": "EarPods con cable",
+      "variantLabel": "Tipo de conector",
+      "variantInquiryLabel": "conector",
+      "configuratorEyebrow": "ELEGÍ LA CONEXIÓN",
+      "configuratorTitle": "Seleccioná el conector de tu dispositivo",
+      "variants": [
+        { "name": "USB-C", "priceCRC": 10000, "image": "/images/products/earpods-usb-c-premium.webp" },
+        { "name": "Lightning", "priceCRC": 10000, "image": "/images/products/earpods-lightning-premium.webp" }
+      ],
+      "referenceFeatures": [
+        { "label": "Diseño definido por la geometría del oído para un ajuste cómodo", "icon": "headphones" },
+        { "label": "Bocinas internas diseñadas para ofrecer audio de alta calidad y graves profundos", "icon": "audio" },
+        { "label": "Control integrado para volumen, reproducción y llamadas", "icon": "sparkles" },
+        { "label": "USB-C para dispositivos con ese puerto; Lightning para equipos Apple compatibles", "icon": "info" }
+      ],
+      "specSourceBrand": "Apple",
+      "specSourceLinks": [
+        { "label": "Ver ficha USB-C de Apple", "url": "https://www.apple.com/mx/shop/product/myqy3am/a/earpods-con-conector-usb-c" },
+        { "label": "Ver ficha Lightning de Apple", "url": "https://www.apple.com/mx/shop/product/mwty3am/a/earpods-con-conector-lightning" }
+      ],
+      "features": [
+        { "label": "Audífonos blancos con cable", "icon": "headphones", "verified": true },
+        { "label": "Conexión a escoger antes de consultar", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 16
+    },
+    {
+      "id": "kit-cargador-apple-35w",
+      "name": "Kit cargador USB-C 35W con cable",
+      "category": "Apple",
+      "priceCRC": 9500,
+      "image": "/images/products/kit-cargador-apple-35w-cable.webp",
+      "detailImage": "/images/products/kit-cargador-apple-35w-cable.webp",
+      "imageAlt": "Kit blanco con adaptador de corriente USB-C de 35 W y cable USB-C a USB-C",
+      "shortDescription": "Kit de carga con adaptador USB-C de 35 W y cable USB-C a USB-C. Confirmá la versión física y compatibilidad antes de comprar.",
+      "referenceFeatures": [
+        { "label": "Incluye adaptador de corriente USB-C y cable USB-C a USB-C", "icon": "package" },
+        { "label": "Potencia anunciada de 35 W en la presentación ilustrada", "icon": "battery" },
+        { "label": "Cable trenzado para carga, sincronización y transferencia de datos entre equipos USB-C compatibles", "icon": "sparkles" },
+        { "label": "La velocidad de carga depende del dispositivo y de la versión exacta del adaptador", "icon": "info" }
+      ],
+      "specSourceBrand": "Apple",
+      "specReferenceTitle": "REFERENCIAS TÉCNICAS DE APPLE",
+      "specReferenceNotice": "La presentación ilustrada muestra un adaptador de un puerto y puede diferir de los modelos oficiales enlazados. Confirmá la versión exacta disponible con la tienda.",
+      "specSourceLinks": [
+        { "label": "Referencia Apple para adaptador de 35 W", "url": "https://www.apple.com/mx/shop/product/mw2k3am/a/adaptador-de-corriente-de-35-w-con-dos-puertos-usb-c" },
+        { "label": "Referencia Apple para cable USB-C", "url": "https://www.apple.com/mx/shop/product/mw493am/a/cable-de-carga-usb-c-de-60-w-1-m" }
+      ],
+      "features": [
+        { "label": "Kit con adaptador y cable", "icon": "package", "verified": true },
+        { "label": "Confirmá versión y compatibilidad", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 17
+    },
+    {
+      "id": "adaptador-audio-35mm-apple",
+      "name": "Adaptador para audífonos de 3,5 mm",
+      "category": "Apple",
+      "priceCRC": 3700,
+      "image": "/images/products/adaptador-audio-usb-c.webp",
+      "detailImage": "/images/products/adaptador-audio-usb-c.webp",
+      "imageAlt": "Adaptador blanco de USB-C a entrada de audio de 3,5 mm dentro de su empaque",
+      "shortDescription": "Conectá audífonos o bocinas con conector de 3,5 mm a un dispositivo compatible. Elegí USB-C o Lightning antes de consultar.",
+      "inquiryProductName": "adaptador para audífonos de 3,5 mm",
+      "variantLabel": "Conector del dispositivo",
+      "variantInquiryLabel": "conector",
+      "configuratorEyebrow": "ELEGÍ LA CONEXIÓN",
+      "configuratorTitle": "Seleccioná el puerto de tu dispositivo",
+      "variants": [
+        { "name": "USB-C", "priceCRC": 3700, "image": "/images/products/adaptador-audio-usb-c.webp" },
+        { "name": "Lightning", "priceCRC": 3700, "image": "/images/products/adaptador-audio-lightning.webp" }
+      ],
+      "referenceFeatures": [
+        { "label": "Entrada hembra de 3,5 mm para conectar audífonos y otros accesorios de audio compatibles", "icon": "headphones" },
+        { "label": "Versión USB-C para dispositivos equipados con puerto USB-C", "icon": "package" },
+        { "label": "Versión Lightning para iPhone, iPad o iPod touch con puerto Lightning", "icon": "sparkles" },
+        { "label": "Apple indica iOS 10 o posterior para utilizar la versión Lightning", "icon": "info" }
+      ],
+      "specSourceBrand": "Apple",
+      "specSourceLinks": [
+        { "label": "Guía oficial de Apple para ambos adaptadores", "url": "https://support.apple.com/es-es/108042" },
+        { "label": "Ficha oficial de la versión USB-C", "url": "https://www.apple.com/mx-edu/shop/product/mw2q3am/a/adaptador-de-usb-c-a-entrada-de-35-mm-para-aud%C3%ADfonos" }
+      ],
+      "features": [
+        { "label": "Adaptador de audio a entrada de 3,5 mm", "icon": "headphones", "verified": true },
+        { "label": "Conector USB-C o Lightning a escoger", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 18
+    },
+    {
+      "id": "bateria-portatil-magnetica-iphone",
+      "name": "Batería portátil magnética para iPhone",
+      "category": "Apple",
+      "priceCRC": 10000,
+      "image": "/images/products/bateria-magnetica-5000mah.webp",
+      "detailImage": "/images/products/bateria-magnetica-5000mah.webp",
+      "imageAlt": "Batería portátil magnética blanca de 5.000 mAh para iPhone junto a su empaque",
+      "shortDescription": "Batería portátil magnética para extender la carga de un iPhone compatible. Elegí la capacidad antes de consultar.",
+      "inquiryProductName": "batería portátil magnética para iPhone",
+      "variantLabel": "Capacidad",
+      "variantInquiryLabel": "capacidad",
+      "configuratorEyebrow": "ELEGÍ LA CAPACIDAD",
+      "configuratorTitle": "Seleccioná autonomía y precio",
+      "showVariantPrices": true,
+      "variants": [
+        { "name": "5.000 mAh", "priceCRC": 10000, "image": "/images/products/bateria-magnetica-5000mah.webp" },
+        { "name": "10.000 mAh", "priceCRC": 15000, "image": "/images/products/bateria-magnetica-10000mah.webp" }
+      ],
+      "referenceFeatures": [
+        { "label": "Se acopla magnéticamente a la parte trasera de modelos de iPhone compatibles", "icon": "battery" },
+        { "label": "Permite sostener y utilizar el iPhone mientras recibe carga", "icon": "sparkles" },
+        { "label": "Apple recomienda retirar la cartera magnética antes de colocar una batería externa", "icon": "info" },
+        { "label": "Capacidad, potencia y estándar de carga del artículo deben confirmarse con la tienda", "icon": "package" }
+      ],
+      "specSourceBrand": "Apple",
+      "specReferenceTitle": "GUÍA DE COMPATIBILIDAD MAGNÉTICA DE APPLE",
+      "specReferenceNotice": "Referencia general de uso con iPhone y MagSafe. Apple no identifica estas presentaciones ilustradas de 5.000 y 10.000 mAh como modelos propios; confirmá marca, potencia y compatibilidad del artículo disponible.",
+      "specSourceLinks": [
+        { "label": "Ver guía oficial de Apple sobre baterías externas", "url": "https://support.apple.com/es-es/guide/iphone/-iphac0f12e49/ios" },
+        { "label": "Ver accesorios MagSafe disponibles en Apple", "url": "https://www.apple.com/es/shop/accessories/all/magsafe" }
+      ],
+      "features": [
+        { "label": "Batería externa magnética para iPhone compatible", "icon": "battery", "verified": true },
+        { "label": "Capacidad a escoger: 5.000 o 10.000 mAh", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 19
+    },
+    {
+      "id": "cable-samsung-usbc-3a",
+      "name": "Cable Samsung USB-C a USB-C 3A",
+      "category": "Samsung",
+      "priceCRC": 5000,
+      "image": "/images/products/cable-samsung-usbc-negro.webp",
+      "detailImage": "/images/products/cable-samsung-usbc-negro.webp",
+      "imageAlt": "Cable Samsung negro USB-C a USB-C de 3 A dentro de su empaque",
+      "shortDescription": "Cable USB-C en ambos extremos para carga y transferencia de datos. Elegí color negro o blanco.",
+      "inquiryProductName": "cable Samsung USB-C a USB-C 3A",
+      "variantLabel": "Color",
+      "variantInquiryLabel": "color",
+      "configuratorEyebrow": "ELEGÍ EL COLOR",
+      "configuratorTitle": "Seleccioná negro o blanco",
+      "variants": [
+        { "name": "Negro", "priceCRC": 5000, "image": "/images/products/cable-samsung-usbc-negro.webp" },
+        { "name": "Blanco", "priceCRC": 5000, "image": "/images/products/cable-samsung-usbc-blanco.webp" }
+      ],
+      "referenceFeatures": [
+        { "label": "Conectores USB-C en ambos extremos y corriente de hasta 3 A", "icon": "package" },
+        { "label": "Modelo Samsung EP-DX310 de referencia con longitud de 1,8 metros", "icon": "info" },
+        { "label": "Potencia de referencia de hasta 60 W y carga rápida de 25 W con equipos compatibles", "icon": "battery" },
+        { "label": "Transferencia de datos USB 2.0 de hasta 480 Mb/s", "icon": "sparkles" }
+      ],
+      "specSourceBrand": "Samsung",
+      "specReferenceNotice": "Características de referencia del Samsung EP-DX310. Confirmá longitud, modelo y compatibilidad del artículo disponible con la tienda.",
+      "specSourceLinks": [
+        { "label": "Ficha oficial Samsung en color negro", "url": "https://www.samsung.com/us/mobile-accessories/1-8m-cable-3a-black-sku-ep-dx310jbegus/" },
+        { "label": "Ficha oficial Samsung en color blanco", "url": "https://www.samsung.com/us/mobile-accessories/1-8m-cable-3a-white-sku-ep-dx310jwegus/" }
+      ],
+      "features": [
+        { "label": "Cable USB-C a USB-C de 3 A", "icon": "package", "verified": true },
+        { "label": "Disponible en negro y blanco", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 12
+    },
+    {
+      "id": "cable-apple-usbc-lightning",
+      "name": "Cable USB-C a Lightning",
+      "category": "Apple",
+      "priceCRC": 5000,
+      "image": "/images/products/cable-apple-usbc-lightning-1m.webp",
+      "detailImage": "/images/products/cable-apple-usbc-lightning-1m.webp",
+      "imageAlt": "Cable blanco Apple USB-C a Lightning de un metro dentro de su empaque",
+      "shortDescription": "Cable para cargar y sincronizar dispositivos con conector Lightning desde un puerto USB-C. Elegí la longitud que necesitás.",
+      "inquiryProductName": "cable USB-C a Lightning",
+      "variantLabel": "Longitud",
+      "variantInquiryLabel": "longitud",
+      "configuratorEyebrow": "ELEGÍ LA LONGITUD",
+      "configuratorTitle": "Seleccioná 1 metro o 2 metros",
+      "showVariantPrices": true,
+      "variants": [
+        { "name": "1 m", "priceCRC": 5000, "image": "/images/products/cable-apple-usbc-lightning-1m.webp" },
+        { "name": "2 m", "priceCRC": 6500, "image": "/images/products/cable-apple-usbc-lightning-2m.webp" }
+      ],
+      "referenceFeatures": [
+        { "label": "Conecta un dispositivo Lightning a un puerto USB-C o Thunderbolt 3 (USB-C)", "icon": "package" },
+        { "label": "Permite cargar y sincronizar dispositivos compatibles", "icon": "sparkles" },
+        { "label": "Puede conectarse a un iPad con puerto USB-C para cargar un dispositivo Lightning", "icon": "info" },
+        { "label": "Admite carga rápida en determinados modelos de iPhone y iPad con un adaptador compatible", "icon": "battery" }
+      ],
+      "specSourceBrand": "Apple",
+      "specSourceLinks": [
+        { "label": "Ficha oficial Apple del cable de 1 m", "url": "https://www.apple.com/mx/shop/product/muq93am/a/cable-de-usb-c-a-lightning-1-m" },
+        { "label": "Ficha oficial Apple del cable de 2 m", "url": "https://www.apple.com/mx/shop/product/mw2r3am/a/cable-de-usb-c-a-lightning-2-m" }
+      ],
+      "features": [
+        { "label": "Cable USB-C a Lightning", "icon": "package", "verified": true },
+        { "label": "Disponible en longitudes de 1 m y 2 m", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 14
+    },
+    {
+      "id": "cable-apple-lightning-usb-1m",
+      "name": "Cable Lightning a USB de 1 m",
+      "category": "Apple",
+      "priceCRC": 4000,
+      "image": "/images/products/cable-apple-lightning-usb-1m.png",
+      "detailImage": "/images/products/cable-apple-lightning-usb-1m.png",
+      "imageAlt": "Cable blanco Apple de Lightning a USB de un metro",
+      "shortDescription": "Cable USB 2 de un metro para cargar y sincronizar dispositivos con conector Lightning mediante un puerto USB-A compatible.",
+      "inquiryProductName": "cable Lightning a USB de 1 m",
+      "gallery": [
+        { "name": "Cable", "image": "/images/products/cable-apple-lightning-usb-1m.png" },
+        { "name": "Empaque", "image": "/images/products/cable-apple-lightning-usb-1m-empaque.png" }
+      ],
+      "referenceFeatures": [
+        { "label": "Cable USB 2 con conectores Lightning y USB-A", "icon": "package" },
+        { "label": "Permite cargar y sincronizar dispositivos con conector Lightning desde un puerto USB", "icon": "sparkles" },
+        { "label": "Puede conectarse a un adaptador de corriente USB compatible para cargar desde una toma de pared", "icon": "battery" },
+        { "label": "Longitud de un metro", "icon": "info" }
+      ],
+      "specSourceBrand": "Apple",
+      "specReferenceNotice": "Características tomadas como referencia de la ficha oficial del cable Lightning a USB de 1 m. Confirmá compatibilidad y presentación del artículo disponible con la tienda.",
+      "specSourceUrl": "https://www.apple.com/es/shop/product/muqw3zm/a/cable-de-conector-lightning-a-usb-1-m",
+      "features": [
+        { "label": "Cable Lightning a USB-A", "icon": "package", "verified": true },
+        { "label": "Longitud de 1 m", "icon": "info", "verified": true }
+      ],
+      "availability": "Consultar",
+      "featured": true,
+      "displayOrder": 20
     }
   ],
   "siteSections": [
