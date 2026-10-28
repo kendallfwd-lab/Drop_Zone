@@ -253,13 +253,13 @@ describe('catalog experience', () => {
   it('changes the Apple adapter price and WhatsApp message by selected wattage', async () => {
     render(<App />);
     const catalog = document.getElementById('productos');
-    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Adaptador USB-C para Apple/ }));
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Adaptador de corriente USB-C de Apple/ }));
     const detail = document.getElementById('caracteristicas');
-    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Adaptador USB-C para Apple' })).toBeInTheDocument());
+    await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Adaptador de corriente USB-C de Apple' })).toBeInTheDocument());
     expect(within(detail).getAllByText('₡6.500').length).toBeGreaterThan(0);
     fireEvent.change(within(detail).getByLabelText('Potencia'), { target: { value: '20 W' } });
     expect(within(detail).getAllByText('₡5.000').length).toBeGreaterThan(0);
-    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Adaptador USB-C para Apple/ });
+    const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Adaptador de corriente USB-C de Apple/ });
     const message = new URL(link.href).searchParams.get('text');
     expect(message).toContain('potencia 20 W');
     expect(message).toContain('₡5.000');
