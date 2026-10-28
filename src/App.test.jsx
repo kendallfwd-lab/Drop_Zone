@@ -211,6 +211,11 @@ describe('catalog experience', () => {
     const catalog = document.getElementById('productos');
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Pro 3/ }));
     const detail = document.getElementById('caracteristicas');
+    fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
+    expect(within(detail).getByText('TOTAL CON DESCUENTO')).toBeInTheDocument();
+    expect(within(detail).getByText('₡45.000')).toBeInTheDocument();
+    expect(within(detail).getByText(/¡Descuento de Audio! Ahorrás ₡5.000/)).toBeInTheDocument();
+    fireEvent.click(within(detail).getByRole('button', { name: 'Disminuir cantidad' }));
     fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 1 producto' }));

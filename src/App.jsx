@@ -8,7 +8,7 @@ import {
 import { ProductService } from './domain/catalog.js';
 import {
   addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
-  AUDIO_DISCOUNT_THRESHOLD, audioProductCount, cartDiscount, cartSubtotal, formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
+  AUDIO_DISCOUNT_CRC, AUDIO_DISCOUNT_THRESHOLD, audioProductCount, cartDiscount, cartSubtotal, formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
 } from './domain/cart.js';
 import { compareProducts } from './domain/comparison.js';
 import { getFallbackData } from './data/fallback.js';
@@ -354,7 +354,7 @@ function ConfiguratorPicker({ label, value, options, onChange }) {
   </div>;
 }
 
-function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart }) {
+function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart, onAudioDiscountNotice }) {
   const tabRefs = useRef([]);
   const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
   const specificationBrand = product.specSourceBrand || 'Apple';
@@ -372,7 +372,10 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
   const activeImage = selectedVariantOption?.image || selectedColorOption?.image || selectedGalleryOption?.image || product.detailImage || product.image;
   const activeUnitPrice = selectedVariantOption?.priceCRC ?? product.priceCRC;
   const activePrice = product.formatPrice(activeUnitPrice);
-  const activeQuantityPrice = product.formatPrice(activeUnitPrice * quantity);
+  const activeQuantitySubtotal = activeUnitPrice * quantity;
+  const quantityDiscount = product.category === 'Audio' && quantity >= AUDIO_DISCOUNT_THRESHOLD ? AUDIO_DISCOUNT_CRC : 0;
+  const activeQuantityPrice = product.formatPrice(Math.max(0, activeQuantitySubtotal - quantityDiscount));
+  const activeQuantitySubtotalPrice = product.formatPrice(activeQuantitySubtotal);
   const inquirySelections = { model: selectedModel, color: selectedColor, variant: selectedVariant };
 
   useEffect(() => {
@@ -386,6 +389,12 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
   const chooseColor = (color) => {
     if (!color) return;
     setSelectedColor(color.name);
+  };
+  const handleQuantityChange = (nextQuantity) => {
+    if (product.category === 'Audio' && nextQuantity >= AUDIO_DISCOUNT_THRESHOLD && quantity < AUDIO_DISCOUNT_THRESHOLD) {
+      onAudioDiscountNotice?.();
+    }
+    setQuantity(nextQuantity);
   };
   const selectTab = (next) => {
     onTabChange(next);
@@ -450,11 +459,12 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
             <div className="image-gallery-options">{product.gallery.map((item) => <button key={item.name} type="button" className={selectedGalleryImage === item.name ? 'image-gallery-option image-gallery-option--active' : 'image-gallery-option'} onClick={() => setSelectedGalleryImage(item.name)} aria-pressed={selectedGalleryImage === item.name}><img src={item.image} alt="" aria-hidden="true" /><span>{item.name}</span></button>)}</div>
           </div>}
           <div className="purchase-row">
-            <QuantityStepper value={quantity} onChange={setQuantity} />
+            <QuantityStepper value={quantity} onChange={handleQuantityChange} />
             <p>Elegí primero el modelo, tipo o color cuando corresponda.</p>
           </div>
+          {quantityDiscount > 0 && <div className="quantity-discount-notice" role="status"><Check size={16} aria-hidden="true" /><span>¡Descuento de Audio! Ahorrás {product.formatPrice(quantityDiscount)} al comprar {quantity} unidades.</span></div>}
           <div className="detail-content__footer">
-            <div className="detail-content__price" aria-live="polite"><span>{quantity > 1 ? 'PRECIO TOTAL' : 'PRECIO'}</span><strong>{activeQuantityPrice}</strong>{quantity > 1 && <small>{activePrice} por unidad</small>}</div>
+            <div className="detail-content__price" aria-live="polite"><span>{quantityDiscount > 0 ? 'TOTAL CON DESCUENTO' : quantity > 1 ? 'PRECIO TOTAL' : 'PRECIO'}</span>{quantityDiscount > 0 && <del>{activeQuantitySubtotalPrice}</del>}<strong>{activeQuantityPrice}</strong>{quantity > 1 && <small>{activePrice} por unidad{quantityDiscount > 0 ? ` · Ahorrás ${product.formatPrice(quantityDiscount)}` : ''}</small>}</div>
             <div className="detail-content__actions">
               <WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">Consultar solo este producto <ArrowRight size={17} /></WhatsAppLink>
               <button type="button" className="button button--cart" onClick={() => onAddToCart(product, inquirySelections, quantity)}><ShoppingCart size={17} aria-hidden="true" />Agregar al carrito</button>
@@ -764,7 +774,7 @@ export default function App() {
       {loadState === 'fallback' && <div className="api-notice" role="status">Vista de respaldo: el catálogo local no está conectado. Los datos mostrados proceden de la copia incluida en la web.</div>}
       <Hero settings={data.settings} reducedMotion={reducedMotion} />
       <Catalog catalog={data.catalog} selectedId={product.id} onSelect={selectProduct} reducedMotion={reducedMotion} />
-      <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} onAddToCart={handleAddToCart} />
+      <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} onAddToCart={handleAddToCart} onAudioDiscountNotice={() => setCartNotice('¡Descuento de Audio! Ahorrás ₡5.000 al comprar 2 o más unidades.')} />
       <Comparison catalog={data.catalog} onSelect={selectProduct} reducedMotion={reducedMotion} />
     </main>
     <Footer settings={data.settings} />

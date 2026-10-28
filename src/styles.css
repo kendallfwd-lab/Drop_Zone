@@ -374,6 +374,7 @@
 }
 
 .detail-content__price small{color:#8a96a6;font-size:10px}
+.detail-content__price del{color:#8a96a6;font-size:13px;line-height:1;text-decoration-thickness:1px}.quantity-discount-notice{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;border:1px solid #cce9d7;border-radius:11px;background:#f1fff6;color:#087b38;font-size:11px;font-weight:750;line-height:1.35}.quantity-discount-notice svg{flex:0 0 auto}
 @media(max-width:639px){
   .compare-card__select-wrap{max-width:none}
   .compare-card .product-picker__menu{max-height:min(280px,calc(100svh - 150px))}
