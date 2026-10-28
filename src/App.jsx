@@ -288,6 +288,72 @@ function getDefaultColorName(product) {
   return product.colors.find((color) => color.image === product.image)?.name || product.colors[0]?.name || '';
 }
 
+function ConfiguratorPicker({ label, value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const pickerRef = useRef(null);
+  const triggerRef = useRef(null);
+  const selected = options.find((option) => option === value) || options[0] || '';
+  const optionsId = `configurator-${label.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const closeOnOutsideClick = (event) => {
+      if (!pickerRef.current?.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
+
+  return <div className={`product-picker product-picker--configurator ${open ? 'product-picker--open' : ''}`} ref={pickerRef}>
+    <button
+      ref={triggerRef}
+      type="button"
+      className="product-picker__trigger"
+      role="combobox"
+      aria-label={label}
+      aria-expanded={open}
+      aria-controls={`${optionsId}-options`}
+      onClick={() => setOpen((current) => !current)}
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setOpen(true);
+        }
+      }}
+    >
+      <span>{selected}</span>
+      <ChevronDown size={17} aria-hidden="true" />
+    </button>
+    {open && <div className="product-picker__menu" role="listbox" id={`${optionsId}-options`} aria-label={label}>
+      {options.map((option) => <button
+        key={option}
+        type="button"
+        role="option"
+        aria-selected={option === value}
+        className={`product-picker__option ${option === value ? 'product-picker__option--selected' : ''}`}
+        onClick={() => {
+          onChange(option);
+          setOpen(false);
+          triggerRef.current?.focus();
+        }}
+      >
+        <span><strong>{option}</strong></span>
+        {option === value && <Check size={17} aria-hidden="true" />}
+      </button>)}
+    </div>}
+  </div>;
+}
+
 function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart }) {
   const tabRefs = useRef([]);
   const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
@@ -365,15 +431,15 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
           {(product.configurable || product.colorConfigurable) && <div className="product-configurator" role="group" aria-labelledby="color-configurator-title">
             <div className="product-configurator__heading"><div><span>{product.configuratorEyebrow || 'PERSONALIZÁ TU ESTUCHE'}</span><strong id="color-configurator-title">{product.configuratorTitle || 'Elegí modelo y color'}</strong></div><span>{product.colors.length} colores</span></div>
             <div className={product.models.length ? 'product-configurator__fields' : 'product-configurator__fields product-configurator__fields--single'}>
-              {product.models.length > 0 && <label>{product.modelLabel || 'Modelo'}<select value={selectedModel} onChange={(event) => setSelectedModel(event.target.value)}>{product.models.map((model) => <option key={model} value={model}>{model}</option>)}</select></label>}
-              <label>Color<select value={selectedColor} onChange={(event) => chooseColor(product.colors.find((color) => color.name === event.target.value))}>{product.colors.map((color) => <option key={color.name} value={color.name}>{color.name}</option>)}</select></label>
+              {product.models.length > 0 && <label>{product.modelLabel || 'Modelo'}<ConfiguratorPicker label={product.modelLabel || 'Modelo'} value={selectedModel} options={product.models} onChange={setSelectedModel} /></label>}
+              <label>Color<ConfiguratorPicker label="Color" value={selectedColor} options={product.colors.map((color) => color.name)} onChange={(colorName) => chooseColor(product.colors.find((color) => color.name === colorName))} /></label>
             </div>
             <div className="case-colors" role="group" aria-label="Colores disponibles">{product.colors.map((color) => <button key={color.name} type="button" className={selectedColor === color.name ? 'case-color case-color--active' : 'case-color'} onClick={() => chooseColor(color)} aria-label={`Elegir color ${color.name}`} aria-pressed={selectedColor === color.name}><span style={{ backgroundColor: color.hex }} aria-hidden="true" /><small>{color.name}</small></button>)}</div>
           </div>}
           {product.variants.length > 0 && <div className="product-configurator" role="group" aria-labelledby="variant-configurator-title">
             <div className="product-configurator__heading"><div><span>{product.configuratorEyebrow || 'ELEGÍ TU OPCIÓN'}</span><strong id="variant-configurator-title">{product.configuratorTitle || 'Seleccioná la opción que necesitás'}</strong></div><span>{product.variants.length} opciones</span></div>
             <div className="product-configurator__fields product-configurator__fields--single">
-              <label>{product.variantLabel || 'Opción'}<select value={selectedVariant} onChange={(event) => setSelectedVariant(event.target.value)}>{product.variants.map((variant) => <option key={variant.name} value={variant.name}>{variant.name}</option>)}</select></label>
+              <label>{product.variantLabel || 'Opción'}<ConfiguratorPicker label={product.variantLabel || 'Opción'} value={selectedVariant} options={product.variants.map((variant) => variant.name)} onChange={setSelectedVariant} /></label>
             </div>
             {product.showVariantPrices && <div className="variant-options" role="group" aria-label="Opciones de capacidad y precio">{product.variants.map((variant) => <button key={variant.name} type="button" className={selectedVariant === variant.name ? 'variant-option variant-option--active' : 'variant-option'} onClick={() => setSelectedVariant(variant.name)} aria-pressed={selectedVariant === variant.name}><span>{variant.name}</span><strong>{product.formatPrice(variant.priceCRC)}</strong></button>)}</div>}
           </div>}

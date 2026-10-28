@@ -19,6 +19,11 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+function chooseConfiguratorOption(container, label, value) {
+  fireEvent.click(within(container).getByRole('combobox', { name: label }));
+  fireEvent.click(within(container).getByRole('option', { name: value, exact: true }));
+}
+
 describe('catalog experience', () => {
   it('shows the requested hero title without the removed lines', () => {
     render(<App />);
@@ -35,10 +40,10 @@ describe('catalog experience', () => {
     });
     try {
       const { container } = render(<App />);
-      expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-hero-background.webp');
+      expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-pro-3-hero-v2.webp');
       expect(intervalCallbacks).not.toHaveLength(0);
       act(() => intervalCallbacks.forEach((callback) => callback()));
-      expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-pro-3-hero-v2.webp');
+      expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-pro-2-hero.webp');
     } finally {
       intervalSpy.mockRestore();
     }
@@ -142,8 +147,8 @@ describe('catalog experience', () => {
     const detail = document.getElementById('caracteristicas');
     await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para AirPods en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-azul-oscuro.webp'));
     expect(within(detail).queryByRole('group', { name: 'Galería de estuches' })).not.toBeInTheDocument();
-    fireEvent.change(within(detail).getByLabelText('Modelo de AirPods'), { target: { value: 'AirPods Pro 2' } });
-    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Fucsia' } });
+    chooseConfiguratorOption(detail, 'Modelo de AirPods', 'AirPods Pro 2');
+    chooseConfiguratorOption(detail, 'Color', 'Fucsia');
     expect(within(detail).getByRole('img', { name: 'Estuches para AirPods en color Fucsia' })).toHaveAttribute('src', '/images/products/estuche-fucsia.webp');
     const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Estuches para AirPods/ });
     const message = new URL(link.href).searchParams.get('text');
@@ -159,8 +164,8 @@ describe('catalog experience', () => {
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ }));
     const detail = document.getElementById('caracteristicas');
     await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp'));
-    fireEvent.change(within(detail).getByLabelText('Modelo de iPhone'), { target: { value: 'iPhone 17 Pro Max' } });
-    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Azul oscuro' } });
+    chooseConfiguratorOption(detail, 'Modelo de iPhone', 'iPhone 17 Pro Max');
+    chooseConfiguratorOption(detail, 'Color', 'Azul oscuro');
     expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp');
     const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Estuches para iPhone/ });
     const message = new URL(link.href).searchParams.get('text');
@@ -175,8 +180,8 @@ describe('catalog experience', () => {
     const catalog = document.getElementById('productos');
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ }));
     const detail = document.getElementById('caracteristicas');
-    fireEvent.change(within(detail).getByLabelText('Modelo de iPhone'), { target: { value: 'iPhone 17 Pro Max' } });
-    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Azul oscuro' } });
+    chooseConfiguratorOption(detail, 'Modelo de iPhone', 'iPhone 17 Pro Max');
+    chooseConfiguratorOption(detail, 'Color', 'Azul oscuro');
     fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
     fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
 
@@ -258,7 +263,7 @@ describe('catalog experience', () => {
     const detail = document.getElementById('caracteristicas');
     await waitFor(() => expect(within(detail).getByRole('heading', { name: 'Adaptador de corriente USB-C de Apple' })).toBeInTheDocument());
     expect(within(detail).getAllByText('₡6.500').length).toBeGreaterThan(0);
-    fireEvent.change(within(detail).getByLabelText('Potencia'), { target: { value: '20 W' } });
+    chooseConfiguratorOption(detail, 'Potencia', '20 W');
     expect(within(detail).getAllByText('₡5.000').length).toBeGreaterThan(0);
     const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Adaptador de corriente USB-C de Apple/ });
     const message = new URL(link.href).searchParams.get('text');
@@ -273,7 +278,7 @@ describe('catalog experience', () => {
     const detail = document.getElementById('caracteristicas');
     await waitFor(() => expect(within(detail).getByRole('img', { name: 'EarPods con cable, USB-C' })).toHaveAttribute('src', '/images/products/earpods-usb-c-premium.webp'));
     expect(within(detail).getAllByText('₡10.000').length).toBeGreaterThan(0);
-    fireEvent.change(within(detail).getByLabelText('Tipo de conector'), { target: { value: 'Lightning' } });
+    chooseConfiguratorOption(detail, 'Tipo de conector', 'Lightning');
     expect(within(detail).getByRole('img', { name: 'EarPods con cable, Lightning' })).toHaveAttribute('src', '/images/products/earpods-lightning-premium.webp');
     const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre EarPods con cable/ });
     const message = new URL(link.href).searchParams.get('text');
@@ -307,7 +312,7 @@ describe('catalog experience', () => {
     const detail = document.getElementById('caracteristicas');
     await waitFor(() => expect(within(detail).getByRole('img', { name: 'Adaptador para audífonos de 3,5 mm, USB-C' })).toHaveAttribute('src', '/images/products/adaptador-audio-usb-c.webp'));
     expect(within(detail).getAllByText('₡3.700').length).toBeGreaterThan(0);
-    fireEvent.change(within(detail).getByLabelText('Conector del dispositivo'), { target: { value: 'Lightning' } });
+    chooseConfiguratorOption(detail, 'Conector del dispositivo', 'Lightning');
     expect(within(detail).getByRole('img', { name: 'Adaptador para audífonos de 3,5 mm, Lightning' })).toHaveAttribute('src', '/images/products/adaptador-audio-lightning.webp');
     expect(within(detail).getByText(/iOS 10 o posterior/)).toBeInTheDocument();
     const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Adaptador para audífonos de 3,5 mm/ });
@@ -340,7 +345,7 @@ describe('catalog experience', () => {
     const detail = document.getElementById('caracteristicas');
     await waitFor(() => expect(within(detail).getByRole('img', { name: 'Cable Samsung USB-C a USB-C 3A, Negro' })).toHaveAttribute('src', '/images/products/cable-samsung-usbc-negro.webp'));
     expect(within(detail).getAllByText('₡5.000').length).toBeGreaterThan(0);
-    fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Blanco' } });
+    chooseConfiguratorOption(detail, 'Color', 'Blanco');
     expect(within(detail).getByRole('img', { name: 'Cable Samsung USB-C a USB-C 3A, Blanco' })).toHaveAttribute('src', '/images/products/cable-samsung-usbc-blanco.webp');
     const message = new URL(within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre Cable Samsung USB-C a USB-C 3A/ }).href).searchParams.get('text');
     expect(message).toContain('color Blanco');

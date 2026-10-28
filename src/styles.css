@@ -357,3 +357,22 @@
     background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,.18) 28%,rgba(255,255,255,.82) 72%,#fff 100%);
   }
 }
+
+/* Keep configurator menus inside the product detail on every viewport. */
+.product-configurator .product-picker{width:100%;min-width:0}
+.product-configurator .product-picker__trigger{min-height:42px;padding:8px 11px;border-radius:10px;font-size:13px;box-shadow:none}
+.product-configurator .product-picker__menu{max-height:min(300px,42vh);padding:5px;border-radius:13px}
+.product-configurator .product-picker__option{min-height:42px;padding:8px 10px}
+.product-configurator .product-picker__option strong{font-size:13px}
+.product-picker__menu{max-width:calc(100vw - 32px)}
+@media(max-width:479px){
+  .product-configurator{padding:14px}
+  .product-configurator__heading{gap:10px}
+  .product-configurator__heading strong{font-size:15px}
+  .product-configurator__heading>span{font-size:9px}
+  .product-configurator .product-picker__menu{max-height:min(260px,38vh)}
+}
+@media(max-width:639px){
+  .compare-card__select-wrap{max-width:none}
+  .compare-card .product-picker__menu{max-height:min(280px,calc(100svh - 150px))}
+}
