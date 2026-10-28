@@ -1,4 +1,6 @@
 const MAX_QUANTITY = 99;
+export const AUDIO_DISCOUNT_THRESHOLD = 2;
+export const AUDIO_DISCOUNT_CRC = 5000;
 
 export function clampQuantity(value) {
   const quantity = Number.parseInt(value, 10);
@@ -25,12 +27,21 @@ export function createCartItem(product, selections = {}, quantity = 1) {
     key,
     productId: product.id,
     name: product.inquiryProductName || product.name,
+    category: product.category,
     image: selectedVariant?.image || selectedColor?.image || product.image,
     imageAlt: product.imageAlt,
     options,
     unitPriceCRC: selectedVariant?.priceCRC ?? product.priceCRC,
     quantity: clampQuantity(quantity),
   };
+}
+
+export function audioProductCount(cart) {
+  return cart.reduce((total, item) => total + (item.category === 'Audio' ? item.quantity : 0), 0);
+}
+
+export function cartDiscount(cart) {
+  return audioProductCount(cart) >= AUDIO_DISCOUNT_THRESHOLD ? AUDIO_DISCOUNT_CRC : 0;
 }
 
 export function addCartItem(cart, nextItem) {
@@ -54,11 +65,13 @@ export function cartItemCount(cart) {
 }
 
 export function cartTotal(cart) {
-  return cart.reduce((total, item) => total + item.unitPriceCRC * item.quantity, 0);
+  const subtotal = cart.reduce((total, item) => total + item.unitPriceCRC * item.quantity, 0);
+  return Math.max(0, subtotal - cartDiscount(cart));
 }
 
 export function createCartWhatsAppUrl(phone, cart) {
   const number = String(phone).replace(/\D/g, '');
+  const discount = cartDiscount(cart);
   const lines = cart.flatMap((item, index) => [
     `${index + 1}. ${item.name}`,
     ...item.options.map((option) => `   • ${option}`),
@@ -70,6 +83,7 @@ export function createCartWhatsAppUrl(phone, cart) {
     '',
     ...lines,
     '',
+    ...(discount > 0 ? [`Descuento Audio (2 o más productos): -${formatCRC(discount)}`, ''] : []),
     `Total publicado: ${formatCRC(cartTotal(cart))}`,
     '',
     '¿Podrían confirmarme disponibilidad y detalles de entrega?',
@@ -83,7 +97,7 @@ export function readStoredCart(storage, key = 'drop-zone-cart') {
     if (!Array.isArray(value)) return [];
     return value
       .filter((item) => item && typeof item.key === 'string' && typeof item.name === 'string' && Number.isInteger(item.unitPriceCRC) && item.unitPriceCRC >= 0)
-      .map((item) => ({ ...item, options: Array.isArray(item.options) ? item.options.filter((option) => typeof option === 'string') : [], quantity: clampQuantity(item.quantity) }));
+      .map((item) => ({ ...item, category: typeof item.category === 'string' ? item.category : '', options: Array.isArray(item.options) ? item.options.filter((option) => typeof option === 'string') : [], quantity: clampQuantity(item.quantity) }));
   } catch {
     return [];
   }

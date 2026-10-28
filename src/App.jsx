@@ -8,7 +8,7 @@ import {
 import { ProductService } from './domain/catalog.js';
 import {
   addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
-  formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
+  audioProductCount, cartDiscount, formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
 } from './domain/cart.js';
 import { compareProducts } from './domain/comparison.js';
 import { getFallbackData } from './data/fallback.js';
@@ -610,6 +610,8 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
   const closeButtonRef = useRef(null);
   const count = cartItemCount(cart);
   const total = cartTotal(cart);
+  const audioCount = audioProductCount(cart);
+  const discount = cartDiscount(cart);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -649,7 +651,7 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
             </div>
           </article>)}
         </div>
-        <div className="cart-drawer__summary"><div><span>{count} {count === 1 ? 'producto' : 'productos'}</span><strong>Total: {formatCRC(total)}</strong></div><p>La disponibilidad y entrega se confirman por WhatsApp.</p></div>
+        <div className="cart-drawer__summary"><div><span>{count} {count === 1 ? 'producto' : 'productos'}</span><strong>Total: {formatCRC(total)}</strong></div>{discount > 0 ? <p className="cart-drawer__discount">Descuento Audio aplicado: -{formatCRC(discount)}</p> : audioCount === 1 ? <p className="cart-drawer__promo">Agregá otro producto de Audio y obtené ₡5.000 de descuento.</p> : null}<p>La disponibilidad y entrega se confirman por WhatsApp.</p></div>
         <div className="cart-drawer__actions">
           <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} aria-label="Enviar pedido completo por WhatsApp"><MessageCircle size={18} aria-hidden="true" />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
           <button type="button" className="cart-continue" onClick={onClose}>Seguir comprando</button>

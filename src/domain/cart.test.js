@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import data from '../../db.json';
 import { Product } from './catalog.js';
 import {
-  addCartItem, cartItemCount, cartTotal, createCartItem, createCartWhatsAppUrl,
+  AUDIO_DISCOUNT_CRC, addCartItem, cartDiscount, cartItemCount, cartTotal, createCartItem, createCartWhatsAppUrl,
   readStoredCart, removeCartItem, updateCartItemQuantity,
 } from './cart.js';
 
@@ -30,6 +30,18 @@ describe('shopping cart', () => {
     expect(message).toContain('Cantidad: 2');
     expect(message).toContain('Subtotal: ₡30.000');
     expect(message).toContain('Total publicado: ₡30.000');
+  });
+
+  it('applies a one-time discount after two audio products', () => {
+    const firstAudio = new Product(data.products.find((item) => item.id === 'airpods-pro-3'));
+    const secondAudio = new Product(data.products.find((item) => item.id === 'airpods-pro-2'));
+    const cart = [createCartItem(firstAudio), createCartItem(secondAudio)];
+    const subtotal = cart.reduce((total, item) => total + item.unitPriceCRC, 0);
+    const url = new URL(createCartWhatsAppUrl(data.settings.whatsappPhone, cart));
+
+    expect(cartDiscount(cart)).toBe(AUDIO_DISCOUNT_CRC);
+    expect(cartTotal(cart)).toBe(subtotal - AUDIO_DISCOUNT_CRC);
+    expect(url.searchParams.get('text')).toContain('Descuento Audio (2 o más productos): -₡5.000');
   });
 
   it('updates, limits and removes cart quantities safely', () => {
