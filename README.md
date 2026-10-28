@@ -24,6 +24,10 @@ npm run dev
 
 Abrí la URL que indique Vite, normalmente `http://127.0.0.1:5173/`. La API local usa el puerto 3001. Si no está disponible, la página muestra un aviso y utiliza una copia de `db.json` incluida en el build. En una web estática publicada esa copia queda congelada hasta la siguiente compilación; `json-server` no es una base de datos persistente de producción.
 
+## Publicar en Vercel
+
+Importá el proyecto en Vercel con el preset **Vite**, el comando de compilación `npm run build` y el directorio de salida `dist`. No se necesita una función API ni un archivo `vercel.json`: en producción se usa directamente el catálogo incluido desde `db.json`, sin solicitar el endpoint local `/api`. Los cambios a productos, precios o configuración requieren una nueva compilación y publicación. El carrito prepara el pedido para WhatsApp y no procesa pagos.
+
 ## Editar el catálogo
 
 `db.json` concentra precios en colones, productos, orden, descripciones, características, WhatsApp, Instagram, ubicación y enlaces de navegación. Cambiá `priceCRC` como número entero, sin símbolo de moneda. `displayOrder` define el orden. `referenceFeatures` contiene las características del modelo publicadas por Apple y `specSourceUrl` enlaza la ficha oficial. Estas características son una referencia, no una verificación del artículo disponible en la tienda. Confirmá físicamente la versión y sus funciones antes de anunciar especificaciones como propias del inventario.

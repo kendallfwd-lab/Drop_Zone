@@ -17,6 +17,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
 });
 
 function chooseConfiguratorOption(container, label, value) {
@@ -25,6 +26,15 @@ function chooseConfiguratorOption(container, label, value) {
 }
 
 describe('catalog experience', () => {
+  it('uses the bundled catalog without requesting a development API in production', async () => {
+    vi.stubEnv('DEV', false);
+    render(<App />);
+
+    await waitFor(() => expect(screen.queryByText('Actualizando catálogo…')).not.toBeInTheDocument());
+    expect(fetch).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('El producto que quieras de la mejor calidad');
+  });
+
   it('shows the requested hero title without the removed lines', () => {
     render(<App />);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('El producto que quieras de la mejor calidad');

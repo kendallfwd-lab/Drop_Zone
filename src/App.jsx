@@ -695,6 +695,11 @@ export default function App() {
   const closeCart = useCallback(() => setCartOpen(false), []);
 
   useEffect(() => {
+    if (!import.meta.env.DEV) {
+      setLoadState('ready');
+      return undefined;
+    }
+
     const controller = new AbortController();
     service.load(controller.signal).then((next) => { setData(next); setLoadState('ready'); }).catch((error) => { if (error.name !== 'AbortError') setLoadState('fallback'); });
     return () => controller.abort();
