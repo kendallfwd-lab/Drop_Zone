@@ -24,6 +24,21 @@
 @media(max-width:639px){.comparison-stage{grid-template-columns:1fr;gap:0}.compare-card{padding:20px;border-radius:21px}.compare-card__visual{height:245px}.compare-card__info>div{align-items:center;flex-direction:row}.comparison-stage__versus{position:relative;top:auto;left:auto;transform:none;justify-self:center;margin:-16px 0;grid-row:2}.comparison-summary{align-items:flex-start;padding:15px}.comparison-summary strong{font-size:14px}.comparison-summary p{font-size:11px}.comparison__heading>p{max-width:none}}
 @media(max-width:374px){.compare-card__info>div{align-items:flex-start;flex-direction:column}.compare-card__visual{height:215px}.comparison-summary__mark{width:30px;height:30px;flex-basis:30px}}
 
+/* Keep the detail and comparison sections focused on the product itself. */
+.section-heading--detail .eyebrow,
+.section-heading--detail>p,
+.comparison__heading .eyebrow,
+.comparison__heading>p,
+.detail-content__top,
+.detail-showcase__heading,
+.detail-content__body .detail-content__category:not(.detail-content__category--features),
+.compare-card__top,
+.compare-card__info>p{
+  display:none;
+}
+
+.compare-card__select-wrap{margin-top:0}
+
 /* Keep mobile scrolling touch-friendly without a visually heavy side rail. */
 @media(max-width:767px){
   html,body{max-width:100%;overflow-x:hidden;-ms-overflow-style:none;scrollbar-width:none}

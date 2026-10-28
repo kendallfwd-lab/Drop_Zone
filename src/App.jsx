@@ -281,7 +281,6 @@ function Catalog({ catalog, selectedId, onSelect, reducedMotion }) {
       </div>
       <p className="catalog-filter-status" aria-live="polite">{products.length} {products.length === 1 ? 'producto' : 'productos'} en {filter.label}</p>
       <div className="product-grid">{products.map((product, index) => <ProductCard key={product.id} product={product} selected={selectedId === product.id} onSelect={onSelect} index={index} reducedMotion={reducedMotion} />)}</div>
-      <p className="catalog__note">Imágenes ilustrativas. Consultá la versión y características del artículo disponible.</p>
     </div>
   </section>;
 }
