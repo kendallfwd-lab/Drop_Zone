@@ -44,6 +44,10 @@ export function cartDiscount(cart) {
   return audioProductCount(cart) >= AUDIO_DISCOUNT_THRESHOLD ? AUDIO_DISCOUNT_CRC : 0;
 }
 
+export function cartSubtotal(cart) {
+  return cart.reduce((total, item) => total + item.unitPriceCRC * item.quantity, 0);
+}
+
 export function addCartItem(cart, nextItem) {
   const existing = cart.find((item) => item.key === nextItem.key);
   if (!existing) return [...cart, nextItem];
@@ -65,8 +69,7 @@ export function cartItemCount(cart) {
 }
 
 export function cartTotal(cart) {
-  const subtotal = cart.reduce((total, item) => total + item.unitPriceCRC * item.quantity, 0);
-  return Math.max(0, subtotal - cartDiscount(cart));
+  return Math.max(0, cartSubtotal(cart) - cartDiscount(cart));
 }
 
 export function createCartWhatsAppUrl(phone, cart) {

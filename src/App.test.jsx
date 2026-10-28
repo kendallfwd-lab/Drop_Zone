@@ -205,6 +205,23 @@ describe('catalog experience', () => {
     expect(within(cart).getByText('Tu carrito está vacío')).toBeInTheDocument();
   });
 
+  it('shows the Audio discount in the cart and notifies when the threshold is reached', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Pro 3/ }));
+    const detail = document.getElementById('caracteristicas');
+    fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 1 producto' }));
+    const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    fireEvent.click(within(cart).getByRole('button', { name: 'Aumentar cantidad' }));
+    expect(document.querySelector('.cart-toast')).toHaveTextContent('Descuento aplicado! Ahorraste ₡5.000');
+    expect(within(cart).getByText('Subtotal')).toBeInTheDocument();
+    expect(within(cart).getByText('Descuento Audio')).toBeInTheDocument();
+    expect(within(cart).getByText('-₡5.000')).toBeInTheDocument();
+    expect(within(cart).getByText('¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.')).toBeInTheDocument();
+  });
+
   it('shows Samsung-sourced Galaxy Buds3 Pro specifications and price', async () => {
     render(<App />);
     fireEvent.click(within(document.getElementById('productos')).getByRole('button', { name: /Ver detalles de Samsung Galaxy Buds3 Pro/ }));

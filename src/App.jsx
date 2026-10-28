@@ -8,7 +8,7 @@ import {
 import { ProductService } from './domain/catalog.js';
 import {
   addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
-  audioProductCount, cartDiscount, formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
+  AUDIO_DISCOUNT_THRESHOLD, audioProductCount, cartDiscount, cartSubtotal, formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
 } from './domain/cart.js';
 import { compareProducts } from './domain/comparison.js';
 import { getFallbackData } from './data/fallback.js';
@@ -187,7 +187,7 @@ function Header({ settings, sections, cartCount, onOpenCart }) {
       </nav>
       <div className="site-header__actions">
         <WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp header-whatsapp"><span className="header-whatsapp__long">Escríbenos</span><span className="header-whatsapp__short">WhatsApp</span></WhatsAppLink>
-        <button className="header-cart" type="button" onClick={onOpenCart} aria-label={`Abrir carrito, ${cartCount} productos`}>
+        <button className="header-cart" type="button" onClick={onOpenCart} aria-label={`Abrir carrito, ${cartCount} ${cartCount === 1 ? 'producto' : 'productos'}`}>
           <ShoppingCart size={19} aria-hidden="true" />
           <span className={cartCount > 0 ? 'header-cart__count header-cart__count--visible' : 'header-cart__count'} aria-hidden="true">{cartCount}</span>
         </button>
@@ -609,6 +609,7 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
 function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove, onEditProduct }) {
   const closeButtonRef = useRef(null);
   const count = cartItemCount(cart);
+  const subtotal = cartSubtotal(cart);
   const total = cartTotal(cart);
   const audioCount = audioProductCount(cart);
   const discount = cartDiscount(cart);
@@ -651,7 +652,14 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
             </div>
           </article>)}
         </div>
-        <div className="cart-drawer__summary"><div><span>{count} {count === 1 ? 'producto' : 'productos'}</span><strong>Total: {formatCRC(total)}</strong></div>{discount > 0 ? <p className="cart-drawer__discount">Descuento Audio aplicado: -{formatCRC(discount)}</p> : audioCount === 1 ? <p className="cart-drawer__promo">Agregá otro producto de Audio y obtené ₡5.000 de descuento.</p> : null}<p>La disponibilidad y entrega se confirman por WhatsApp.</p></div>
+        <div className="cart-drawer__summary">
+          <div className="cart-drawer__summary-title"><span>Resumen del pedido</span><span>{count} {count === 1 ? 'producto' : 'productos'}</span></div>
+          <div className="cart-drawer__summary-row"><span>Subtotal</span><strong>{formatCRC(subtotal)}</strong></div>
+          {discount > 0 && <div className="cart-drawer__discount"><span><Check size={14} aria-hidden="true" />Descuento Audio</span><strong>-{formatCRC(discount)}</strong></div>}
+          <div className="cart-drawer__total"><span className="sr-only">Total</span><strong>Total: {formatCRC(total)}</strong></div>
+          {discount > 0 ? <p className="cart-drawer__promo cart-drawer__promo--active">¡Descuento aplicado! Ahorraste {formatCRC(discount)} por comprar 2 productos de Audio.</p> : audioCount === 1 ? <p className="cart-drawer__promo">Agregá otro producto de Audio y obtené ₡5.000 de descuento.</p> : null}
+          <p>La disponibilidad y entrega se confirman por WhatsApp.</p>
+        </div>
         <div className="cart-drawer__actions">
           <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} aria-label="Enviar pedido completo por WhatsApp"><MessageCircle size={18} aria-hidden="true" />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
           <button type="button" className="cart-continue" onClick={onClose}>Seguir comprando</button>
@@ -721,8 +729,22 @@ export default function App() {
   };
   const handleAddToCart = (selectedProduct, selections, quantity) => {
     const item = createCartItem(selectedProduct, selections, quantity);
-    setCart((current) => addCartItem(current, item));
-    setCartNotice(`${item.name} agregado al carrito`);
+    const previousAudioCount = audioProductCount(cart);
+    const nextCart = addCartItem(cart, item);
+    const nextAudioCount = audioProductCount(nextCart);
+    setCart(nextCart);
+    setCartNotice(nextAudioCount >= AUDIO_DISCOUNT_THRESHOLD && previousAudioCount < AUDIO_DISCOUNT_THRESHOLD
+      ? '¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.'
+      : `${item.name} agregado al carrito`);
+  };
+  const handleUpdateCartQuantity = (key, quantity) => {
+    const previousAudioCount = audioProductCount(cart);
+    const nextCart = updateCartItemQuantity(cart, key, quantity);
+    const nextAudioCount = audioProductCount(nextCart);
+    setCart(nextCart);
+    if (nextAudioCount >= AUDIO_DISCOUNT_THRESHOLD && previousAudioCount < AUDIO_DISCOUNT_THRESHOLD) {
+      setCartNotice('¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.');
+    }
   };
   const handleEditCartProduct = (id) => {
     closeCart();
@@ -744,7 +766,7 @@ export default function App() {
       <Comparison catalog={data.catalog} onSelect={selectProduct} reducedMotion={reducedMotion} />
     </main>
     <Footer settings={data.settings} />
-    <CartDrawer open={cartOpen} cart={cart} settings={data.settings} onClose={closeCart} onUpdateQuantity={(key, quantity) => setCart((current) => updateCartItemQuantity(current, key, quantity))} onRemove={(key) => setCart((current) => removeCartItem(current, key))} onEditProduct={handleEditCartProduct} />
+    <CartDrawer open={cartOpen} cart={cart} settings={data.settings} onClose={closeCart} onUpdateQuantity={handleUpdateCartQuantity} onRemove={(key) => setCart((current) => removeCartItem(current, key))} onEditProduct={handleEditCartProduct} />
     {cartNotice && <div className="cart-toast" role="status"><Check size={16} aria-hidden="true" />{cartNotice}</div>}
     <span className="sr-only" role="status" aria-live="polite">{product.name} seleccionado, precio {product.formattedPrice}</span>
   </>;
