@@ -370,7 +370,9 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
   const selectedVariantOption = product.variants.find((variant) => variant.name === selectedVariant);
   const selectedGalleryOption = product.gallery.find((item) => item.name === selectedGalleryImage);
   const activeImage = selectedVariantOption?.image || selectedColorOption?.image || selectedGalleryOption?.image || product.detailImage || product.image;
-  const activePrice = product.formatPrice(selectedVariantOption?.priceCRC ?? product.priceCRC);
+  const activeUnitPrice = selectedVariantOption?.priceCRC ?? product.priceCRC;
+  const activePrice = product.formatPrice(activeUnitPrice);
+  const activeQuantityPrice = product.formatPrice(activeUnitPrice * quantity);
   const inquirySelections = { model: selectedModel, color: selectedColor, variant: selectedVariant };
 
   useEffect(() => {
@@ -452,7 +454,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
             <p>Elegí primero el modelo, tipo o color cuando corresponda.</p>
           </div>
           <div className="detail-content__footer">
-            <div><span>PRECIO</span><strong>{activePrice}</strong></div>
+            <div className="detail-content__price" aria-live="polite"><span>{quantity > 1 ? 'PRECIO TOTAL' : 'PRECIO'}</span><strong>{activeQuantityPrice}</strong>{quantity > 1 && <small>{activePrice} por unidad</small>}</div>
             <div className="detail-content__actions">
               <WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">Consultar solo este producto <ArrowRight size={17} /></WhatsAppLink>
               <button type="button" className="button button--cart" onClick={() => onAddToCart(product, inquirySelections, quantity)}><ShoppingCart size={17} aria-hidden="true" />Agregar al carrito</button>

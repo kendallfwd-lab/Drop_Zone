@@ -183,6 +183,7 @@ describe('catalog experience', () => {
     chooseConfiguratorOption(detail, 'Modelo de iPhone', 'iPhone 17 Pro Max');
     chooseConfiguratorOption(detail, 'Color', 'Azul oscuro');
     fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
+    expect(within(detail).getByText('₡12.000')).toBeInTheDocument();
     fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 2 productos' }));

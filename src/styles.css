@@ -372,6 +372,8 @@
   .product-configurator__heading>span{font-size:9px}
   .product-configurator .product-picker__menu{max-height:min(260px,38vh)}
 }
+
+.detail-content__price small{color:#8a96a6;font-size:10px}
 @media(max-width:639px){
   .compare-card__select-wrap{max-width:none}
   .compare-card .product-picker__menu{max-height:min(280px,calc(100svh - 150px))}
