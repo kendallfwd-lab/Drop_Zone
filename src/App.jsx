@@ -16,7 +16,6 @@ import { getFallbackData } from './data/fallback.js';
 const service = new ProductService();
 const iconMap = { headphones: Headphones, info: Info, pen: PenLine, audio: AudioLines, bluetooth: Bluetooth, battery: BatteryFull, droplet: Droplets, sparkles: Sparkles, package: Package, palette: Palette };
 const heroBackdrops = [
-  { id: 'airpods-background', image: '/images/hero/airpods-hero-background.webp' },
   { id: 'airpods-pro-3', image: '/images/hero/airpods-pro-3-hero-v2.webp' },
   { id: 'airpods-pro-2', image: '/images/hero/airpods-pro-2-hero.webp' },
   { id: 'airpods-3', image: '/images/hero/airpods-3-hero.webp' },
