@@ -105,7 +105,7 @@ describe('catalog experience', () => {
     expect(within(catalog).getByRole('img', { name: /AirPods Max en color azul medianoche/ })).toHaveAttribute('src', '/images/products/airpods-max-azul-medianoche.webp');
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Max/ }));
     const detail = document.getElementById('caracteristicas');
-    await waitFor(() => expect(within(detail).getByRole('img', { name: 'AirPods Max en color Blanco y gris' })).toHaveAttribute('src', '/images/products/airpods-max-blanco-gris.webp'));
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'AirPods Max en color Azul medianoche' })).toHaveAttribute('src', '/images/products/airpods-max-azul-medianoche.webp'));
     fireEvent.click(within(detail).getByRole('button', { name: 'Elegir color Azul medianoche' }));
     expect(within(detail).getByRole('img', { name: 'AirPods Max en color Azul medianoche' })).toHaveAttribute('src', '/images/products/airpods-max-azul-medianoche.webp');
     const link = within(detail).getByRole('link', { name: /Consultar por WhatsApp sobre AirPods Max/ });
@@ -140,7 +140,7 @@ describe('catalog experience', () => {
     const catalog = document.getElementById('productos');
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para AirPods/ }));
     const detail = document.getElementById('caracteristicas');
-    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para AirPods en color Verde pino' })).toHaveAttribute('src', '/images/products/estuche-verde-pino.webp'));
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para AirPods en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-azul-oscuro.webp'));
     expect(within(detail).queryByRole('group', { name: 'Galería de estuches' })).not.toBeInTheDocument();
     fireEvent.change(within(detail).getByLabelText('Modelo de AirPods'), { target: { value: 'AirPods Pro 2' } });
     fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Fucsia' } });
@@ -158,7 +158,7 @@ describe('catalog experience', () => {
     const catalog = document.getElementById('productos');
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ }));
     const detail = document.getElementById('caracteristicas');
-    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Arena' })).toHaveAttribute('src', '/images/products/estuche-iphone-arena.webp'));
+    await waitFor(() => expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp'));
     fireEvent.change(within(detail).getByLabelText('Modelo de iPhone'), { target: { value: 'iPhone 17 Pro Max' } });
     fireEvent.change(within(detail).getByLabelText('Color'), { target: { value: 'Azul oscuro' } });
     expect(within(detail).getByRole('img', { name: 'Estuches para iPhone en color Azul oscuro' })).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp');
@@ -182,6 +182,7 @@ describe('catalog experience', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 2 productos' }));
     const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    expect(cart.querySelector('.cart-item img')).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp');
     expect(within(cart).getByText('Modelo de iPhone: iPhone 17 Pro Max')).toBeInTheDocument();
     expect(within(cart).getByText('Color: Azul oscuro')).toBeInTheDocument();
     expect(within(cart).getByText('Total: ₡12.000')).toBeInTheDocument();

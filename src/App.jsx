@@ -284,6 +284,10 @@ function Catalog({ catalog, selectedId, onSelect, reducedMotion }) {
   </section>;
 }
 
+function getDefaultColorName(product) {
+  return product.colors.find((color) => color.image === product.image)?.name || product.colors[0]?.name || '';
+}
+
 function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart }) {
   const tabRefs = useRef([]);
   const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
@@ -292,7 +296,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
     ? product.specSourceLinks
     : product.specSourceUrl ? [{ label: `Ver ficha oficial de ${specificationBrand}`, url: product.specSourceUrl }] : [];
   const [selectedModel, setSelectedModel] = useState(product.models[0] || '');
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || '');
+  const [selectedColor, setSelectedColor] = useState(() => getDefaultColorName(product));
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]?.name || '');
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(product.gallery[0]?.name || '');
   const [quantity, setQuantity] = useState(1);
@@ -305,7 +309,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
 
   useEffect(() => {
     setSelectedModel(product.models[0] || '');
-    setSelectedColor(product.colors[0]?.name || '');
+    setSelectedColor(getDefaultColorName(product));
     setSelectedVariant(product.variants[0]?.name || '');
     setSelectedGalleryImage(product.gallery[0]?.name || '');
     setQuantity(1);
