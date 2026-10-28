@@ -354,7 +354,7 @@ function ConfiguratorPicker({ label, value, options, onChange }) {
   </div>;
 }
 
-function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart, onAudioDiscountNotice }) {
+function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart }) {
   const tabRefs = useRef([]);
   const features = product.referenceFeatures.length ? product.referenceFeatures : product.verifiedFeatures;
   const specificationBrand = product.specSourceBrand || 'Apple';
@@ -391,9 +391,6 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
     setSelectedColor(color.name);
   };
   const handleQuantityChange = (nextQuantity) => {
-    if (product.category === 'Audio' && nextQuantity >= AUDIO_DISCOUNT_THRESHOLD && quantity < AUDIO_DISCOUNT_THRESHOLD) {
-      onAudioDiscountNotice?.();
-    }
     setQuantity(nextQuantity);
   };
   const selectTab = (next) => {
@@ -462,7 +459,7 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
             <QuantityStepper value={quantity} onChange={handleQuantityChange} />
             <p>Elegí primero el modelo, tipo o color cuando corresponda.</p>
           </div>
-          {quantityDiscount > 0 && <div className="quantity-discount-notice" role="status"><Check size={16} aria-hidden="true" /><span>¡Descuento de Audio! Ahorrás {product.formatPrice(quantityDiscount)} al comprar {quantity} unidades.</span></div>}
+          {quantityDiscount > 0 && <div className="quantity-discount-notice" role="status"><span className="quantity-discount-notice__icon"><Check size={16} aria-hidden="true" /></span><span className="quantity-discount-notice__copy"><strong>Descuento aplicado</strong><small>Ahorrás {product.formatPrice(quantityDiscount)} por comprar {quantity} unidades de Audio.</small></span></div>}
           <div className="detail-content__footer">
             <div className="detail-content__price" aria-live="polite"><span>{quantityDiscount > 0 ? 'TOTAL CON DESCUENTO' : quantity > 1 ? 'PRECIO TOTAL' : 'PRECIO'}</span>{quantityDiscount > 0 && <del>{activeQuantitySubtotalPrice}</del>}<strong>{activeQuantityPrice}</strong>{quantity > 1 && <small>{activePrice} por unidad{quantityDiscount > 0 ? ` · Ahorrás ${product.formatPrice(quantityDiscount)}` : ''}</small>}</div>
             <div className="detail-content__actions">
@@ -788,7 +785,7 @@ export default function App() {
       {loadState === 'fallback' && <div className="api-notice" role="status">Vista de respaldo: el catálogo local no está conectado. Los datos mostrados proceden de la copia incluida en la web.</div>}
       <Hero settings={data.settings} reducedMotion={reducedMotion} />
       <Catalog catalog={data.catalog} selectedId={product.id} onSelect={selectProduct} reducedMotion={reducedMotion} />
-      <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} onAddToCart={handleAddToCart} onAudioDiscountNotice={() => setCartNotice('¡Descuento de Audio! Ahorrás ₡5.000 al comprar 2 o más unidades.')} />
+      <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} onAddToCart={handleAddToCart} />
       <Comparison catalog={data.catalog} onSelect={selectProduct} reducedMotion={reducedMotion} />
     </main>
     <Footer settings={data.settings} />

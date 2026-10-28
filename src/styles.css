@@ -374,7 +374,7 @@
 }
 
 .detail-content__price small{color:#8a96a6;font-size:10px}
-.detail-content__price del{color:#8a96a6;font-size:13px;line-height:1;text-decoration-thickness:1px}.quantity-discount-notice{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 12px;border:1px solid #cce9d7;border-radius:11px;background:#f1fff6;color:#087b38;font-size:11px;font-weight:750;line-height:1.35}.quantity-discount-notice svg{flex:0 0 auto}
+.detail-content__price del{color:#8a96a6;font-size:13px;line-height:1;text-decoration-thickness:1px}.quantity-discount-notice{display:flex;align-items:center;gap:10px;margin-top:10px;padding:11px 13px;border:1px solid #bfe8cf;border-radius:14px;background:linear-gradient(135deg,#f4fff8,#ebfff3);color:#087b38;box-shadow:0 8px 20px rgba(8,123,56,.07)}.quantity-discount-notice__icon{width:25px;height:25px;display:grid;place-items:center;flex:0 0 25px;border-radius:50%;background:#0a9d49;color:#fff}.quantity-discount-notice__icon svg{stroke-width:2.5}.quantity-discount-notice__copy{display:grid;gap:2px;min-width:0}.quantity-discount-notice__copy strong{font-size:11px;line-height:1.2}.quantity-discount-notice__copy small{color:#2d7d50;font-size:10px;line-height:1.35}
 @media(max-width:639px){
   .compare-card__select-wrap{max-width:none}
   .compare-card .product-picker__menu{max-height:min(280px,calc(100svh - 150px))}

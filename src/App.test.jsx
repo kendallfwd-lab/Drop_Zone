@@ -214,7 +214,8 @@ describe('catalog experience', () => {
     fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
     expect(within(detail).getByText('TOTAL CON DESCUENTO')).toBeInTheDocument();
     expect(within(detail).getByText('₡45.000')).toBeInTheDocument();
-    expect(within(detail).getByText(/¡Descuento de Audio! Ahorrás ₡5.000/)).toBeInTheDocument();
+    expect(within(detail).getByText('Descuento aplicado')).toBeInTheDocument();
+    expect(within(detail).getByText('Ahorrás ₡5.000 por comprar 2 unidades de Audio.')).toBeInTheDocument();
     fireEvent.click(within(detail).getByRole('button', { name: 'Disminuir cantidad' }));
     fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
 
