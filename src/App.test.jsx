@@ -228,6 +228,20 @@ describe('catalog experience', () => {
     expect(within(cart).getByText('¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.')).toBeInTheDocument();
   });
 
+  it('restores the Audio discount for older cart items when quantity increases', () => {
+    window.localStorage.setItem('drop-zone-cart', JSON.stringify([{
+      key: 'airpods-4', productId: 'airpods-4', name: 'AirPods 4', unitPriceCRC: 18000,
+      quantity: 1, options: [], image: '/images/products/airpods-4.webp', imageAlt: 'AirPods 4',
+    }]));
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 1 producto' }));
+    const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    expect(within(cart).getByText(/Agregá otro producto de Audio/)).toBeInTheDocument();
+    fireEvent.click(within(cart).getByRole('button', { name: 'Aumentar cantidad' }));
+    expect(within(cart).getByText('Descuento Audio')).toBeInTheDocument();
+    expect(within(cart).getByText('-₡5.000')).toBeInTheDocument();
+  });
+
   it('shows Samsung-sourced Galaxy Buds3 Pro specifications and price', async () => {
     render(<App />);
     fireEvent.click(within(document.getElementById('productos')).getByRole('button', { name: /Ver detalles de Samsung Galaxy Buds3 Pro/ }));

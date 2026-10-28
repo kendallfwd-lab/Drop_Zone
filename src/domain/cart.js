@@ -52,7 +52,7 @@ export function addCartItem(cart, nextItem) {
   const existing = cart.find((item) => item.key === nextItem.key);
   if (!existing) return [...cart, nextItem];
   return cart.map((item) => item.key === nextItem.key
-    ? { ...item, quantity: clampQuantity(item.quantity + nextItem.quantity) }
+    ? { ...item, category: item.category || nextItem.category, quantity: clampQuantity(item.quantity + nextItem.quantity) }
     : item);
 }
 

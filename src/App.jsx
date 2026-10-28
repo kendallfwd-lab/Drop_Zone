@@ -718,6 +718,20 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    setCart((current) => {
+      let changed = false;
+      const hydrated = current.map((item) => {
+        if (item.category) return item;
+        const storedProduct = data.catalog.find(item.productId);
+        if (!storedProduct?.category) return item;
+        changed = true;
+        return { ...item, category: storedProduct.category };
+      });
+      return changed ? hydrated : current;
+    });
+  }, [data.catalog]);
+
+  useEffect(() => {
     try {
       window.localStorage.setItem('drop-zone-cart', JSON.stringify(cart));
     } catch {
