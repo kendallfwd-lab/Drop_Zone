@@ -382,7 +382,8 @@ describe('catalog experience', () => {
     expect(within(comparison).getByRole('table', { name: 'Comparación entre AirPods Pro 3 y AirPods Pro 2' })).toBeInTheDocument();
     expect(within(comparison).getByText('Autonomía')).toBeInTheDocument();
     expect(within(comparison).getByRole('button', { name: 'Ocultar diferencias' })).toHaveAttribute('aria-expanded', 'true');
-    fireEvent.change(within(comparison).getByRole('combobox', { name: 'Segundo producto para comparar' }), { target: { value: 'airpods-3' } });
+    fireEvent.click(within(comparison).getByRole('combobox', { name: 'Segundo producto para comparar' }));
+    fireEvent.click(within(comparison).getByRole('option', { name: /AirPods 3/ }));
     expect(within(comparison).getByText('Diferencia de precio: ₡9.000')).toBeInTheDocument();
     expect(within(comparison).getByRole('button', { name: 'Ver diferencias' })).toHaveAttribute('aria-expanded', 'false');
     fireEvent.click(within(comparison).getByRole('button', { name: 'Ver detalles de AirPods 3' }));

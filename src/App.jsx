@@ -409,9 +409,64 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
 
   useEffect(() => setExpanded(false), [firstId, secondId]);
 
+  const ProductPicker = ({ label, value, options, onChange }) => {
+    const [open, setOpen] = useState(false);
+    const pickerRef = useRef(null);
+    const triggerRef = useRef(null);
+    const selected = options.find((option) => option.id === value) || options[0];
+
+    useEffect(() => {
+      if (!open) return undefined;
+      const closeOnOutsideClick = (event) => {
+        if (!pickerRef.current?.contains(event.target)) setOpen(false);
+      };
+      const closeOnEscape = (event) => {
+        if (event.key === 'Escape') {
+          setOpen(false);
+          triggerRef.current?.focus();
+        }
+      };
+      document.addEventListener('mousedown', closeOnOutsideClick);
+      document.addEventListener('keydown', closeOnEscape);
+      return () => {
+        document.removeEventListener('mousedown', closeOnOutsideClick);
+        document.removeEventListener('keydown', closeOnEscape);
+      };
+    }, [open]);
+
+    return <div className={`product-picker ${open ? 'product-picker--open' : ''}`} ref={pickerRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className="product-picker__trigger"
+        role="combobox"
+        aria-label={label}
+        aria-expanded={open}
+        aria-controls={`${label.replace(/\s+/g, '-').toLowerCase()}-options`}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span>{selected?.name}</span>
+        <ChevronDown size={19} aria-hidden="true" />
+      </button>
+      {open && <div className="product-picker__menu" role="listbox" id={`${label.replace(/\s+/g, '-').toLowerCase()}-options`} aria-label={label}>
+        {options.map((option) => <button
+          key={option.id}
+          type="button"
+          role="option"
+          aria-selected={option.id === value}
+          className={`product-picker__option ${option.id === value ? 'product-picker__option--selected' : ''}`}
+          onClick={() => { onChange(option.id); setOpen(false); triggerRef.current?.focus(); }}
+        >
+          <span><strong>{option.name}</strong><small>{option.category}</small></span>
+          {option.id === value && <Check size={17} aria-hidden="true" />}
+        </button>)}
+      </div>}
+    </div>;
+  };
+
   const compareCard = (product, index, value, onChange) => <motion.article className="compare-card" key={`${index}-${product.id}`} initial={reducedMotion ? false : { opacity: 0, y: 22, scale: 0.985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.46, delay: reducedMotion ? 0 : index * 0.1, ease: 'easeOut' }}>
     <div className="compare-card__top"><span>0{index + 1} / {index === 0 ? 'TU ELECCIÓN' : 'COMPARAR CON'}</span><span className="compare-card__category">{product.category}</span></div>
-    <div className="compare-card__select-wrap"><select aria-label={index === 0 ? 'Primer producto para comparar' : 'Segundo producto para comparar'} value={value} onChange={(event) => onChange(event.target.value)}>{catalog.products.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}</select><ChevronDown size={19} aria-hidden="true" /></div>
+    <div className="compare-card__select-wrap"><ProductPicker label={index === 0 ? 'Primer producto para comparar' : 'Segundo producto para comparar'} value={value} onChange={onChange} options={catalog.products} /></div>
     <div className="compare-card__visual"><img src={product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" decoding="async" /></div>
     <div className="compare-card__info"><p>{product.verifiedFeatures[0]?.label || product.category}</p><div><strong>{product.formattedPrice}</strong><button type="button" onClick={() => onSelect(product.id)} aria-label={`Ver detalles de ${product.name}`}>Ver detalles <ArrowRight size={16} aria-hidden="true" /></button></div></div>
   </motion.article>;
