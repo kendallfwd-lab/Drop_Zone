@@ -69,7 +69,7 @@
   html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0;background:transparent}
   main,section,footer{max-width:100%}
 }
-.scroll-progress{position:fixed;z-index:60;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),#61a0ff);transform-origin:0 50%;box-shadow:0 0 14px rgba(22,98,235,.4);pointer-events:none}
+.scroll-progress{position:fixed;z-index:60;top:0;left:0;right:0;height:2px;background:#52657b;transform-origin:0 50%;pointer-events:none}
 .product-card__image{display:grid;place-items:center;padding:5px}
 .product-card__image img{object-fit:contain;object-position:center;transform:none}
 .product-card:hover .product-card__image img{transform:none}
@@ -107,8 +107,8 @@
 .compare-card__visual img{width:min(94%,460px);height:94%;max-width:none;max-height:none;object-fit:contain;border-radius:16px}
 @media(max-width:767px){.compare-card__visual{height:clamp(245px,66vw,360px);padding:10px}.compare-card__visual img{width:100%;height:100%;border-radius:13px}}
 @media(max-width:374px){.compare-card__visual{height:230px}}
-.footer{position:relative;overflow:hidden;background:linear-gradient(135deg,#0d1420 0%,#121c2a 58%,#0c1725 100%);color:#fff;border-top:0}
-.footer::before{content:"";position:absolute;pointer-events:none;width:520px;height:520px;right:-180px;top:-330px;border-radius:50%;background:radial-gradient(circle,rgba(32,105,238,.2),rgba(32,105,238,0) 68%)}
+.footer-transition{display:block;width:100%;height:260px;background:linear-gradient(180deg,#F5F7FB 0%,#F3F6FA 15%,#E9EEF5 30%,#D5DEEA 45%,#A7B5C8 60%,#708098 74%,#36465E 88%,#0D1522 100%);border:0;box-shadow:none}
+.footer{position:relative;overflow:hidden;margin-top:-1px;background:#0D1522;color:#fff;border-top:0;box-shadow:none}
 .footer__main,.footer__bottom{position:relative;z-index:1}
 .footer__main{grid-template-columns:minmax(230px,1fr) auto auto;gap:38px;padding-block:54px}
 .footer-wordmark{display:inline-flex;align-items:baseline;color:#fff;font-size:27px;font-weight:800;letter-spacing:-.075em;line-height:1}
@@ -350,7 +350,7 @@
 @media(prefers-reduced-motion:reduce){.comparison-summary__toggle,.comparison-summary__toggle svg{transition:none}}
 
 /* Give the comparison section a tighter, more intentional entry on phones. */
-.comparison{background:linear-gradient(180deg,#f3f7fc 0%,#f7f9fc 30%,#f7f9fc 100%)}
+.comparison{background:linear-gradient(180deg,#f3f7fc 0%,#f7f9fc 30%,#F5F7FB 100%)}
 @media(max-width:767px){
   .comparison{padding-top:42px}
   .comparison__heading{margin-bottom:24px}
@@ -430,6 +430,31 @@
 @media(max-width:639px){
   .compare-card__select-wrap{max-width:none}
   .compare-card .product-picker__menu{max-height:min(280px,calc(100svh - 150px))}
+}
+
+/* Make the comparison marker feel like a lively accent between the products. */
+.comparison-stage__versus{
+  width:62px;
+  height:62px;
+  border:5px solid #f7f9fc;
+  background:#123b68;
+  box-shadow:0 8px 20px rgba(18,59,104,.25),0 0 0 1px rgba(255,255,255,.9);
+  animation:comparison-versus-pulse 2.8s ease-in-out infinite;
+  transition:transform .24s ease,box-shadow .24s ease;
+}
+.comparison-stage__versus:hover{
+  transform:translate(-50%,-50%) scale(1.08);
+  box-shadow:0 11px 26px rgba(18,59,104,.32),0 0 0 5px rgba(18,59,104,.1);
+}
+@keyframes comparison-versus-pulse{
+  0%,100%{box-shadow:0 8px 20px rgba(18,59,104,.22),0 0 0 1px rgba(255,255,255,.9)}
+  50%{box-shadow:0 11px 25px rgba(18,59,104,.3),0 0 0 5px rgba(18,59,104,.1)}
+}
+@media(max-width:639px){
+  .comparison-stage__versus:hover{transform:scale(1.08)}
+}
+@media(prefers-reduced-motion:reduce){
+  .comparison-stage__versus{animation:none;transition:none}
 }
 
 /* Keep product details scannable on small screens without removing core information. */
