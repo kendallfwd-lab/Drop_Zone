@@ -456,3 +456,18 @@
   .purchase-row{margin-top:14px}
   .detail-content__footer{padding-top:14px}
 }
+
+/* Mobile footer: keep contact details on an even vertical rhythm. */
+@media(max-width:639px){
+  .footer__links{width:100%;align-items:flex-start;gap:14px}
+  .footer__links>*{min-height:22px;line-height:1.35}
+}
+
+/* The 3D cart is the navbar cart control on every viewport. */
+.header-cart{width:54px;height:54px;flex-basis:54px;border:0;background:transparent;box-shadow:none}
+.header-cart:hover{border:0;background:transparent;box-shadow:none;transform:translateY(-2px)}
+.header-cart__image{width:62px;height:62px;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(17,35,62,.16));pointer-events:none}
+@media(max-width:767px){
+  .header-cart{width:48px;height:48px;flex-basis:48px}
+  .header-cart__image{width:58px;height:58px}
+}

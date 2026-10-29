@@ -201,19 +201,29 @@ describe('catalog experience', () => {
     expect(cart.querySelector('.cart-item img')).toHaveAttribute('src', '/images/products/estuche-iphone-azul-oscuro.webp');
     expect(within(cart).getByText('Modelo de iPhone: iPhone 17 Pro Max')).toBeInTheDocument();
     expect(within(cart).getByText('Color: Azul oscuro')).toBeInTheDocument();
-    expect(within(cart).getByText('Total: ₡12.000')).toBeInTheDocument();
+    expect(within(cart).getByText('Total: ₡10.000')).toBeInTheDocument();
+    expect(within(cart).getByText('Descuento en estuches para iPhone')).toBeInTheDocument();
+    expect(within(cart).getByText('-₡2.000')).toBeInTheDocument();
 
     fireEvent.change(within(cart).getByRole('spinbutton', { name: 'Cantidad' }), { target: { value: '3' } });
-    expect(within(cart).getByText('Total: ₡18.000')).toBeInTheDocument();
+    expect(within(cart).getByText('Total: ₡16.000')).toBeInTheDocument();
     const orderLink = within(cart).getByRole('link', { name: 'Enviar pedido completo por WhatsApp' });
     const orderMessage = new URL(orderLink.href).searchParams.get('text');
     expect(orderMessage).toContain('Modelo de iPhone: iPhone 17 Pro Max');
     expect(orderMessage).toContain('Color: Azul oscuro');
     expect(orderMessage).toContain('Cantidad: 3');
-    expect(orderMessage).toContain('Total publicado: ₡18.000');
+    expect(orderMessage).toContain('Descuento en estuches para iPhone (2 o más unidades): -₡2.000');
+    expect(orderMessage).toContain('Total publicado: ₡16.000');
 
     fireEvent.click(within(cart).getByRole('button', { name: /Eliminar estuche para iPhone del carrito/i }));
     expect(within(cart).getByText('Tu carrito está vacío')).toBeInTheDocument();
+  });
+
+  it('uses the 3D cart image in the navbar and opens the cart', () => {
+    render(<App />);
+    expect(document.querySelector('.header-cart__image')).toHaveAttribute('src', '/images/cart-floating.png');
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 0 productos' }));
+    expect(screen.getByRole('dialog', { name: 'Carrito de compras' })).toBeInTheDocument();
   });
 
   it('shows the Audio discount in the cart and notifies when the threshold is reached', async () => {
@@ -237,6 +247,63 @@ describe('catalog experience', () => {
     expect(within(cart).getByText('Descuento Audio')).toBeInTheDocument();
     expect(within(cart).getByText('-₡5.000')).toBeInTheDocument();
     expect(within(cart).getByText('¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.')).toBeInTheDocument();
+  });
+
+  it('shows the AirPods case discount in the detail and cart', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para AirPods/ }));
+    const detail = document.getElementById('caracteristicas');
+    fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
+
+    expect(within(detail).getByText('Descuento en estuches')).toBeInTheDocument();
+    expect(within(detail).getByText('Ahorrás ₡1.500 por comprar 2 estuches para AirPods.')).toBeInTheDocument();
+    expect(within(detail).getByText('₡6.500')).toBeInTheDocument();
+
+    fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 2 productos' }));
+    const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    expect(within(cart).getByText('Descuento en estuches')).toBeInTheDocument();
+    expect(within(cart).getByText('-₡1.500')).toBeInTheDocument();
+    expect(within(cart).getByText('¡Descuento aplicado! Ahorraste ₡1.500 por comprar 2 estuches para AirPods.')).toBeInTheDocument();
+  });
+
+  it('shows the iPhone case discount in the detail and cart', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Estuches para iPhone/ }));
+    const detail = document.getElementById('caracteristicas');
+    fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
+
+    expect(within(detail).getByText('Descuento en estuches para iPhone')).toBeInTheDocument();
+    expect(within(detail).getByText('Ahorrás ₡2.000 por comprar 2 estuches para iPhone.')).toBeInTheDocument();
+    expect(within(detail).getByText('₡10.000')).toBeInTheDocument();
+
+    fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 2 productos' }));
+    const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    expect(within(cart).getByText('Descuento en estuches para iPhone')).toBeInTheDocument();
+    expect(within(cart).getByText('-₡2.000')).toBeInTheDocument();
+    expect(within(cart).getByText('¡Descuento aplicado! Ahorraste ₡2.000 por comprar 2 estuches para iPhone.')).toBeInTheDocument();
+  });
+
+  it('shows the Apple Pencil discount in the detail and cart', async () => {
+    render(<App />);
+    const catalog = document.getElementById('productos');
+    fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de Apple Pencil/ }));
+    const detail = document.getElementById('caracteristicas');
+    fireEvent.click(within(detail).getByRole('button', { name: 'Aumentar cantidad' }));
+
+    expect(within(detail).getByText('Descuento en Apple Pencil')).toBeInTheDocument();
+    expect(within(detail).getByText('Ahorrás ₡3.000 por comprar 2 unidades de Apple Pencil.')).toBeInTheDocument();
+    expect(within(detail).getByText('₡35.000')).toBeInTheDocument();
+
+    fireEvent.click(within(detail).getByRole('button', { name: /Agregar al carrito/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 2 productos' }));
+    const cart = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    expect(within(cart).getByText('Descuento en Apple Pencil')).toBeInTheDocument();
+    expect(within(cart).getByText('-₡3.000')).toBeInTheDocument();
+    expect(within(cart).getByText('¡Descuento aplicado! Ahorraste ₡3.000 por comprar 2 unidades de Apple Pencil.')).toBeInTheDocument();
   });
 
   it('restores the Audio discount for older cart items when quantity increases', () => {

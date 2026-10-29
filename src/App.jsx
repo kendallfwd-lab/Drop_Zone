@@ -8,7 +8,7 @@ import {
 import { ProductService } from './domain/catalog.js';
 import {
   addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
-  AUDIO_DISCOUNT_CRC, AUDIO_DISCOUNT_THRESHOLD, audioProductCount, cartDiscount, cartSubtotal, formatCRC, readStoredCart, removeCartItem, updateCartItemQuantity,
+  applePencilProductCount, audioProductCount, cartDiscountBreakdown, cartSubtotal, caseProductCount, formatCRC, iphoneCaseProductCount, quantityDiscountForProduct, readStoredCart, removeCartItem, updateCartItemQuantity,
 } from './domain/cart.js';
 import { compareProducts } from './domain/comparison.js';
 import { getFallbackData } from './data/fallback.js';
@@ -47,6 +47,14 @@ const catalogFilters = [
   { id: 'apple', label: 'Apple', matches: (product) => !samsungProductIds.has(product.id) },
   { id: 'samsung', label: 'Samsung', matches: (product) => samsungProductIds.has(product.id) },
 ];
+
+function newlyAppliedDiscountNotice(previousCart, nextCart) {
+  const previousDiscountIds = new Set(cartDiscountBreakdown(previousCart).map((discount) => discount.id));
+  return cartDiscountBreakdown(nextCart)
+    .filter((discount) => !previousDiscountIds.has(discount.id))
+    .map((discount) => discount.message)
+    .join(' ');
+}
 
 function usePageScroller(reducedMotion) {
   const animationRef = useRef(null);
@@ -188,7 +196,7 @@ function Header({ settings, sections, cartCount, onOpenCart }) {
       <div className="site-header__actions">
         <WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp header-whatsapp"><span className="header-whatsapp__long">Escríbenos</span><span className="header-whatsapp__short">WhatsApp</span></WhatsAppLink>
         <button className="header-cart" type="button" onClick={onOpenCart} aria-label={`Abrir carrito, ${cartCount} ${cartCount === 1 ? 'producto' : 'productos'}`}>
-          <ShoppingCart size={19} aria-hidden="true" />
+          <img className="header-cart__image" src="/images/cart-floating.png" alt="" aria-hidden="true" />
           <span className={cartCount > 0 ? 'header-cart__count header-cart__count--visible' : 'header-cart__count'} aria-hidden="true">{cartCount}</span>
         </button>
         <button ref={menuRef} className="menu-toggle" type="button" aria-label={open ? 'Cerrar menú' : 'Abrir menú'} aria-controls="main-navigation" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X size={22} /> : <Menu size={22} />}</button>
@@ -373,8 +381,9 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
   const activeUnitPrice = selectedVariantOption?.priceCRC ?? product.priceCRC;
   const activePrice = product.formatPrice(activeUnitPrice);
   const activeQuantitySubtotal = activeUnitPrice * quantity;
-  const quantityDiscount = product.category === 'Audio' && quantity >= AUDIO_DISCOUNT_THRESHOLD ? AUDIO_DISCOUNT_CRC : 0;
-  const activeQuantityPrice = product.formatPrice(Math.max(0, activeQuantitySubtotal - quantityDiscount));
+  const quantityDiscount = quantityDiscountForProduct(product, quantity);
+  const quantityDiscountAmount = quantityDiscount?.amount || 0;
+  const activeQuantityPrice = product.formatPrice(Math.max(0, activeQuantitySubtotal - quantityDiscountAmount));
   const activeQuantitySubtotalPrice = product.formatPrice(activeQuantitySubtotal);
   const inquirySelections = { model: selectedModel, color: selectedColor, variant: selectedVariant };
 
@@ -459,9 +468,9 @@ function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onA
             <QuantityStepper value={quantity} onChange={handleQuantityChange} />
             <p>Elegí primero el modelo, tipo o color cuando corresponda.</p>
           </div>
-          {quantityDiscount > 0 && <div className="quantity-discount-notice" role="status"><span className="quantity-discount-notice__icon"><Check size={16} aria-hidden="true" /></span><span className="quantity-discount-notice__copy"><strong>Descuento aplicado</strong><small>Ahorrás {product.formatPrice(quantityDiscount)} por comprar {quantity} unidades de Audio.</small></span></div>}
+          {quantityDiscount && <div className="quantity-discount-notice" role="status"><span className="quantity-discount-notice__icon"><Check size={16} aria-hidden="true" /></span><span className="quantity-discount-notice__copy"><strong>{quantityDiscount.label}</strong><small>Ahorrás {product.formatPrice(quantityDiscount.amount)} {quantityDiscount.description}.</small></span></div>}
           <div className="detail-content__footer">
-            <div className="detail-content__price" aria-live="polite"><span>{quantityDiscount > 0 ? 'TOTAL CON DESCUENTO' : quantity > 1 ? 'PRECIO TOTAL' : 'PRECIO'}</span>{quantityDiscount > 0 && <del>{activeQuantitySubtotalPrice}</del>}<strong>{activeQuantityPrice}</strong>{quantity > 1 && <small>{activePrice} por unidad{quantityDiscount > 0 ? ` · Ahorrás ${product.formatPrice(quantityDiscount)}` : ''}</small>}</div>
+            <div className="detail-content__price" aria-live="polite"><span>{quantityDiscount ? 'TOTAL CON DESCUENTO' : quantity > 1 ? 'PRECIO TOTAL' : 'PRECIO'}</span>{quantityDiscount && <del>{activeQuantitySubtotalPrice}</del>}<strong>{activeQuantityPrice}</strong>{quantity > 1 && <small>{activePrice} por unidad{quantityDiscount ? ` · Ahorrás ${product.formatPrice(quantityDiscount.amount)}` : ''}</small>}</div>
             <div className="detail-content__actions">
               <WhatsAppLink phone={settings.whatsappPhone} product={product} selections={inquirySelections} className="button button--whatsapp">Consultar solo este producto <ArrowRight size={17} /></WhatsAppLink>
               <button type="button" className="button button--cart" onClick={() => onAddToCart(product, inquirySelections, quantity)}><ShoppingCart size={17} aria-hidden="true" />Agregar al carrito</button>
@@ -621,7 +630,10 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
   const subtotal = cartSubtotal(cart);
   const total = cartTotal(cart);
   const audioCount = audioProductCount(cart);
-  const discount = cartDiscount(cart);
+  const caseCount = caseProductCount(cart);
+  const iphoneCaseCount = iphoneCaseProductCount(cart);
+  const applePencilCount = applePencilProductCount(cart);
+  const discountBreakdown = cartDiscountBreakdown(cart);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -664,9 +676,9 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
         <div className="cart-drawer__summary">
           <div className="cart-drawer__summary-title"><span>Resumen del pedido</span><span>{count} {count === 1 ? 'producto' : 'productos'}</span></div>
           <div className="cart-drawer__summary-row"><span>Subtotal</span><strong>{formatCRC(subtotal)}</strong></div>
-          {discount > 0 && <div className="cart-drawer__discount"><span><Check size={14} aria-hidden="true" />Descuento Audio</span><strong>-{formatCRC(discount)}</strong></div>}
+          {discountBreakdown.map((item) => <div className="cart-drawer__discount" key={item.id}><span><Check size={14} aria-hidden="true" />{item.label}</span><strong>-{formatCRC(item.amount)}</strong></div>)}
           <div className="cart-drawer__total"><span className="sr-only">Total</span><strong>Total: {formatCRC(total)}</strong></div>
-          {discount > 0 ? <p className="cart-drawer__promo cart-drawer__promo--active">¡Descuento aplicado! Ahorraste {formatCRC(discount)} por comprar 2 productos de Audio.</p> : audioCount === 1 ? <p className="cart-drawer__promo">Agregá otro producto de Audio y obtené ₡5.000 de descuento.</p> : null}
+          {discountBreakdown.length ? <p className="cart-drawer__promo cart-drawer__promo--active">{discountBreakdown.map((item) => item.message).join(' ')}</p> : audioCount === 1 ? <p className="cart-drawer__promo">Agregá otro producto de Audio y obtené ₡5.000 de descuento.</p> : caseCount === 1 ? <p className="cart-drawer__promo">Agregá otro estuche para AirPods y obtené ₡1.500 de descuento.</p> : iphoneCaseCount === 1 ? <p className="cart-drawer__promo">Agregá otro estuche para iPhone y obtené ₡2.000 de descuento.</p> : applePencilCount === 1 ? <p className="cart-drawer__promo">Agregá otro Apple Pencil y obtené ₡3.000 de descuento.</p> : null}
           <p>La disponibilidad y entrega se confirman por WhatsApp.</p>
         </div>
         <div className="cart-drawer__actions">
@@ -757,22 +769,16 @@ export default function App() {
   };
   const handleAddToCart = (selectedProduct, selections, quantity) => {
     const item = createCartItem(selectedProduct, selections, quantity);
-    const previousAudioCount = audioProductCount(cart);
     const nextCart = addCartItem(cart, item);
-    const nextAudioCount = audioProductCount(nextCart);
+    const discountNotice = newlyAppliedDiscountNotice(cart, nextCart);
     setCart(nextCart);
-    setCartNotice(nextAudioCount >= AUDIO_DISCOUNT_THRESHOLD && previousAudioCount < AUDIO_DISCOUNT_THRESHOLD
-      ? '¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.'
-      : `${item.name} agregado al carrito`);
+    setCartNotice(discountNotice || `${item.name} agregado al carrito`);
   };
   const handleUpdateCartQuantity = (key, quantity) => {
-    const previousAudioCount = audioProductCount(cart);
     const nextCart = updateCartItemQuantity(cart, key, quantity);
-    const nextAudioCount = audioProductCount(nextCart);
+    const discountNotice = newlyAppliedDiscountNotice(cart, nextCart);
     setCart(nextCart);
-    if (nextAudioCount >= AUDIO_DISCOUNT_THRESHOLD && previousAudioCount < AUDIO_DISCOUNT_THRESHOLD) {
-      setCartNotice('¡Descuento aplicado! Ahorraste ₡5.000 por comprar 2 productos de Audio.');
-    }
+    if (discountNotice) setCartNotice(discountNotice);
   };
   const handleEditCartProduct = (id) => {
     closeCart();

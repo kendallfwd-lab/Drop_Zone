@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import data from '../../db.json';
 import { Product } from './catalog.js';
 import {
-  AUDIO_DISCOUNT_CRC, addCartItem, cartDiscount, cartItemCount, cartTotal, createCartItem, createCartWhatsAppUrl,
+  APPLE_PENCIL_DISCOUNT_CRC, AUDIO_DISCOUNT_CRC, CASE_DISCOUNT_CRC, IPHONE_CASE_DISCOUNT_CRC, addCartItem, cartDiscount, cartItemCount, cartTotal, createCartItem, createCartWhatsAppUrl,
   readStoredCart, removeCartItem, updateCartItemQuantity,
 } from './cart.js';
 
@@ -16,7 +16,7 @@ describe('shopping cart', () => {
     expect(cart[0].options).toEqual(['Modelo de iPhone: iPhone 16 Pro Max', 'Color: Azul oscuro']);
     expect(cart[0].quantity).toBe(3);
     expect(cartItemCount(cart)).toBe(3);
-    expect(cartTotal(cart)).toBe(18000);
+    expect(cartTotal(cart)).toBe(16000);
   });
 
   it('uses the selected variant price and creates a complete WhatsApp order', () => {
@@ -42,6 +42,36 @@ describe('shopping cart', () => {
     expect(cartDiscount(cart)).toBe(AUDIO_DISCOUNT_CRC);
     expect(cartTotal(cart)).toBe(subtotal - AUDIO_DISCOUNT_CRC);
     expect(url.searchParams.get('text')).toContain('Descuento Audio (2 o más productos): -₡5.000');
+  });
+
+  it('applies the AirPods case discount after two identical cases', () => {
+    const product = new Product(data.products.find((item) => item.id === 'estuches-airpods'));
+    const cart = [createCartItem(product, {}, 2)];
+    const url = new URL(createCartWhatsAppUrl(data.settings.whatsappPhone, cart));
+
+    expect(cartDiscount(cart)).toBe(CASE_DISCOUNT_CRC);
+    expect(cartTotal(cart)).toBe(6500);
+    expect(url.searchParams.get('text')).toContain('Descuento en estuches (2 o más unidades): -₡1.500');
+  });
+
+  it('applies the iPhone case discount after two identical cases', () => {
+    const product = new Product(data.products.find((item) => item.id === 'estuches-iphone'));
+    const cart = [createCartItem(product, {}, 2)];
+    const url = new URL(createCartWhatsAppUrl(data.settings.whatsappPhone, cart));
+
+    expect(cartDiscount(cart)).toBe(IPHONE_CASE_DISCOUNT_CRC);
+    expect(cartTotal(cart)).toBe(10000);
+    expect(url.searchParams.get('text')).toContain('Descuento en estuches para iPhone (2 o más unidades): -₡2.000');
+  });
+
+  it('applies the Apple Pencil discount after two units', () => {
+    const product = new Product(data.products.find((item) => item.id === 'apple-pencil'));
+    const cart = [createCartItem(product, {}, 2)];
+    const url = new URL(createCartWhatsAppUrl(data.settings.whatsappPhone, cart));
+
+    expect(cartDiscount(cart)).toBe(APPLE_PENCIL_DISCOUNT_CRC);
+    expect(cartTotal(cart)).toBe(35000);
+    expect(url.searchParams.get('text')).toContain('Descuento en Apple Pencil (2 o más unidades): -₡3.000');
   });
 
   it('updates, limits and removes cart quantities safely', () => {
