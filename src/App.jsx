@@ -785,7 +785,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
       window.setTimeout(() => { suppressClick.current = false; }, 0);
     }
     if (Math.abs(delta) > 45) moveTo(activeIndex + (delta < 0 ? 1 : -1));
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
+    if (event.pointerId != null) event.currentTarget.releasePointerCapture?.(event.pointerId);
   };
 
   return <section className="promotions section" aria-labelledby="promotions-title">
@@ -793,7 +793,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
       <div className="promotions__heading">
         <div><p className="eyebrow">PROMOCIONES DROP_ZONE</p><h2 id="promotions-title">Precios exclusivos</h2></div>
       </div>
-      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={finishPointerGesture} onPointerCancel={finishPointerGesture} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
+      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={(event) => { finishPointerGesture(event); setIsPaused(false); }} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={finishPointerGesture} onPointerCancel={finishPointerGesture} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
         <div className="promotion-carousel__viewport">
           {promotions.map((promotion, index) => {
             const product = promotion.products[0];
