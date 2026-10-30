@@ -564,8 +564,8 @@
 @media(max-width:639px){
   .promotion-dialog__body--case-pair .promotion-dialog__preview{grid-template-columns:1fr;min-height:230px;text-align:center}
   .promotion-dialog__body--case-pair .promotion-dialog__preview-images--pair{height:180px;align-items:end;margin-inline:auto}
-  .promotion-dialog__body--case-pair .promotion-dialog__preview-images--pair img{width:54%;height:160px;transform:translate(12%,8px)}
-  .promotion-dialog__body--case-pair .promotion-dialog__preview-images--pair img+img{right:13%;bottom:0;width:40%;height:122px;transform:translateY(8px)}
+  .promotion-dialog__body--case-pair .promotion-dialog__preview-images--pair img{width:48%;height:160px;transform:translate(-17%,8px)}
+  .promotion-dialog__body--case-pair .promotion-dialog__preview-images--pair img+img{right:4%;bottom:0;width:35%;height:122px;transform:translateY(8px)}
   .promotion-dialog__body--case-pair .promotion-dialog__preview strong{margin-top:6px}
 }
 @media(max-width:767px){.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-4%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:10%;bottom:18%}}
