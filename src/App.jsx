@@ -784,7 +784,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
   return <section className="promotions section" aria-labelledby="promotions-title">
     <div className="container">
       <div className="promotions__heading">
-        <div><p className="eyebrow">SELECCIÓN DROP_ZONE</p><h2 id="promotions-title">Lo esencial, mejor elegido<span className="promotions__blue-dot">.</span></h2></div>
+        <div><p className="eyebrow">PROMOCIONES DROP_ZONE</p><h2 id="promotions-title">Precios exclusivos</h2></div>
       </div>
       <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={finishPointerGesture} onPointerCancel={finishPointerGesture} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
         <div className="promotion-carousel__viewport">
