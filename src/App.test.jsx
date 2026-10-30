@@ -115,7 +115,10 @@ describe('catalog experience', () => {
     const catalog = document.getElementById('productos');
     const externalLinks = screen.getAllByRole('link').filter((link) => /^https?:/.test(link.href));
     expect(externalLinks.length).toBeGreaterThan(0);
-    externalLinks.forEach((link) => expect(link).not.toHaveAttribute('target'));
+    externalLinks.filter((link) => /wa\.me|instagram/i.test(link.href)).forEach((link) => {
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+    });
 
     fireEvent.click(within(catalog).getByRole('button', { name: /Ver detalles de AirPods Max/ }));
     await waitFor(() => expect(within(document.getElementById('caracteristicas')).getByRole('heading', { name: 'AirPods Max' })).toBeInTheDocument());

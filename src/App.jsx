@@ -206,7 +206,7 @@ function WhatsAppLink({ phone, product, selections, children, className = '' }) 
   const href = product
     ? product.whatsappUrl(phone, selections)
     : `https://wa.me/${String(phone).replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera consultar sobre los productos de Drop_Zone CR.')}`;
-  return <a className={className} href={href} aria-label={product ? `Consultar por WhatsApp sobre ${product.name}` : 'Escribir a Drop Zone CR por WhatsApp'}>
+  return <a className={className} href={href} target="_blank" rel="noopener noreferrer" aria-label={product ? `Consultar por WhatsApp sobre ${product.name}` : 'Escribir a Drop Zone CR por WhatsApp'}>
     <WhatsAppMark />{children}
   </a>;
 }
@@ -651,7 +651,7 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
           <p>La disponibilidad y entrega se confirman por WhatsApp.</p>
         </div>
         <div className="cart-drawer__actions">
-          <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} aria-label="Enviar pedido completo por WhatsApp"><WhatsAppMark />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
+          <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} target="_blank" rel="noopener noreferrer" aria-label="Enviar pedido completo por WhatsApp"><WhatsAppMark />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
           <button type="button" className="cart-continue" onClick={onClose}>Seguir comprando</button>
         </div>
       </>}
@@ -857,7 +857,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
 function Footer({ settings }) {
   return <>
     <div className="footer-transition" aria-hidden="true" />
-    <footer id="contacto" className="footer"><div className="container footer__main"><div className="footer__brand"><Brand compact /><p>{settings.tagline}</p></div><div className="footer__links"><span className="location-link"><MapPin size={17} />{settings.location}</span><a className="phone-link" href={`tel:+${settings.whatsappPhone}`}><Phone size={17} />{settings.displayPhone}</a><a className="instagram-link" href={settings.instagramUrl}><InstagramBrandIcon />{settings.instagramHandle}</a></div><WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp">Escribenos a nuestro WhatsApp <ArrowRight size={17} /></WhatsAppLink></div><div className="container footer__bottom"><span>© {new Date().getFullYear()} Drop_Zone CR</span><span>Comercio independiente. Las marcas mencionadas pertenecen a sus titulares.</span></div></footer>
+    <footer id="contacto" className="footer"><div className="container footer__main"><div className="footer__brand"><Brand compact /><p>{settings.tagline}</p></div><div className="footer__links"><span className="location-link"><MapPin size={17} />{settings.location}</span><a className="phone-link" href={`tel:+${settings.whatsappPhone}`}><Phone size={17} />{settings.displayPhone}</a><a className="instagram-link" href={settings.instagramUrl} target="_blank" rel="noopener noreferrer"><InstagramBrandIcon />{settings.instagramHandle}</a></div><WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp">Escribenos a nuestro WhatsApp <ArrowRight size={17} /></WhatsAppLink></div><div className="container footer__bottom"><span>© {new Date().getFullYear()} Drop_Zone CR</span><span>Comercio independiente. Las marcas mencionadas pertenecen a sus titulares.</span></div></footer>
   </>;
 }
 
