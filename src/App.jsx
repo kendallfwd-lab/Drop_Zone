@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useSpring } from 'motion/react';
 import {
   ArrowRight, AudioLines, BatteryFull, Bluetooth, Check, ChevronDown, Droplets, Headphones, Info,
-  MapPin, Menu, MessageCircle, Package, Palette, PenLine, Phone,
+  MapPin, Menu, Package, Palette, PenLine, Phone,
   Minus, Plus, ShoppingCart, Sparkles, Trash2, X,
 } from 'lucide-react';
 import AccessiblePicker from './components/AccessiblePicker.jsx';
@@ -195,12 +195,19 @@ function InstagramBrandIcon() {
   </svg>;
 }
 
+function WhatsAppMark() {
+  return <svg className="whatsapp-mark" viewBox="0 0 24 24" role="img" aria-label="WhatsApp">
+    <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+    <path d="M8.9 7.9c.25-.28.62-.31.9-.08l1.05.88c.3.25.37.68.16 1.02l-.5.77c.67 1.3 1.72 2.35 3.02 3.02l.77-.5c.34-.21.77-.14 1.02.16l.88 1.05c.23.28.2.65-.08.9l-.57.51c-.57.51-1.39.68-2.1.42-2.77-1.01-4.93-3.17-5.94-5.94-.26-.71-.09-1.53.42-2.1l.51-.57Z" fill="currentColor" />
+  </svg>;
+}
+
 function WhatsAppLink({ phone, product, selections, children, className = '' }) {
   const href = product
     ? product.whatsappUrl(phone, selections)
     : `https://wa.me/${String(phone).replace(/\D/g, '')}?text=${encodeURIComponent('Hola, quisiera consultar sobre los productos de Drop_Zone CR.')}`;
   return <a className={className} href={href} aria-label={product ? `Consultar por WhatsApp sobre ${product.name}` : 'Escribir a Drop Zone CR por WhatsApp'}>
-    <MessageCircle size={18} aria-hidden="true" />{children}
+    <WhatsAppMark />{children}
   </a>;
 }
 
@@ -644,7 +651,7 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
           <p>La disponibilidad y entrega se confirman por WhatsApp.</p>
         </div>
         <div className="cart-drawer__actions">
-          <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} aria-label="Enviar pedido completo por WhatsApp"><MessageCircle size={18} aria-hidden="true" />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
+          <a className="button button--whatsapp" href={createCartWhatsAppUrl(settings.whatsappPhone, cart)} aria-label="Enviar pedido completo por WhatsApp"><WhatsAppMark />Hacer pedido por WhatsApp <ArrowRight size={17} aria-hidden="true" /></a>
           <button type="button" className="cart-continue" onClick={onClose}>Seguir comprando</button>
         </div>
       </>}

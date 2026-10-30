@@ -583,3 +583,7 @@
   .promotion-slide__case--pair{max-height:34%;width:29%}
   .promotion-slide__product-name{bottom:0}
 }
+/* WhatsApp mark: a lightweight outline that keeps the action visually minimal. */
+.whatsapp-mark{width:18px;height:18px;display:block;flex:0 0 auto;color:currentColor}
+.header-whatsapp .whatsapp-mark{width:19px;height:19px}
+@media(max-width:479px){.header-whatsapp .whatsapp-mark{width:17px;height:17px}}
