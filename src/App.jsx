@@ -763,6 +763,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
     if (event.key === 'ArrowRight') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex + 1); }
   };
   const handlePointerDown = (event) => {
+    if (event.target.closest('button')) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     pointerStartX.current = event.clientX;
     pointerDragged.current = false;
@@ -793,7 +794,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
       <div className="promotions__heading">
         <div><p className="eyebrow">PROMOCIONES DROP_ZONE</p><h2 id="promotions-title">Precios exclusivos</h2></div>
       </div>
-      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={(event) => { finishPointerGesture(event); setIsPaused(false); }} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={finishPointerGesture} onPointerCancel={finishPointerGesture} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
+      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={finishPointerGesture} onPointerCancel={finishPointerGesture} onPointerLeave={finishPointerGesture} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
         <div className="promotion-carousel__viewport">
           {promotions.map((promotion, index) => {
             const product = promotion.products[0];
