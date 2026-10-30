@@ -552,12 +552,14 @@
 /* The AirPods model uses the same custom accessible picker as the rest of the store. */
 .promotion-dialog__picker{margin-top:0}.promotion-dialog__picker::before{content:"1. Modelo de AirPods";display:block;margin-bottom:8px;color:#25344a;font-size:10px;font-weight:800}.promotion-dialog__picker .product-picker__trigger{min-height:44px;padding:8px 13px;border-radius:10px;font-size:12px;box-shadow:none}.promotion-dialog__picker .product-picker__menu{max-height:240px;padding:5px;border-radius:12px}.promotion-dialog__picker .product-picker__option{min-height:42px;padding:8px 10px}.promotion-dialog__picker .product-picker__option strong{font-size:12px}
 .promotion-dialog__picker--second{margin-top:16px}.promotion-dialog__picker--second::before{content:"2. Modelo de AirPods"}.promotion-dialog__preview-images--pair img{width:52%;height:190px}.promotion-dialog__preview-images--pair img+img{right:4%;bottom:14%;width:47%;height:155px}
+.promotion-dialog__pair-color{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;margin-bottom:8px;color:#25344a;font-size:10px;font-weight:800}.promotion-dialog__pair-color strong{color:#66758a;font-size:10px;font-weight:500}
 .promotion-dialog .product-picker__menu{scrollbar-width:none;-ms-overflow-style:none}.promotion-dialog .product-picker__menu::-webkit-scrollbar{display:none;width:0;height:0}
 .promotion-dialog__preview-images::before{display:none}
 .promotion-slide__case--pair{right:0;bottom:10%;width:min(27%,170px)}
 .promotion-slide--case-pair .promotion-slide__image{transform:translateY(-6%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:8%;bottom:16%;width:min(42%,280px)}
 @media(max-width:639px){.promotion-dialog__picker::before{margin-bottom:5px;font-size:9px}.promotion-dialog__picker .product-picker__trigger{min-height:37px;padding:7px 10px;font-size:11px}.promotion-dialog__picker .product-picker__menu{top:calc(100% + 5px);max-height:190px;padding:4px}.promotion-dialog__picker .product-picker__option{min-height:36px;padding:6px 8px}.promotion-dialog__picker .product-picker__option strong{font-size:11px}}
 @media(max-width:639px){.promotion-dialog__picker--second{margin-top:10px}.promotion-dialog__preview-images--pair img{height:95px}.promotion-dialog__preview-images--pair img+img{height:78px}.promotion-slide__case--pair{right:0;bottom:13%;width:31%;max-width:112px}}
+@media(max-width:639px){.promotion-dialog__pair-color{margin-top:10px;margin-bottom:5px;font-size:9px}.promotion-dialog__pair-color strong{font-size:9px}}
 @media(max-width:767px){.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-4%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:10%;bottom:18%}}
 @media(max-width:767px){.promotion-slide:not(.promotion-slide--case-pair) .promotion-slide__case{right:0;bottom:13%;width:28%;max-width:110px}}
 

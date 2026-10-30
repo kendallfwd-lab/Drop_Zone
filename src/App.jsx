@@ -661,6 +661,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
   const [selectedCaseColor, setSelectedCaseColor] = useState('Azul oscuro');
   const [selectedIphoneCaseModel, setSelectedIphoneCaseModel] = useState('');
   const [selectedAirpodsCaseModel, setSelectedAirpodsCaseModel] = useState('');
+  const [selectedPairCaseColor, setSelectedPairCaseColor] = useState('');
   const dialogRef = useRef(null);
   const touchStartX = useRef(null);
   const resumeTimeout = useRef(null);
@@ -698,6 +699,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
   const iphoneCaseProduct = catalog.find('estuches-iphone');
   const selectedModel = catalog.find(selectedModelId) || featuredProduct;
   const selectedColor = caseProduct?.colors?.find((color) => color.name === selectedCaseColor) || caseProduct?.colors?.[0];
+  const selectedPairColor = caseProduct?.colors?.find((color) => color.name === selectedPairCaseColor) || caseProduct?.colors?.[0];
   const prices = activePromotion.products.flatMap((product) => product.variants?.length ? product.variants.map((variant) => variant.priceCRC) : [product.priceCRC]).filter(Number.isFinite);
   const startingPrice = activePromotion.fixedPriceCRC || (prices.length ? Math.min(...prices) : null);
   const openConfigurator = () => {
@@ -706,6 +708,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
       setIsCasePairConfigurator(true);
       setSelectedIphoneCaseModel(iphoneCaseProduct?.models?.[0] || '');
       setSelectedAirpodsCaseModel(caseProduct?.models?.[0] || '');
+      setSelectedPairCaseColor(caseProduct?.colors?.[0]?.name || '');
       setIsConfiguratorOpen(true);
       return;
     }
@@ -721,7 +724,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
   const closeConfigurator = () => setIsConfiguratorOpen(false);
   const inquiryMessage = `Hola, quiero solicitar la promoción AirPods 4 + estuche por ₡20.000.\nAudífonos: ${selectedModel.name}.\nColor del estuche: ${selectedColor?.name || 'por elegir'}.\nPrecio promocional: ₡20.000.\n¿Me confirman compatibilidad, existencias y precio final?`;
   const inquiryHref = `https://wa.me/${String(settings.whatsappPhone).replace(/\D/g, '')}?text=${encodeURIComponent(inquiryMessage)}`;
-  const casePairInquiryMessage = `Hola, quiero solicitar el combo de dos estuches por ₡8.000.\nEstuche para iPhone: ${selectedIphoneCaseModel || 'por elegir'}.\nEstuche para AirPods: ${selectedAirpodsCaseModel || 'por elegir'}.\n¿Me confirman disponibilidad y compatibilidad de ambos estuches?`;
+  const casePairInquiryMessage = `Hola, quiero solicitar el combo de dos estuches por ₡8.000.\nEstuche para iPhone: ${selectedIphoneCaseModel || 'por elegir'}.\nEstuche para AirPods: ${selectedAirpodsCaseModel || 'por elegir'}.\nColor del estuche de AirPods: ${selectedPairColor?.name || 'por elegir'}.\n¿Me confirman disponibilidad y compatibilidad de ambos estuches?`;
   const casePairInquiryHref = `https://wa.me/${String(settings.whatsappPhone).replace(/\D/g, '')}?text=${encodeURIComponent(casePairInquiryMessage)}`;
 
   useEffect(() => {
@@ -785,7 +788,9 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
             <div className="promotion-dialog__options">
               <AccessiblePicker label="1. Modelo de iPhone" value={selectedIphoneCaseModel} onChange={setSelectedIphoneCaseModel} className="promotion-dialog__picker" options={(iphoneCaseProduct?.models || []).map((model) => ({ value: model, label: model }))} />
               <AccessiblePicker label="2. Modelo de AirPods" value={selectedAirpodsCaseModel} onChange={setSelectedAirpodsCaseModel} className="promotion-dialog__picker promotion-dialog__picker--second" options={(caseProduct?.models || []).map((model) => ({ value: model, label: model }))} />
-              <div className="promotion-dialog__summary"><div><span>Estuche para iPhone</span><strong>{selectedIphoneCaseModel || 'Por elegir'}</strong></div><div><span>Estuche para AirPods</span><strong>{selectedAirpodsCaseModel || 'Por elegir'}</strong></div><div className="promotion-dialog__total"><span>Combo de los dos</span><strong>₡8.000</strong></div><p>El precio aplica al combo de dos estuches. Confirmaremos compatibilidad y disponibilidad por WhatsApp.</p></div>
+              <div className="promotion-dialog__pair-color"><span>3. Color del estuche de AirPods</span><strong>{selectedPairColor?.name}</strong></div>
+              <div className="promotion-dialog__colors" role="group" aria-label="Seleccionar color del estuche de AirPods">{caseProduct?.colors?.map((color) => <button key={`pair-${color.name}`} type="button" className={`promotion-color ${selectedPairColor?.name === color.name ? 'promotion-color--selected' : ''}`} aria-label={`Estuche de AirPods ${color.name}`} aria-pressed={selectedPairColor?.name === color.name} onClick={() => setSelectedPairCaseColor(color.name)}><span style={{ backgroundColor: color.hex }} /><small>{color.name}</small></button>)}</div>
+              <div className="promotion-dialog__summary"><div><span>Estuche para iPhone</span><strong>{selectedIphoneCaseModel || 'Por elegir'}</strong></div><div><span>Estuche para AirPods</span><strong>{selectedAirpodsCaseModel || 'Por elegir'} · {selectedPairColor?.name}</strong></div><div className="promotion-dialog__total"><span>Combo de los dos</span><strong>₡8.000</strong></div><p>El precio aplica al combo de dos estuches. Confirmaremos compatibilidad y disponibilidad por WhatsApp.</p></div>
               <a className="button button--whatsapp promotion-dialog__submit" href={casePairInquiryHref} target="_blank" rel="noopener noreferrer" onClick={closeConfigurator}>Solicitar combo de estuches <ArrowRight size={17} aria-hidden="true" /></a>
             </div>
           </div> : <div className="promotion-dialog__body">
