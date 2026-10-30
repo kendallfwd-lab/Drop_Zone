@@ -5,6 +5,7 @@ import {
   MapPin, Menu, MessageCircle, Package, Palette, PenLine, Phone,
   Minus, Plus, ShoppingCart, Sparkles, Trash2, X,
 } from 'lucide-react';
+import AccessiblePicker from './components/AccessiblePicker.jsx';
 import { ProductService } from './domain/catalog.js';
 import {
   addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
@@ -46,6 +47,49 @@ const catalogFilters = [
   { id: 'accessories', label: 'Accesorios', matches: (product) => accessoryProductIds.has(product.id) },
   { id: 'apple', label: 'Apple', matches: (product) => !samsungProductIds.has(product.id) },
   { id: 'samsung', label: 'Samsung', matches: (product) => samsungProductIds.has(product.id) },
+];
+
+// Editorial configuration for the reusable promotion carousel. Keep product
+// ids in sync with db.json so the carousel never invents offers or prices.
+const promotionDefinitions = [
+  {
+    id: 'case-pair',
+    eyebrow: 'Combo especial',
+    title: 'Dos estuches, una sola elección',
+    description: 'Elegí el modelo de iPhone y de AirPods para preparar tu combo de estuches protectores.',
+    productIds: ['estuches-iphone', 'estuches-airpods'],
+    accent: 'slate',
+    fixedPriceCRC: 8000,
+    label: 'Combo por',
+  },
+  {
+    id: 'airpods',
+    eyebrow: 'Audio premium',
+    title: 'AirPods 4 + tu estuche',
+    description: 'Elegí el color de tu estuche y llevate el combo completo con tus AirPods 4.',
+    productIds: ['airpods-4'],
+    accent: 'blue',
+    fixedPriceCRC: 20000,
+    label: 'Combo por',
+  },
+  {
+    id: 'chargers',
+    eyebrow: 'Carga USB-C',
+    title: 'La potencia que necesitás',
+    description: 'Adaptadores y kits USB-C con opciones de 20 W, 25 W, 35 W y 45 W, según el producto disponible.',
+    productIds: ['kit-cargador-apple-35w', 'apple-adaptador-usb-c', 'samsung-cargador-45w', 'samsung-adaptador-45w'],
+    accent: 'slate',
+    label: 'Opciones desde',
+  },
+  {
+    id: 'power-banks',
+    eyebrow: 'Energía portátil',
+    title: 'Más batería para tu ritmo',
+    description: 'Baterías portátiles magnéticas para iPhone con capacidades de 5.000 y 10.000 mAh.',
+    productIds: ['bateria-portatil-magnetica-iphone'],
+    accent: 'ice',
+    label: 'Desde',
+  },
 ];
 
 function newlyAppliedDiscountNotice(previousCart, nextCart) {
@@ -171,7 +215,7 @@ function QuantityStepper({ value, onChange, label = 'Cantidad' }) {
   </div>;
 }
 
-function Header({ settings, sections, cartCount, onOpenCart }) {
+function Header({ settings, sections, cartCount, onOpenCart, cartButtonRef }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -195,7 +239,7 @@ function Header({ settings, sections, cartCount, onOpenCart }) {
       </nav>
       <div className="site-header__actions">
         <WhatsAppLink phone={settings.whatsappPhone} className="button button--whatsapp header-whatsapp"><span className="header-whatsapp__long">Escríbenos</span><span className="header-whatsapp__short">WhatsApp</span></WhatsAppLink>
-        <button className="header-cart" type="button" onClick={onOpenCart} aria-label={`Abrir carrito, ${cartCount} ${cartCount === 1 ? 'producto' : 'productos'}`}>
+        <button ref={cartButtonRef} className="header-cart" type="button" onClick={onOpenCart} aria-label={`Abrir carrito, ${cartCount} ${cartCount === 1 ? 'producto' : 'productos'}`}>
           <img className="header-cart__image" src="/images/cart-floating.png" alt="" aria-hidden="true" />
           <span className={cartCount > 0 ? 'header-cart__count header-cart__count--visible' : 'header-cart__count'} aria-hidden="true">{cartCount}</span>
         </button>
@@ -205,17 +249,18 @@ function Header({ settings, sections, cartCount, onOpenCart }) {
   </header>;
 }
 
-function Hero({ settings, reducedMotion }) {
+export function Hero({ settings, reducedMotion }) {
   const title = settings.heroTitle;
   const lastSpace = title.lastIndexOf(' ');
   const [activeBackdrop, setActiveBackdrop] = useState(0);
 
   useEffect(() => {
+    if (reducedMotion) return undefined;
     const intervalId = window.setInterval(() => {
       setActiveBackdrop((current) => (current + 1) % heroBackdrops.length);
     }, 5000);
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [reducedMotion]);
 
   return <section className="hero" id="inicio" aria-labelledby="hero-title">
     <div className="hero__backdrops" aria-hidden="true">
@@ -297,69 +342,13 @@ function getDefaultColorName(product) {
 }
 
 function ConfiguratorPicker({ label, value, options, onChange }) {
-  const [open, setOpen] = useState(false);
-  const pickerRef = useRef(null);
-  const triggerRef = useRef(null);
-  const selected = options.find((option) => option === value) || options[0] || '';
-  const optionsId = `configurator-${label.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const closeOnOutsideClick = (event) => {
-      if (!pickerRef.current?.contains(event.target)) setOpen(false);
-    };
-    const closeOnEscape = (event) => {
-      if (event.key === 'Escape') {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    };
-    document.addEventListener('mousedown', closeOnOutsideClick);
-    document.addEventListener('keydown', closeOnEscape);
-    return () => {
-      document.removeEventListener('mousedown', closeOnOutsideClick);
-      document.removeEventListener('keydown', closeOnEscape);
-    };
-  }, [open]);
-
-  return <div className={`product-picker product-picker--configurator ${open ? 'product-picker--open' : ''}`} ref={pickerRef}>
-    <button
-      ref={triggerRef}
-      type="button"
-      className="product-picker__trigger"
-      role="combobox"
-      aria-label={label}
-      aria-expanded={open}
-      aria-controls={`${optionsId}-options`}
-      onClick={() => setOpen((current) => !current)}
-      onKeyDown={(event) => {
-        if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          setOpen(true);
-        }
-      }}
-    >
-      <span>{selected}</span>
-      <ChevronDown size={17} aria-hidden="true" />
-    </button>
-    {open && <div className="product-picker__menu" role="listbox" id={`${optionsId}-options`} aria-label={label}>
-      {options.map((option) => <button
-        key={option}
-        type="button"
-        role="option"
-        aria-selected={option === value}
-        className={`product-picker__option ${option === value ? 'product-picker__option--selected' : ''}`}
-        onClick={() => {
-          onChange(option);
-          setOpen(false);
-          triggerRef.current?.focus();
-        }}
-      >
-        <span><strong>{option}</strong></span>
-        {option === value && <Check size={17} aria-hidden="true" />}
-      </button>)}
-    </div>}
-  </div>;
+  return <AccessiblePicker
+    label={label}
+    value={value}
+    options={options.map((option) => ({ value: option, label: option }))}
+    onChange={onChange}
+    className="product-picker--configurator"
+  />;
 }
 
 function ProductDetail({ product, settings, onTabChange, tab, reducedMotion, onAddToCart }) {
@@ -496,64 +485,14 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
 
   useEffect(() => setExpanded(false), [firstId, secondId]);
 
-  const ProductPicker = ({ label, value, options, onChange }) => {
-    const [open, setOpen] = useState(false);
-    const pickerRef = useRef(null);
-    const triggerRef = useRef(null);
-    const selected = options.find((option) => option.id === value) || options[0];
-
-    useEffect(() => {
-      if (!open) return undefined;
-      const closeOnOutsideClick = (event) => {
-        if (!pickerRef.current?.contains(event.target)) setOpen(false);
-      };
-      const closeOnEscape = (event) => {
-        if (event.key === 'Escape') {
-          setOpen(false);
-          triggerRef.current?.focus();
-        }
-      };
-      document.addEventListener('mousedown', closeOnOutsideClick);
-      document.addEventListener('keydown', closeOnEscape);
-      return () => {
-        document.removeEventListener('mousedown', closeOnOutsideClick);
-        document.removeEventListener('keydown', closeOnEscape);
-      };
-    }, [open]);
-
-    return <div className={`product-picker ${open ? 'product-picker--open' : ''}`} ref={pickerRef}>
-      <button
-        ref={triggerRef}
-        type="button"
-        className="product-picker__trigger"
-        role="combobox"
-        aria-label={label}
-        aria-expanded={open}
-        aria-controls={`${label.replace(/\s+/g, '-').toLowerCase()}-options`}
-        onClick={() => setOpen((current) => !current)}
-      >
-        <span>{selected?.name}</span>
-        <ChevronDown size={19} aria-hidden="true" />
-      </button>
-      {open && <div className="product-picker__menu" role="listbox" id={`${label.replace(/\s+/g, '-').toLowerCase()}-options`} aria-label={label}>
-        {options.map((option) => <button
-          key={option.id}
-          type="button"
-          role="option"
-          aria-selected={option.id === value}
-          className={`product-picker__option ${option.id === value ? 'product-picker__option--selected' : ''}`}
-          onClick={() => { onChange(option.id); setOpen(false); triggerRef.current?.focus(); }}
-        >
-          <span><strong>{option.name}</strong><small>{option.category}</small></span>
-          {option.id === value && <Check size={17} aria-hidden="true" />}
-        </button>)}
-      </div>}
-    </div>;
-  };
-
   const compareCard = (product, index, value, onChange) => <motion.article className="compare-card" key={`${index}-${product.id}`} initial={reducedMotion ? false : { opacity: 0, y: 22, scale: 0.985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: 0.46, delay: reducedMotion ? 0 : index * 0.1, ease: 'easeOut' }}>
     <div className="compare-card__top"><span>0{index + 1} / {index === 0 ? 'TU ELECCIÓN' : 'COMPARAR CON'}</span><span className="compare-card__category">{product.category}</span></div>
-    <div className="compare-card__select-wrap"><ProductPicker label={index === 0 ? 'Primer producto para comparar' : 'Segundo producto para comparar'} value={value} onChange={onChange} options={catalog.products} /></div>
+    <div className="compare-card__select-wrap"><AccessiblePicker
+      label={index === 0 ? 'Primer producto para comparar' : 'Segundo producto para comparar'}
+      value={value}
+      onChange={onChange}
+      options={catalog.products.map((option) => ({ value: option.id, label: option.name, description: option.category }))}
+    /></div>
     <div className="compare-card__visual"><img src={product.image} alt={product.imageAlt} width="900" height="900" loading="lazy" decoding="async" /></div>
     <div className="compare-card__info"><p>{product.verifiedFeatures[0]?.label || product.category}</p><div><strong>{product.formattedPrice}</strong><button type="button" onClick={() => onSelect(product.id)} aria-label={`Ver detalles de ${product.name}`}>Ver detalles <ArrowRight size={16} aria-hidden="true" /></button></div></div>
   </motion.article>;
@@ -624,8 +563,9 @@ function Comparison({ catalog, onSelect, reducedMotion }) {
   </div></section>;
 }
 
-function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove, onEditProduct }) {
+function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove, onEditProduct, triggerRef }) {
   const closeButtonRef = useRef(null);
+  const dialogRef = useRef(null);
   const count = cartItemCount(cart);
   const subtotal = cartSubtotal(cart);
   const total = cartTotal(cart);
@@ -638,6 +578,7 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
   useEffect(() => {
     if (!open) return undefined;
     const previousOverflow = document.body.style.overflow;
+    const previouslyFocusedElement = triggerRef.current || document.activeElement;
     document.body.style.overflow = 'hidden';
     closeButtonRef.current?.focus();
     const onKeyDown = (event) => {
@@ -647,12 +588,33 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKeyDown);
+      if (previouslyFocusedElement instanceof HTMLElement && previouslyFocusedElement.isConnected) {
+        previouslyFocusedElement.focus();
+      }
     };
-  }, [open, onClose]);
+  }, [open, onClose, triggerRef]);
+
+  const trapDialogFocus = (event) => {
+    if (event.key !== 'Tab') return;
+    const focusable = dialogRef.current?.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    if (!focusable?.length) {
+      event.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && (document.activeElement === first || !dialogRef.current.contains(document.activeElement))) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || !dialogRef.current.contains(document.activeElement))) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   if (!open) return null;
   return <div className="cart-layer" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-    <aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+    <aside ref={dialogRef} className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" onKeyDown={trapDialogFocus}>
       <div className="cart-drawer__header">
         <div><span>TU PEDIDO</span><h2 id="cart-title">Carrito de compras</h2></div>
         <button ref={closeButtonRef} type="button" onClick={onClose} aria-label="Cerrar carrito"><X size={20} aria-hidden="true" /></button>
@@ -690,6 +652,164 @@ function CartDrawer({ open, cart, settings, onClose, onUpdateQuantity, onRemove,
   </div>;
 }
 
+function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isConfiguratorOpen, setIsConfiguratorOpen] = useState(false);
+  const [isCasePairConfigurator, setIsCasePairConfigurator] = useState(false);
+  const [selectedModelId, setSelectedModelId] = useState('airpods-pro-3');
+  const [selectedCaseColor, setSelectedCaseColor] = useState('Azul oscuro');
+  const [selectedIphoneCaseModel, setSelectedIphoneCaseModel] = useState('');
+  const [selectedAirpodsCaseModel, setSelectedAirpodsCaseModel] = useState('');
+  const dialogRef = useRef(null);
+  const touchStartX = useRef(null);
+  const resumeTimeout = useRef(null);
+
+  const promotions = promotionDefinitions.map((definition) => ({
+    ...definition,
+    products: definition.productIds.map((id) => catalog.find(id)).filter(Boolean),
+  })).filter((promotion) => promotion.products.length);
+
+  const moveTo = useCallback((index) => setActiveIndex((index + promotions.length) % promotions.length), [promotions.length]);
+  const pauseForInteraction = useCallback((resume = false) => {
+    setIsPaused(true);
+    if (resume) {
+      window.clearTimeout(resumeTimeout.current);
+      resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 6500);
+    }
+  }, []);
+
+  useEffect(() => () => window.clearTimeout(resumeTimeout.current), []);
+  useEffect(() => {
+    if (reducedMotion || isPaused || promotions.length < 2) return undefined;
+    const intervalId = window.setInterval(() => setActiveIndex((current) => (current + 1) % promotions.length), 5600);
+    return () => window.clearInterval(intervalId);
+  }, [isPaused, promotions.length, reducedMotion]);
+  useEffect(() => {
+    const onVisibilityChange = () => setIsPaused(document.hidden);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, []);
+
+  if (!promotions.length) return null;
+  const activePromotion = promotions[activeIndex] || promotions[0];
+  const featuredProduct = activePromotion.products[0];
+  const caseProduct = catalog.find('estuches-airpods');
+  const iphoneCaseProduct = catalog.find('estuches-iphone');
+  const selectedModel = catalog.find(selectedModelId) || featuredProduct;
+  const selectedColor = caseProduct?.colors?.find((color) => color.name === selectedCaseColor) || caseProduct?.colors?.[0];
+  const prices = activePromotion.products.flatMap((product) => product.variants?.length ? product.variants.map((variant) => variant.priceCRC) : [product.priceCRC]).filter(Number.isFinite);
+  const startingPrice = activePromotion.fixedPriceCRC || (prices.length ? Math.min(...prices) : null);
+  const openConfigurator = () => {
+    pauseForInteraction(true);
+    if (activePromotion.id === 'case-pair') {
+      setIsCasePairConfigurator(true);
+      setSelectedIphoneCaseModel(iphoneCaseProduct?.models?.[0] || '');
+      setSelectedAirpodsCaseModel(caseProduct?.models?.[0] || '');
+      setIsConfiguratorOpen(true);
+      return;
+    }
+    if (activePromotion.id !== 'airpods') {
+      onSelect(featuredProduct.id);
+      return;
+    }
+    setIsCasePairConfigurator(false);
+    setSelectedModelId(featuredProduct.id);
+    setSelectedCaseColor(caseProduct?.colors?.[0]?.name || '');
+    setIsConfiguratorOpen(true);
+  };
+  const closeConfigurator = () => setIsConfiguratorOpen(false);
+  const inquiryMessage = `Hola, quiero solicitar la promoción AirPods 4 + estuche por ₡20.000.\nAudífonos: ${selectedModel.name}.\nColor del estuche: ${selectedColor?.name || 'por elegir'}.\nPrecio promocional: ₡20.000.\n¿Me confirman compatibilidad, existencias y precio final?`;
+  const inquiryHref = `https://wa.me/${String(settings.whatsappPhone).replace(/\D/g, '')}?text=${encodeURIComponent(inquiryMessage)}`;
+  const casePairInquiryMessage = `Hola, quiero solicitar el combo de dos estuches por ₡8.000.\nEstuche para iPhone: ${selectedIphoneCaseModel || 'por elegir'}.\nEstuche para AirPods: ${selectedAirpodsCaseModel || 'por elegir'}.\n¿Me confirman disponibilidad y compatibilidad de ambos estuches?`;
+  const casePairInquiryHref = `https://wa.me/${String(settings.whatsappPhone).replace(/\D/g, '')}?text=${encodeURIComponent(casePairInquiryMessage)}`;
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return undefined;
+    if (isConfiguratorOpen && !dialog.open) {
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+    }
+    if (!isConfiguratorOpen && dialog.open) dialog.close();
+    return undefined;
+  }, [isConfiguratorOpen]);
+  const handleKeyDown = (event) => {
+    if (event.key === 'ArrowLeft') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex - 1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex + 1); }
+  };
+  const handleTouchStart = (event) => { if (event.touches.length === 1) touchStartX.current = event.touches[0].clientX; pauseForInteraction(true); };
+  const handleTouchEnd = (event) => {
+    if (touchStartX.current == null) return;
+    const delta = event.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) > 45) moveTo(activeIndex + (delta < 0 ? 1 : -1));
+  };
+
+  return <section className="promotions section" aria-labelledby="promotions-title">
+    <div className="container">
+      <div className="promotions__heading">
+        <div><p className="eyebrow">SELECCIÓN DROP_ZONE</p><h2 id="promotions-title">Lo esencial, mejor elegido<span className="promotions__blue-dot">.</span></h2></div>
+        <p>Descubrí productos destacados y encontrá el que acompaña tu ritmo.</p>
+      </div>
+      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <div className="promotion-carousel__viewport">
+          {promotions.map((promotion, index) => {
+            const product = promotion.products[0];
+            const isActive = index === activeIndex;
+            return <article key={promotion.id} className={`promotion-slide promotion-slide--${promotion.accent} promotion-slide--${promotion.id} ${isActive ? 'promotion-slide--active' : ''}`} aria-hidden={!isActive} aria-roledescription="diapositiva" aria-label={`${index + 1} de ${promotions.length}: ${promotion.title}`}>
+              <div className="promotion-slide__copy">
+                <span className="promotion-slide__eyebrow">{promotion.eyebrow}</span><h3>{promotion.title}</h3><p>{promotion.description}</p>
+                {promotion.id === 'airpods' && <span className="promotion-slide__detail">AirPods 4 · {caseProduct?.colors?.length || 0} colores de estuche</span>}
+                {promotion.id === 'case-pair' && <span className="promotion-slide__detail">Estuche para iPhone + estuche para AirPods</span>}
+                {startingPrice && isActive && <span className="promotion-slide__price"><small>{promotion.label}</small> {formatCRC(startingPrice)}</span>}
+                <button className="button promotion-slide__cta" type="button" onClick={openConfigurator} tabIndex={isActive ? 0 : -1}>{promotion.id === 'case-pair' ? 'Elegir combo' : 'Personalizar promoción'} <ArrowRight size={17} aria-hidden="true" /></button>
+              </div>
+              <div className="promotion-slide__media"><div className="promotion-slide__halo" aria-hidden="true" /><ProductImage product={product} className="promotion-slide__image" eager={index === 0} />{promotion.id === 'airpods' && caseProduct?.colors?.[0] && <img className="promotion-slide__case" src={caseProduct.colors[0].image} alt="Estuche compatible para AirPods" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />}{promotion.id === 'case-pair' && caseProduct?.image && <img className="promotion-slide__case promotion-slide__case--pair" src={caseProduct.image} alt="Segundo estuche para AirPods" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />}<span className="promotion-slide__product-name">{promotion.id === 'airpods' ? 'Elegí modelo y color' : promotion.id === 'case-pair' ? 'Elegí los dos modelos' : product.name}</span></div>
+            </article>;
+          })}
+        </div>
+        <button className="promotion-carousel__arrow promotion-carousel__arrow--prev" type="button" aria-label="Ver promoción anterior" onClick={() => { pauseForInteraction(true); moveTo(activeIndex - 1); }}><ChevronDown size={20} aria-hidden="true" /></button>
+        <button className="promotion-carousel__arrow promotion-carousel__arrow--next" type="button" aria-label="Ver siguiente promoción" onClick={() => { pauseForInteraction(true); moveTo(activeIndex + 1); }}><ChevronDown size={20} aria-hidden="true" /></button>
+        <div className="promotion-carousel__dots" role="group" aria-label="Seleccionar promoción">{promotions.map((promotion, index) => <button key={promotion.id} type="button" className={`promotion-carousel__dot ${index === activeIndex ? 'promotion-carousel__dot--active' : ''}`} aria-label={`Ir a ${promotion.title}`} aria-current={index === activeIndex ? 'true' : undefined} onClick={() => { pauseForInteraction(true); moveTo(index); }} />)}</div>
+        <p className="sr-only" aria-live="polite">{activePromotion.title}, {featuredProduct.name}</p>
+      </div>
+      <dialog ref={dialogRef} className="promotion-dialog" aria-labelledby="promotion-dialog-title" onClose={() => setIsConfiguratorOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) closeConfigurator(); }}>
+        <div className="promotion-dialog__shell">
+          <header className="promotion-dialog__header">
+            <div><span className="promotion-dialog__eyebrow">{isCasePairConfigurator ? 'Elegí tus modelos' : 'Elegí tu combinación'}</span><h2 id="promotion-dialog-title">{isCasePairConfigurator ? 'Personalizá tu combo' : 'Personalizá tu promoción'}</h2><p>{isCasePairConfigurator ? 'Seleccioná el modelo de iPhone y de AirPods para preparar los dos estuches.' : 'Elegí primero tus AirPods y después el color del estuche compatible.'}</p></div>
+            <button type="button" className="promotion-dialog__close" onClick={closeConfigurator} aria-label="Cerrar personalización"><X size={17} aria-hidden="true" /></button>
+          </header>
+          {isCasePairConfigurator ? <div className="promotion-dialog__body promotion-dialog__body--case-pair">
+            <div className="promotion-dialog__preview"><div className="promotion-dialog__preview-images promotion-dialog__preview-images--pair"><img src={iphoneCaseProduct?.image} alt="Estuche para iPhone" /><img src={caseProduct?.image} alt="Estuche para AirPods" /></div><strong>Dos estuches protectores</strong><span>Uno para iPhone y uno para AirPods, sujetos a compatibilidad y existencias.</span></div>
+            <div className="promotion-dialog__options">
+              <AccessiblePicker label="1. Modelo de iPhone" value={selectedIphoneCaseModel} onChange={setSelectedIphoneCaseModel} className="promotion-dialog__picker" options={(iphoneCaseProduct?.models || []).map((model) => ({ value: model, label: model }))} />
+              <AccessiblePicker label="2. Modelo de AirPods" value={selectedAirpodsCaseModel} onChange={setSelectedAirpodsCaseModel} className="promotion-dialog__picker promotion-dialog__picker--second" options={(caseProduct?.models || []).map((model) => ({ value: model, label: model }))} />
+              <div className="promotion-dialog__summary"><div><span>Estuche para iPhone</span><strong>{selectedIphoneCaseModel || 'Por elegir'}</strong></div><div><span>Estuche para AirPods</span><strong>{selectedAirpodsCaseModel || 'Por elegir'}</strong></div><div className="promotion-dialog__total"><span>Combo de los dos</span><strong>₡8.000</strong></div><p>El precio aplica al combo de dos estuches. Confirmaremos compatibilidad y disponibilidad por WhatsApp.</p></div>
+              <a className="button button--whatsapp promotion-dialog__submit" href={casePairInquiryHref} target="_blank" rel="noopener noreferrer" onClick={closeConfigurator}>Solicitar combo de estuches <ArrowRight size={17} aria-hidden="true" /></a>
+            </div>
+          </div> : <div className="promotion-dialog__body">
+            <div className="promotion-dialog__preview"><div className="promotion-dialog__preview-images"><ProductImage product={selectedModel} eager /><img src={selectedColor?.image} alt={`Estuche ${selectedColor?.name || ''}`} /></div><strong>{selectedModel.name} + estuche {selectedColor?.name || ''}</strong><span>Compatibilidad y disponibilidad se confirman antes de pedir.</span></div>
+            <div className="promotion-dialog__options">
+              <AccessiblePicker
+                label="1. Modelo de AirPods"
+                value={selectedModel.id}
+                onChange={setSelectedModelId}
+                className="promotion-dialog__picker"
+                options={(promotionDefinitions.find((definition) => definition.id === 'airpods')?.productIds || []).map((id) => catalog.find(id)).filter(Boolean).map((product) => ({ value: product.id, label: product.name }))}
+              />
+              <div className="promotion-dialog__color-heading"><label>2. Color del estuche</label><span>{selectedColor?.name}</span></div>
+              <div className="promotion-dialog__colors" role="group" aria-label="Seleccionar color del estuche">{caseProduct?.colors?.map((color) => <button key={color.name} type="button" className={`promotion-color ${selectedColor?.name === color.name ? 'promotion-color--selected' : ''}`} aria-label={`Estuche ${color.name}`} aria-pressed={selectedColor?.name === color.name} onClick={() => setSelectedCaseColor(color.name)}><span style={{ backgroundColor: color.hex }} /><small>{color.name}</small></button>)}</div>
+              <div className="promotion-dialog__summary"><div><span>AirPods 4</span><strong>{selectedModel.formattedPrice}</strong></div><div><span>Estuche compatible</span><strong>{caseProduct?.formattedPrice || 'Por confirmar'}</strong></div><div className="promotion-dialog__total"><span>Precio de promoción</span><strong>₡20.000</strong></div><p>Promoción AirPods 4 + estuche. Confirmaremos compatibilidad y existencias por WhatsApp.</p></div>
+              <a className="button button--whatsapp promotion-dialog__submit" href={inquiryHref} target="_blank" rel="noopener noreferrer" onClick={closeConfigurator}>Solicitar esta selección <ArrowRight size={17} aria-hidden="true" /></a>
+            </div>
+          </div>}
+        </div>
+      </dialog>
+    </div>
+  </section>;
+}
+
 function Footer({ settings }) {
   return <>
     <div className="footer-transition" aria-hidden="true" />
@@ -705,6 +825,7 @@ export default function App() {
   const [cart, setCart] = useState(() => readStoredCart(window.localStorage));
   const [cartOpen, setCartOpen] = useState(false);
   const [cartNotice, setCartNotice] = useState('');
+  const cartButtonRef = useRef(null);
   const reducedMotion = useReducedMotion();
   const scrollToElement = usePageScroller(reducedMotion);
   const closeCart = useCallback(() => setCartOpen(false), []);
@@ -793,7 +914,7 @@ export default function App() {
   return <>
     <ScrollProgress reducedMotion={reducedMotion} />
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
-    <Header settings={data.settings} sections={data.siteSections} cartCount={numberOfCartItems} onOpenCart={() => setCartOpen(true)} />
+    <Header settings={data.settings} sections={data.siteSections} cartCount={numberOfCartItems} onOpenCart={() => setCartOpen(true)} cartButtonRef={cartButtonRef} />
     <main id="contenido">
       {loadState === 'loading' && <div className="api-loading" role="status">Actualizando catálogo…</div>}
       {loadState === 'fallback' && <div className="api-notice" role="status">Vista de respaldo: el catálogo local no está conectado. Los datos mostrados proceden de la copia incluida en la web.</div>}
@@ -801,9 +922,10 @@ export default function App() {
       <Catalog catalog={data.catalog} selectedId={product.id} onSelect={selectProduct} reducedMotion={reducedMotion} />
       <ProductDetail product={product} settings={data.settings} tab={tab} onTabChange={setTab} reducedMotion={reducedMotion} onAddToCart={handleAddToCart} />
       <Comparison catalog={data.catalog} onSelect={selectProduct} reducedMotion={reducedMotion} />
+      <PromotionsCarousel catalog={data.catalog} settings={data.settings} onSelect={selectProduct} reducedMotion={reducedMotion} />
     </main>
     <Footer settings={data.settings} />
-    <CartDrawer open={cartOpen} cart={cart} settings={data.settings} onClose={closeCart} onUpdateQuantity={handleUpdateCartQuantity} onRemove={(key) => setCart((current) => removeCartItem(current, key))} onEditProduct={handleEditCartProduct} />
+    <CartDrawer open={cartOpen} cart={cart} settings={data.settings} onClose={closeCart} onUpdateQuantity={handleUpdateCartQuantity} onRemove={(key) => setCart((current) => removeCartItem(current, key))} onEditProduct={handleEditCartProduct} triggerRef={cartButtonRef} />
     {cartNotice && <div className="cart-toast" role="status"><Check size={16} aria-hidden="true" />{cartNotice}</div>}
     <span className="sr-only" role="status" aria-live="polite">{product.name} seleccionado, precio {product.formattedPrice}</span>
   </>;

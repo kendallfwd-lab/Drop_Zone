@@ -24,6 +24,13 @@ npm run dev
 
 Abrí la URL que indique Vite, normalmente `http://127.0.0.1:5173/`. La API local usa el puerto 3001. Si no está disponible, la página muestra un aviso y utiliza una copia de `db.json` incluida en el build. En una web estática publicada esa copia queda congelada hasta la siguiente compilación; `json-server` no es una base de datos persistente de producción.
 
+## Estructura del código
+
+- `src/components/` contiene controles de interfaz reutilizables, como selectores accesibles.
+- `src/domain/` concentra las reglas del catálogo, el carrito y la comparación, con pruebas unitarias junto a cada módulo.
+- `src/data/` contiene datos derivados y el acceso al catálogo de respaldo.
+- `src/App.jsx` compone las secciones de la página y coordina su estado.
+
 ## Publicar en Vercel
 
 Importá el proyecto en Vercel con el preset **Vite**, el comando de compilación `npm run build` y el directorio de salida `dist`. No se necesita una función API ni un archivo `vercel.json`: en producción se usa directamente el catálogo incluido desde `db.json`, sin solicitar el endpoint local `/api`. Los cambios a productos, precios o configuración requieren una nueva compilación y publicación. El carrito prepara el pedido para WhatsApp y no procesa pagos.

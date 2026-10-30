@@ -51,7 +51,7 @@
 .product-picker--open .product-picker__trigger>svg{transform:rotate(180deg)}
 .product-picker__menu{position:absolute;z-index:20;top:calc(100% + 9px);left:0;width:100%;max-height:min(330px,52vh);overflow-y:auto;padding:7px;border:1px solid #dce4ef;border-radius:17px;background:rgba(255,255,255,.98);box-shadow:0 22px 55px rgba(20,42,78,.18);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#b9c8dc transparent}
 .product-picker__option{width:100%;min-height:55px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 11px;border:0;border-radius:11px;background:transparent;color:#17202e;text-align:left;transition:background .16s,color .16s}
-.product-picker__option:hover,.product-picker__option:focus-visible{background:#f0f5ff;color:#0d4fd0;outline:none}
+.product-picker__option:hover,.product-picker__option:focus-visible,.product-picker__option--active{background:#f0f5ff;color:#0d4fd0;outline:none}
 .product-picker__option--selected{background:#eaf2ff;color:#0d4fd0}
 .product-picker__option>span{min-width:0;display:flex;flex-direction:column;gap:3px}
 .product-picker__option strong{overflow:hidden;font-size:13px;font-weight:650;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
@@ -495,4 +495,80 @@
 @media(max-width:767px){
   .header-cart{width:48px;height:48px;flex-basis:48px}
   .header-cart__image{width:58px;height:58px}
+}
+@media(max-width:767px){.promotion-slide__detail{margin-top:9px;font-size:9px}.promotion-slide__case{right:0;bottom:13%;width:28%;max-width:110px}}
+
+/* Editorial promotion carousel. It is data-driven in App.jsx and sits above the existing footer. */
+.promotions{padding-block:88px 104px;background:#fff}
+.promotions__heading{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:28px}
+.promotions__heading h2{max-width:15ch;margin:7px 0 0;color:var(--text);font-size:clamp(30px,3.5vw,48px);line-height:1.02;letter-spacing:-.055em}
+.promotions__heading>p{max-width:280px;margin:0 0 4px;color:#6c7a8e;font-size:12px;line-height:1.55;text-align:right}
+.promotions__blue-dot{color:#176cff}
+.promotion-carousel{position:relative;outline:none}
+.promotion-carousel:focus-visible{border-radius:30px;box-shadow:0 0 0 4px rgba(23,108,255,.2)}
+.promotion-carousel__viewport{position:relative;aspect-ratio:16 / 7;min-height:390px;overflow:hidden;border-radius:30px;background:#0d1522;isolation:isolate}
+.promotion-slide{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(38%,.95fr);align-items:center;padding:clamp(34px,5vw,76px) clamp(28px,6vw,96px);opacity:0;pointer-events:none;transform:translateX(14px);transition:opacity .55s ease,transform .55s ease}
+.promotion-slide--active{z-index:1;opacity:1;pointer-events:auto;transform:translateX(0)}
+.promotion-slide--blue{background:#0d1522;color:#fff}.promotion-slide--slate{background:#15283e;color:#fff}.promotion-slide--ice{background:#edf4fc;color:#0d1522}
+.promotion-slide__copy{position:relative;z-index:2;max-width:500px}
+.promotion-slide__eyebrow{display:inline-flex;align-items:center;gap:8px;color:#82b3ff;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.promotion-slide--ice .promotion-slide__eyebrow{color:#176cff}
+.promotion-slide__eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.promotion-slide h3{max-width:9ch;margin:18px 0 15px;font-size:clamp(30px,4.5vw,68px);line-height:.96;letter-spacing:-.065em}
+.promotion-slide__copy>p{max-width:390px;margin:0;color:rgba(255,255,255,.7);font-size:clamp(12px,1.25vw,15px);line-height:1.55}
+.promotion-slide--ice .promotion-slide__copy>p{color:#53657b}
+.promotion-slide__detail{display:block;margin-top:13px;color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.04em}.promotion-slide--ice .promotion-slide__detail{color:#65768b}
+.promotion-slide__price{display:block;margin-top:20px;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.035em}.promotion-slide--ice .promotion-slide__price{color:#0d1522}.promotion-slide__price small{margin-right:8px;color:#9caabd;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.promotion-slide--ice .promotion-slide__price small{color:#69798d}
+.promotion-slide__cta{display:inline-flex;width:auto;min-height:44px;margin-top:26px;padding-inline:18px;border:0;background:#fff;color:#0d1522;font-size:12px}.promotion-slide__cta:hover{background:#dceaff;color:#0d1522}.promotion-slide--ice .promotion-slide__cta{background:#0d1522;color:#fff}.promotion-slide--ice .promotion-slide__cta:hover{background:#176cff}
+.promotion-slide__media{position:relative;align-self:stretch;display:grid;place-items:center;min-width:0}.promotion-slide__halo{position:absolute;width:min(29vw,360px);aspect-ratio:1;border-radius:50%;background:rgba(57,129,255,.16)}.promotion-slide--ice .promotion-slide__halo{background:rgba(96,157,230,.18)}
+.promotion-slide__image{position:relative;z-index:1;width:min(92%,450px);height:auto;max-height:100%;object-fit:contain;filter:drop-shadow(0 25px 20px rgba(0,0,0,.2))}.promotion-slide__product-name{position:absolute;z-index:2;right:3%;bottom:3%;max-width:170px;color:rgba(255,255,255,.62);font-size:10px;text-align:right}.promotion-slide--ice .promotion-slide__product-name{color:#74869d}
+.promotion-slide__case{position:absolute;z-index:2;right:3%;bottom:11%;width:min(24%,155px);height:auto;object-fit:contain;filter:drop-shadow(0 16px 14px rgba(0,0,0,.24))}
+.promotion-carousel__arrow{position:absolute;z-index:3;top:50%;display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(255,255,255,.26);border-radius:50%;background:rgba(13,21,34,.72);color:#fff;transform:translateY(-50%);transition:background .2s ease,transform .2s ease}.promotion-carousel__arrow:hover{background:#176cff;transform:translateY(-50%) scale(1.06)}.promotion-carousel__arrow svg{transform:rotate(90deg)}.promotion-carousel__arrow--prev{left:18px}.promotion-carousel__arrow--next{right:18px}.promotion-carousel__arrow--next svg{transform:rotate(-90deg)}
+.promotion-carousel__dots{position:absolute;z-index:3;left:50%;bottom:22px;display:flex;gap:8px;transform:translateX(-50%)}.promotion-carousel__dot{width:8px;height:8px;padding:0;border:1px solid rgba(255,255,255,.75);border-radius:50%;background:transparent}.promotion-carousel__dot--active{width:24px;border-color:#fff;border-radius:999px;background:#fff}
+@media(max-width:767px){
+  .promotions{padding-block:62px 70px}.promotions__heading{display:block;margin-bottom:22px}.promotions__heading h2{font-size:34px}.promotions__heading>p{max-width:320px;margin-top:12px;text-align:left}.promotion-carousel__viewport{aspect-ratio:auto;min-height:560px;border-radius:22px}.promotion-slide{grid-template-columns:1fr;grid-template-rows:1fr 1fr;padding:34px 28px 52px}.promotion-slide h3{max-width:12ch;margin-top:14px;font-size:42px}.promotion-slide__copy>p{max-width:310px}.promotion-slide__media{min-height:220px}.promotion-slide__halo{width:230px}.promotion-slide__image{width:78%;max-height:230px}.promotion-slide__product-name{right:0;bottom:4px}.promotion-carousel__arrow{top:auto;bottom:18px;width:38px;height:38px;transform:none}.promotion-carousel__arrow:hover{transform:scale(1.06)}.promotion-carousel__arrow--prev{left:18px}.promotion-carousel__arrow--next{right:18px}.promotion-carousel__dots{bottom:34px}
+}
+@media(prefers-reduced-motion:reduce){.promotion-slide,.promotion-carousel__arrow{transition:none}}
+
+.promotion-dialog{width:min(920px,calc(100% - 28px));max-width:none;padding:0;border:0;border-radius:24px;background:#fff;color:var(--text);box-shadow:0 28px 90px rgba(7,18,35,.28)}.promotion-dialog::backdrop{background:rgba(8,18,31,.68);backdrop-filter:blur(5px)}
+.promotion-dialog__shell{padding:clamp(22px,4vw,42px)}.promotion-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.promotion-dialog__eyebrow{display:inline-flex;align-items:center;gap:8px;color:#176cff;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.promotion-dialog__eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.promotion-dialog h2{margin:10px 0 7px;font-size:clamp(25px,3vw,38px);line-height:1;letter-spacing:-.05em}.promotion-dialog__header p{margin:0;color:#738197;font-size:11px}.promotion-dialog__close{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border:1px solid #dbe3ed;border-radius:50%;background:#fff;color:#526176}.promotion-dialog__close:hover{border-color:#176cff;color:#176cff}.promotion-dialog__body{display:grid;grid-template-columns:minmax(270px,.85fr) minmax(0,1.15fr);gap:28px;margin-top:26px}.promotion-dialog__preview{display:grid;align-content:center;justify-items:center;min-height:360px;padding:22px;border:1px solid #e5ebf2;border-radius:18px;background:#f8fbff;text-align:center}.promotion-dialog__preview-images{position:relative;display:grid;place-items:center;width:100%;height:260px}.promotion-dialog__preview-images::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#edf4fc}.promotion-dialog__preview-images img{position:relative;width:74%;height:240px;object-fit:contain}.promotion-dialog__preview-images img+img{position:absolute;right:7%;bottom:5%;width:38%;height:125px;filter:drop-shadow(0 11px 10px rgba(13,21,34,.18))}.promotion-dialog__preview strong{margin-top:14px;font-size:12px}.promotion-dialog__preview>span{margin-top:7px;color:#7d8999;font-size:10px;line-height:1.4}.promotion-dialog__options{min-width:0}.promotion-dialog__options>label,.promotion-dialog__color-heading label{display:block;margin-bottom:8px;color:#25344a;font-size:10px;font-weight:800}.promotion-dialog__options select{width:100%;min-height:44px;padding:0 13px;border:1px solid #cbd7e5;border-radius:10px;background:#fff;color:#162237;font:inherit;font-size:12px}.promotion-dialog__color-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}.promotion-dialog__color-heading label{margin-bottom:0}.promotion-dialog__color-heading span{color:#66758a;font-size:10px}.promotion-dialog__colors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.promotion-color{display:grid;justify-items:center;gap:5px;min-width:0;padding:7px 3px;border:1px solid #e3e9f1;border-radius:9px;background:#fff;color:#637188}.promotion-color:hover{border-color:#9bbdf5}.promotion-color--selected{border-color:#176cff;background:#f1f6ff;box-shadow:0 0 0 2px rgba(23,108,255,.12)}.promotion-color span{width:22px;height:22px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #d5deea}.promotion-color--selected span{box-shadow:0 0 0 2px #176cff}.promotion-color small{overflow:hidden;width:100%;font-size:8px;text-overflow:ellipsis;white-space:nowrap}.promotion-dialog__summary{display:grid;gap:9px;margin-top:20px;padding:15px;border:1px solid #e0e7ef;border-radius:13px;background:#f8fafc}.promotion-dialog__summary>div{display:flex;align-items:center;justify-content:space-between;gap:14px;color:#6d7c91;font-size:10px}.promotion-dialog__summary strong{color:#1b2b42;font-size:11px}.promotion-dialog__summary .promotion-dialog__total{padding-top:10px;border-top:1px solid #dce5ef;color:#22334b;font-weight:800}.promotion-dialog__total strong{color:#176cff;font-size:16px}.promotion-dialog__summary p{margin:2px 0 0;color:#8491a2;font-size:9px;line-height:1.4}.promotion-dialog__submit{width:100%;margin-top:12px;justify-content:center;font-size:11px}
+@media(max-width:639px){
+  .promotion-dialog{width:100%;height:100dvh;max-width:none;max-height:none;margin:0;border-radius:0;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+  .promotion-dialog::-webkit-scrollbar{display:none;width:0;height:0}
+  .promotion-dialog__shell{min-height:100%;padding:14px 12px 18px}
+  .promotion-dialog__header{gap:8px}
+  .promotion-dialog__eyebrow{font-size:8px;letter-spacing:.12em}.promotion-dialog h2{margin:6px 0 4px;font-size:22px}.promotion-dialog__header p{max-width:245px;font-size:9px;line-height:1.25}
+  .promotion-dialog__close{width:30px;height:30px;flex-basis:30px}
+  .promotion-dialog__body{grid-template-columns:1fr;gap:10px;margin-top:10px}
+  .promotion-dialog__preview{grid-template-columns:1.1fr .9fr;min-height:136px;padding:8px;border-radius:13px;text-align:left}
+  .promotion-dialog__preview-images{height:120px}.promotion-dialog__preview-images::before{width:118px;height:118px}.promotion-dialog__preview-images img{width:90%;height:115px}.promotion-dialog__preview-images img+img{right:0;bottom:3px;width:42%;height:66px}.promotion-dialog__preview strong{margin:0;font-size:10px;line-height:1.25}.promotion-dialog__preview>span{margin-top:4px;font-size:8px;line-height:1.25}
+  .promotion-dialog__options>label,.promotion-dialog__color-heading label{margin-bottom:5px;font-size:9px}.promotion-dialog__options select{min-height:37px;padding-inline:10px;font-size:11px}.promotion-dialog__color-heading{margin-top:10px}.promotion-dialog__color-heading span{font-size:9px}
+  .promotion-dialog__colors{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.promotion-color{gap:3px;padding:4px 2px;border-radius:7px}.promotion-color span{width:19px;height:19px}.promotion-color small{font-size:7px}
+  .promotion-dialog__summary{gap:6px;margin-top:10px;padding:10px;border-radius:10px}.promotion-dialog__summary>div{font-size:8px}.promotion-dialog__summary strong{font-size:10px}.promotion-dialog__summary .promotion-dialog__total{padding-top:7px}.promotion-dialog__total strong{font-size:14px}.promotion-dialog__summary p{font-size:8px;line-height:1.25}
+  .promotion-dialog__submit{min-height:40px;margin-top:8px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.promotion-dialog::backdrop{backdrop-filter:none}}
+
+/* The AirPods model uses the same custom accessible picker as the rest of the store. */
+.promotion-dialog__picker{margin-top:0}.promotion-dialog__picker::before{content:"1. Modelo de AirPods";display:block;margin-bottom:8px;color:#25344a;font-size:10px;font-weight:800}.promotion-dialog__picker .product-picker__trigger{min-height:44px;padding:8px 13px;border-radius:10px;font-size:12px;box-shadow:none}.promotion-dialog__picker .product-picker__menu{max-height:240px;padding:5px;border-radius:12px}.promotion-dialog__picker .product-picker__option{min-height:42px;padding:8px 10px}.promotion-dialog__picker .product-picker__option strong{font-size:12px}
+.promotion-dialog__picker--second{margin-top:16px}.promotion-dialog__picker--second::before{content:"2. Modelo de AirPods"}.promotion-dialog__preview-images--pair img{width:52%;height:190px}.promotion-dialog__preview-images--pair img+img{right:4%;bottom:14%;width:47%;height:155px}
+.promotion-dialog .product-picker__menu{scrollbar-width:none;-ms-overflow-style:none}.promotion-dialog .product-picker__menu::-webkit-scrollbar{display:none;width:0;height:0}
+.promotion-dialog__preview-images::before{display:none}
+.promotion-slide__case--pair{right:0;bottom:10%;width:min(27%,170px)}
+.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-6%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:14%;bottom:16%}
+@media(max-width:639px){.promotion-dialog__picker::before{margin-bottom:5px;font-size:9px}.promotion-dialog__picker .product-picker__trigger{min-height:37px;padding:7px 10px;font-size:11px}.promotion-dialog__picker .product-picker__menu{top:calc(100% + 5px);max-height:190px;padding:4px}.promotion-dialog__picker .product-picker__option{min-height:36px;padding:6px 8px}.promotion-dialog__picker .product-picker__option strong{font-size:11px}}
+@media(max-width:639px){.promotion-dialog__picker--second{margin-top:10px}.promotion-dialog__preview-images--pair img{height:95px}.promotion-dialog__preview-images--pair img+img{height:78px}.promotion-slide__case--pair{right:0;bottom:13%;width:31%;max-width:112px}}
+@media(max-width:767px){.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-4%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:10%;bottom:18%}}
+
+/* Let the mobile carousel use the available viewport instead of leaving a blank tail. */
+@media(max-width:767px){
+  .promotions{padding-top:38px;padding-bottom:20px}
+  .promotion-carousel__viewport{height:calc(100svh - 155px);min-height:520px;max-height:680px}
+  .promotion-slide{grid-template-rows:minmax(0,.86fr) minmax(0,1.14fr);padding:28px 23px 48px}
+  .promotion-slide h3{font-size:clamp(34px,9vw,42px);line-height:.93}
+  .promotion-slide__copy>p{font-size:11px;line-height:1.4}
+  .promotion-slide__media{min-height:0;align-items:end;padding-bottom:4px}
+  .promotion-slide__image{max-height:92%;width:82%}
+  .promotion-slide__case--pair{max-height:34%;width:29%}
+  .promotion-slide__product-name{bottom:0}
 }

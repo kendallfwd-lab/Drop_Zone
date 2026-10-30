@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import App from './App.jsx';
+import App, { Hero } from './App.jsx';
 import data from '../db.json';
 
 beforeEach(() => {
@@ -54,6 +54,16 @@ describe('catalog experience', () => {
       expect(intervalCallbacks).not.toHaveLength(0);
       act(() => intervalCallbacks.forEach((callback) => callback()));
       expect(container.querySelector('.hero__backdrop--active img')).toHaveAttribute('src', '/images/hero/airpods-pro-2-hero.webp');
+    } finally {
+      intervalSpy.mockRestore();
+    }
+  });
+
+  it('does not rotate hero images when reduced motion is requested', () => {
+    const intervalSpy = vi.spyOn(window, 'setInterval').mockReturnValue(1);
+    try {
+      render(<Hero settings={data.settings} reducedMotion />);
+      expect(intervalSpy).not.toHaveBeenCalled();
     } finally {
       intervalSpy.mockRestore();
     }
@@ -224,6 +234,27 @@ describe('catalog experience', () => {
     expect(document.querySelector('.header-cart__image')).toHaveAttribute('src', '/images/cart-floating.png');
     fireEvent.click(screen.getByRole('button', { name: 'Abrir carrito, 0 productos' }));
     expect(screen.getByRole('dialog', { name: 'Carrito de compras' })).toBeInTheDocument();
+  });
+
+  it('keeps keyboard focus in the cart and restores it when the cart closes', async () => {
+    render(<App />);
+    const trigger = screen.getByRole('button', { name: 'Abrir carrito, 0 productos' });
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    const dialog = screen.getByRole('dialog', { name: 'Carrito de compras' });
+    const closeButton = within(dialog).getByRole('button', { name: 'Cerrar carrito' });
+    const continueButton = within(dialog).getByRole('button', { name: 'Explorar productos' });
+    expect(document.activeElement).toBe(closeButton);
+
+    fireEvent.keyDown(closeButton, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(continueButton);
+    fireEvent.keyDown(continueButton, { key: 'Tab' });
+    expect(document.activeElement).toBe(closeButton);
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Carrito de compras' })).not.toBeInTheDocument());
+    expect(document.activeElement).toBe(trigger);
   });
 
   it('shows the Audio discount in the cart and notifies when the threshold is reached', async () => {
