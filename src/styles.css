@@ -522,7 +522,7 @@
 .promotion-slide__cta{display:inline-flex;width:auto;min-height:44px;margin-top:26px;padding-inline:18px;border:0;background:#fff;color:#0d1522;font-size:12px}.promotion-slide__cta:hover{background:#dceaff;color:#0d1522}.promotion-slide--ice .promotion-slide__cta{background:#0d1522;color:#fff}.promotion-slide--ice .promotion-slide__cta:hover{background:#176cff}
 .promotion-slide__media{position:relative;align-self:stretch;display:grid;place-items:center;min-width:0}.promotion-slide__halo{position:absolute;width:min(29vw,360px);aspect-ratio:1;border-radius:50%;background:rgba(57,129,255,.16)}.promotion-slide--ice .promotion-slide__halo{background:rgba(96,157,230,.18)}
 .promotion-slide__image{position:relative;z-index:1;width:min(92%,450px);height:auto;max-height:100%;object-fit:contain;filter:drop-shadow(0 25px 20px rgba(0,0,0,.2))}.promotion-slide__product-name{position:absolute;z-index:2;right:3%;bottom:3%;max-width:170px;color:rgba(255,255,255,.62);font-size:10px;text-align:right}.promotion-slide--ice .promotion-slide__product-name{color:#74869d}
-.promotion-slide__case{position:absolute;z-index:2;right:3%;bottom:11%;width:min(24%,155px);height:auto;object-fit:contain;filter:drop-shadow(0 16px 14px rgba(0,0,0,.24))}
+.promotion-slide__case{position:absolute;z-index:2;right:2%;bottom:11%;width:min(38%,240px);height:auto;object-fit:contain;filter:drop-shadow(0 16px 14px rgba(0,0,0,.24))}
 .promotion-carousel__arrow{position:absolute;z-index:3;top:50%;display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(255,255,255,.26);border-radius:50%;background:rgba(13,21,34,.72);color:#fff;transform:translateY(-50%);transition:background .2s ease,transform .2s ease}.promotion-carousel__arrow:hover{background:#176cff;transform:translateY(-50%) scale(1.06)}.promotion-carousel__arrow svg{transform:rotate(90deg)}.promotion-carousel__arrow--prev{left:18px}.promotion-carousel__arrow--next{right:18px}.promotion-carousel__arrow--next svg{transform:rotate(-90deg)}
 .promotion-carousel__dots{position:absolute;z-index:3;left:50%;bottom:22px;display:flex;gap:8px;transform:translateX(-50%)}.promotion-carousel__dot{width:8px;height:8px;padding:0;border:1px solid rgba(255,255,255,.75);border-radius:50%;background:transparent}.promotion-carousel__dot--active{width:24px;border-color:#fff;border-radius:999px;background:#fff}
 @media(max-width:767px){
@@ -555,10 +555,11 @@
 .promotion-dialog .product-picker__menu{scrollbar-width:none;-ms-overflow-style:none}.promotion-dialog .product-picker__menu::-webkit-scrollbar{display:none;width:0;height:0}
 .promotion-dialog__preview-images::before{display:none}
 .promotion-slide__case--pair{right:0;bottom:10%;width:min(27%,170px)}
-.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-6%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:11%;bottom:16%;width:min(34%,220px)}
+.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-6%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:8%;bottom:16%;width:min(42%,280px)}
 @media(max-width:639px){.promotion-dialog__picker::before{margin-bottom:5px;font-size:9px}.promotion-dialog__picker .product-picker__trigger{min-height:37px;padding:7px 10px;font-size:11px}.promotion-dialog__picker .product-picker__menu{top:calc(100% + 5px);max-height:190px;padding:4px}.promotion-dialog__picker .product-picker__option{min-height:36px;padding:6px 8px}.promotion-dialog__picker .product-picker__option strong{font-size:11px}}
 @media(max-width:639px){.promotion-dialog__picker--second{margin-top:10px}.promotion-dialog__preview-images--pair img{height:95px}.promotion-dialog__preview-images--pair img+img{height:78px}.promotion-slide__case--pair{right:0;bottom:13%;width:31%;max-width:112px}}
 @media(max-width:767px){.promotion-slide--case-pair .promotion-slide__image{transform:translateY(-4%)}.promotion-slide--case-pair .promotion-slide__case--pair{right:10%;bottom:18%}}
+@media(max-width:767px){.promotion-slide:not(.promotion-slide--case-pair) .promotion-slide__case{right:0;bottom:13%;width:28%;max-width:110px}}
 
 /* Let the mobile carousel use the available viewport instead of leaving a blank tail. */
 @media(max-width:767px){
