@@ -682,7 +682,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
   useEffect(() => () => window.clearTimeout(resumeTimeout.current), []);
   useEffect(() => {
     if (reducedMotion || isPaused || promotions.length < 2) return undefined;
-    const intervalId = window.setInterval(() => setActiveIndex((current) => (current + 1) % promotions.length), 5600);
+    const intervalId = window.setInterval(() => setActiveIndex((current) => (current + 1) % promotions.length), 4000);
     return () => window.clearInterval(intervalId);
   }, [isPaused, promotions.length, reducedMotion]);
   useEffect(() => {
