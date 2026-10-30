@@ -663,7 +663,9 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
   const [selectedAirpodsCaseModel, setSelectedAirpodsCaseModel] = useState('');
   const [selectedPairCaseColor, setSelectedPairCaseColor] = useState('');
   const dialogRef = useRef(null);
-  const touchStartX = useRef(null);
+  const pointerStartX = useRef(null);
+  const pointerDragged = useRef(false);
+  const suppressClick = useRef(false);
   const resumeTimeout = useRef(null);
 
   const promotions = promotionDefinitions.map((definition) => ({
@@ -753,12 +755,30 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
     if (event.key === 'ArrowLeft') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex - 1); }
     if (event.key === 'ArrowRight') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex + 1); }
   };
-  const handleTouchStart = (event) => { if (event.touches.length === 1) touchStartX.current = event.touches[0].clientX; pauseForInteraction(true); };
-  const handleTouchEnd = (event) => {
-    if (touchStartX.current == null) return;
-    const delta = event.changedTouches[0].clientX - touchStartX.current;
-    touchStartX.current = null;
+  const handlePointerDown = (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    pointerStartX.current = event.clientX;
+    pointerDragged.current = false;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    pauseForInteraction(true);
+  };
+  const handlePointerMove = (event) => {
+    if (pointerStartX.current == null) return;
+    if (Math.abs(event.clientX - pointerStartX.current) > 8) {
+      pointerDragged.current = true;
+      event.preventDefault();
+    }
+  };
+  const finishPointerGesture = (event) => {
+    if (pointerStartX.current == null) return;
+    const delta = event.clientX - pointerStartX.current;
+    pointerStartX.current = null;
+    if (pointerDragged.current) {
+      suppressClick.current = true;
+      window.setTimeout(() => { suppressClick.current = false; }, 0);
+    }
     if (Math.abs(delta) > 45) moveTo(activeIndex + (delta < 0 ? 1 : -1));
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
   };
 
   return <section className="promotions section" aria-labelledby="promotions-title">
@@ -767,7 +787,7 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
         <div><p className="eyebrow">SELECCIÓN DROP_ZONE</p><h2 id="promotions-title">Lo esencial, mejor elegido<span className="promotions__blue-dot">.</span></h2></div>
         <p>Descubrí productos destacados y encontrá el que acompaña tu ritmo.</p>
       </div>
-      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <div className="promotion-carousel" tabIndex="0" role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas" onKeyDown={handleKeyDown} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocus={() => setIsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false); }} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={finishPointerGesture} onPointerCancel={finishPointerGesture} onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}>
         <div className="promotion-carousel__viewport">
           {promotions.map((promotion, index) => {
             const product = promotion.products[0];
