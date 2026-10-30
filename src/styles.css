@@ -551,6 +551,7 @@
 
 /* The AirPods model uses the same custom accessible picker as the rest of the store. */
 .promotion-dialog__picker{margin-top:0}.promotion-dialog__picker::before{content:"1. Modelo de AirPods";display:block;margin-bottom:8px;color:#25344a;font-size:10px;font-weight:800}.promotion-dialog__picker .product-picker__trigger{min-height:44px;padding:8px 13px;border-radius:10px;font-size:12px;box-shadow:none}.promotion-dialog__picker .product-picker__menu{max-height:240px;padding:5px;border-radius:12px}.promotion-dialog__picker .product-picker__option{min-height:42px;padding:8px 10px}.promotion-dialog__picker .product-picker__option strong{font-size:12px}
+.promotion-dialog__picker--iphone::before{content:"1. Modelo de iPhone"}
 .promotion-dialog__picker--second{margin-top:16px}.promotion-dialog__picker--second::before{content:"2. Modelo de AirPods"}.promotion-dialog__preview-images--pair img{width:52%;height:190px}.promotion-dialog__preview-images--pair img+img{right:4%;bottom:14%;width:47%;height:155px}
 .promotion-dialog__pair-color{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;margin-bottom:8px;color:#25344a;font-size:10px;font-weight:800}.promotion-dialog__pair-color strong{color:#66758a;font-size:10px;font-weight:500}
 .promotion-dialog .product-picker__menu{scrollbar-width:none;-ms-overflow-style:none}.promotion-dialog .product-picker__menu::-webkit-scrollbar{display:none;width:0;height:0}
