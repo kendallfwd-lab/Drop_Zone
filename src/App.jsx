@@ -737,6 +737,18 @@ function PromotionsCarousel({ catalog, settings, onSelect, reducedMotion }) {
     if (!isConfiguratorOpen && dialog.open) dialog.close();
     return undefined;
   }, [isConfiguratorOpen]);
+
+  useEffect(() => {
+    if (!isConfiguratorOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const previousOverscrollBehavior = document.body.style.overscrollBehavior;
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.overscrollBehavior = previousOverscrollBehavior;
+    };
+  }, [isConfiguratorOpen]);
   const handleKeyDown = (event) => {
     if (event.key === 'ArrowLeft') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex - 1); }
     if (event.key === 'ArrowRight') { event.preventDefault(); pauseForInteraction(true); moveTo(activeIndex + 1); }
