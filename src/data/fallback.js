@@ -1,5 +1,5 @@
 import data from '../../db.json';
-import { ProductCatalog } from '../domain/catalog.js';
+import { ProductCatalog } from '../features/catalog/catalog.js';
 
 export function getFallbackData() {
   return {

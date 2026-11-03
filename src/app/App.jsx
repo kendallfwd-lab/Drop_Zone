@@ -5,14 +5,14 @@ import {
   MapPin, Menu, Package, Palette, PenLine, Phone,
   Minus, Plus, ShoppingCart, Sparkles, Trash2, X,
 } from 'lucide-react';
-import AccessiblePicker from './components/AccessiblePicker.jsx';
-import { ProductService } from './domain/catalog.js';
+import AccessiblePicker from '../components/ui/AccessiblePicker.jsx';
+import { ProductService } from '../features/catalog/catalog.js';
 import {
   addCartItem, cartItemCount, cartTotal, clampQuantity, createCartItem, createCartWhatsAppUrl,
   applePencilProductCount, audioProductCount, cartDiscountBreakdown, cartSubtotal, caseProductCount, formatCRC, iphoneCaseProductCount, quantityDiscountForProduct, readStoredCart, removeCartItem, updateCartItemQuantity,
-} from './domain/cart.js';
-import { compareProducts } from './domain/comparison.js';
-import { getFallbackData } from './data/fallback.js';
+} from '../features/cart/cart.js';
+import { compareProducts } from '../features/comparison/comparison.js';
+import { getFallbackData } from '../data/fallback.js';
 
 const service = new ProductService();
 const iconMap = { headphones: Headphones, info: Info, pen: PenLine, audio: AudioLines, bluetooth: Bluetooth, battery: BatteryFull, droplet: Droplets, sparkles: Sparkles, package: Package, palette: Palette };

@@ -1,4 +1,4 @@
-import { comparisonSpecsByProduct } from '../data/comparisonSpecs.js';
+import { comparisonSpecsByProduct } from './comparisonSpecs.js';
 
 const CATEGORY_GROUPS = {
   audio: ['audio', 'audífonos', 'audifonos'],

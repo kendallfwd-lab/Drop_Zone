@@ -26,10 +26,15 @@ Abrí la URL que indique Vite, normalmente `http://127.0.0.1:5173/`. La API loca
 
 ## Estructura del código
 
-- `src/components/` contiene controles de interfaz reutilizables, como selectores accesibles.
-- `src/domain/` concentra las reglas del catálogo, el carrito y la comparación, con pruebas unitarias junto a cada módulo.
-- `src/data/` contiene datos derivados y el acceso al catálogo de respaldo.
-- `src/App.jsx` compone las secciones de la página y coordina su estado.
+- `src/app/` contiene la composición principal de la aplicación y sus pruebas.
+- `src/components/ui/` contiene componentes visuales reutilizables, como selectores accesibles.
+- `src/features/catalog/` concentra el modelo y las reglas del catálogo.
+- `src/features/cart/` concentra las reglas del carrito y sus descuentos.
+- `src/features/comparison/` concentra la comparación de productos y sus especificaciones.
+- `src/data/` contiene datos de respaldo y adaptadores de datos.
+- `src/styles/` contiene los estilos globales de la aplicación.
+- `src/test/` contiene la configuración compartida de Vitest.
+- Las pruebas se mantienen junto al módulo que validan para facilitar su mantenimiento.
 
 ## Publicar en Vercel
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Product, ProductCatalog } from './catalog.js';
-import data from '../../db.json';
+import data from '../../../db.json';
 
 describe('Product', () => {
   it('validates name, id and integer price', () => {

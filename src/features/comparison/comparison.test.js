@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getFallbackData } from '../data/fallback.js';
-import { comparisonSpecsByProduct } from '../data/comparisonSpecs.js';
+import { getFallbackData } from '../../data/fallback.js';
+import { comparisonSpecsByProduct } from './comparisonSpecs.js';
 import { compareProducts, extractAttributes } from './comparison.js';
 
 const { catalog } = getFallbackData();

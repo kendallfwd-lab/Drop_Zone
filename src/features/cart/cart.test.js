@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import data from '../../db.json';
-import { Product } from './catalog.js';
+import data from '../../../db.json';
+import { Product } from '../catalog/catalog.js';
 import {
   APPLE_PENCIL_DISCOUNT_CRC, AUDIO_DISCOUNT_CRC, CASE_DISCOUNT_CRC, IPHONE_CASE_DISCOUNT_CRC, addCartItem, cartDiscount, cartItemCount, cartTotal, createCartItem, createCartWhatsAppUrl,
   readStoredCart, removeCartItem, updateCartItemQuantity,
