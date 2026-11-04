@@ -7,6 +7,7 @@ import '@fontsource/inter/latin-700.css';
 import '@fontsource/inter/latin-800.css';
 import App from './app/App.jsx';
 import './styles/index.css';
+import './styles/promotions.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode><App /></React.StrictMode>,

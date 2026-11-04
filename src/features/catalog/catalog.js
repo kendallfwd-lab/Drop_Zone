@@ -4,6 +4,12 @@ export class Product {
       throw new TypeError('Producto inválido: id, nombre y precio entero no negativo son obligatorios.');
     }
     Object.assign(this, data);
+    const isSamsung = data.category === 'Samsung'
+      || data.id === 'galaxy-buds3-pro'
+      || data.id.startsWith('samsung-')
+      || data.id === 'cable-samsung-usbc-3a';
+    this.brand = data.brand || (isSamsung ? 'Samsung' : 'Apple');
+    this.productType = data.productType || (['Accesorios', 'Estuches'].includes(data.category) ? 'accessory' : data.category.toLowerCase());
     this.features = Array.isArray(data.features) ? data.features : [];
     this.referenceFeatures = Array.isArray(data.referenceFeatures) ? data.referenceFeatures : [];
     this.specSourceLinks = Array.isArray(data.specSourceLinks) ? data.specSourceLinks : [];
