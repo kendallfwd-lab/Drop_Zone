@@ -26,14 +26,17 @@ Abrí la URL que indique Vite, normalmente `http://127.0.0.1:5173/`. La API loca
 
 ## Estructura del código
 
-- `src/app/` contiene la composición principal de la aplicación y sus pruebas.
-- `src/components/ui/` contiene componentes visuales reutilizables, como selectores accesibles.
-- `src/features/catalog/` concentra el modelo y las reglas del catálogo.
-- `src/features/cart/` concentra las reglas del carrito y sus descuentos.
-- `src/features/comparison/` concentra la comparación de productos y sus especificaciones.
+- `src/app/App.jsx` conserva la composición de la página y coordina URL, carga de datos y carrito.
+- `src/components/layout/` contiene navegación y footer.
+- `src/components/common/` contiene piezas compartidas como marca, WhatsApp, imágenes y cantidad.
+- `src/components/ui/` contiene controles visuales accesibles.
+- `src/features/home/` contiene el hero y su carrusel de imágenes.
+- `src/features/catalog/` contiene catálogo, detalle, filtros derivados y reglas del modelo.
+- `src/features/cart/` contiene carrito, descuentos y su drawer.
+- `src/features/comparison/` contiene comparador y reglas de comparación.
+- `src/features/promotions/` contiene carrusel, configuradores, precios y mensajes promocionales.
 - `src/data/` contiene datos de respaldo y adaptadores de datos.
-- `src/styles/` contiene los estilos globales de la aplicación.
-- `src/test/` contiene la configuración compartida de Vitest.
+- `src/styles/index.css` mantiene estilos generales; `src/styles/promotions.css` contiene el bloque visual del carrusel promocional.
 - Las pruebas se mantienen junto al módulo que validan para facilitar su mantenimiento.
 
 ## Publicar en Vercel
